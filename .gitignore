@@ -1,3 +1,4 @@
+/.env*
 
 ###> symfony/framework-bundle ###
 /.env
@@ -9,7 +10,6 @@
 /public/bundles/
 /var/
 /vendor/
-/.env*
 
 ###< symfony/framework-bundle ###
 
