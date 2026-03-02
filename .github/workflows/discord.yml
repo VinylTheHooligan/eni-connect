@@ -2,11 +2,6 @@ name: Discord Commit Notifier
 
 on:
   push:
-    branches:
-      - main
-      - master
-      - develop
-      - "*"   # si tu veux toutes les branches
 
 jobs:
   notify:
@@ -21,34 +16,32 @@ jobs:
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.ref_name }}
         run: |
-          echo "Commits: $COMMITS"
+          echo "$COMMITS" > commits.json
 
-          # Construction du JSON pour Discord
-          PAYLOAD=$(cat <<EOF
-          {
-            "username": "GitHub Bot",
-            "embeds": [
-              {
-                "title": "📌 Nouveau push sur $REPO",
-                "description": "**Auteur :** $AUTHOR\n**Branche :** $BRANCH",
-                "color": 5814783,
-                "fields": [
-                  $(echo $COMMITS | jq -r '
-                    map({
-                      name: ("📝 " + .id[0:7]),
+          EMBEDS=$(jq -c --arg repo "$REPO" \
+                        --arg author "$AUTHOR" \
+                        --arg branch "$BRANCH" \
+                        '
+            {
+              username: "GitHub Bot",
+              embeds: [
+                {
+                  title: ("📌 Nouveau push sur " + $repo),
+                  description: ("**Auteur :** " + $author + "\n**Branche :** " + $branch),
+                  color: 5814783,
+                  fields: (
+                    .[] | {
+                      name: ("📝 " + (.id[0:7])),
                       value: ("**Message :** " + .message + "\n**Auteur :** " + .author.name),
                       inline: false
-                    }) | join(",")
-                  )
-                ],
-                "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-              }
-            ]
-          }
-          EOF
-          )
+                    }
+                  ) | [inputs]
+                }
+              ]
+            }
+          ' commits.json)
 
           curl -H "Content-Type: application/json" \
                -X POST \
-               -d "$PAYLOAD" \
+               -d "$EMBEDS" \
                "$DISCORD_WEBHOOK"
