@@ -1,0 +1,61 @@
+name: Discord Commit Notification
+
+on:
+  push:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Build embed payload
+        id: build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          AUTHOR="${{ github.event.pusher.name }}"
+          AVATAR="https://github.com/${{ github.event.pusher.name }}.png"
+          BRANCH="${{ github.ref_name }}"
+          COMMITS_JSON='${{ toJson(github.event.commits) }}'
+
+          EMBEDS="[]"
+
+          for commit in $(jq -c '.[]' <<< "$COMMITS_JSON"); do
+            SHA=$(jq -r '.id' <<< "$commit")
+            SHORT_SHA=${SHA:0:7}
+            MESSAGE=$(jq -r '.message' <<< "$commit")
+            URL=$(jq -r '.url' <<< "$commit")
+
+            FILES=$(curl -s \
+              -H "Authorization: token $GH_TOKEN" \
+              $URL | jq -r '.files[] | "- \(.filename) (\(.status))"' )
+
+            EMBED=$(jq -n \
+              --arg title "Commit $SHORT_SHA" \
+              --arg description "**Message :** $MESSAGE\n\n**Fichiers :**\n$FILES\n\n[Voir sur GitHub]($URL)" \
+              --arg author "$AUTHOR" \
+              --arg avatar "$AVATAR" \
+              '{
+                title: $title,
+                description: $description,
+                color: 3447003,
+                author: { name: $author, icon_url: $avatar },
+                footer: { text: "Notification GitHub → Discord" },
+                timestamp: now
+              }')
+
+            EMBEDS=$(jq -c --argjson embed "$EMBED" '. += [$embed]' <<< "$EMBEDS")
+          done
+
+          PAYLOAD=$(jq -n \
+            --arg content "<@&1477979874806202472>" \
+            --argjson embeds "$EMBEDS" \
+            '{content: $content, embeds: $embeds}')
+
+          echo "payload=$PAYLOAD" >> $GITHUB_OUTPUT
+
+      - name: Send to Discord
+        run: |
+          curl -H "Content-Type: application/json" \
+               -d '${{ steps.build.outputs.payload }}' \
+               ${{ secrets.DISCORD_WEBHOOK }}
