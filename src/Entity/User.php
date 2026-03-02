@@ -17,23 +17,26 @@ class User
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
     #[Assert\Length(
-        min: 2,
-        max: 150,
+        min: 2, minMessage: 'Le nom doit faire au moins {{ min }} caractères.',
+        max: 150, maxMessage: 'Le nom ne doit pas dépasser {{ max }} caractères.',
     )]
     #[ORM\Column(length: 150)]
     private ?string $nom = null; //////// NOM
 
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank(message: 'Le prénom est obligatoire.')]
     #[Assert\Length(
-        min: 2,
-        max: 150,
+        min: 2, minMessage: 'Le prénom doit faire au moins {{ limit }} caractères.',
+        max: 150, maxMessage: 'Le prénom ne doit pas dépasser {{ limit }} caractères.',
     )]
     #[ORM\Column(length: 150)]
     private ?string $prenom = null; //////// PRENOM
 
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank(message: 'Le pseudo est obligatoire.')]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z0-9._-]+$/',
+        message: 'Le pseudo ne peut contenir que des lettres, chiffres, ".", "_" et "-".'  )]
     #[Assert\Length(
         min: 3,
         max: 150,
@@ -45,18 +48,38 @@ class User
         min: 10,
         max: 10,
     )]
+    #[Assert\Regex(
+        pattern: '/^\d{10}$/',
+        message: 'Le téléphone doit contenir exactement 10 chiffres.',
+        groups: ['Default']
+    )]
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $telephone = null; //////// TELEPHONE
 
-    #[Assert\Email()]
+    #[Assert\Email(message: 'L’email est obligatoire.')]
+    #[Assert\Email(message: 'L’email n’est pas valide.')]
+    #[Assert\Length(max: 180, maxMessage: 'L’email ne doit pas dépasser {{ max }} caractères.')]
     #[ORM\Column(length: 180)]
     private ?string $email = null; //////// EMAIL
 
     #[ORM\Column(length: 250)]
-    private ?string $motPasse = null; //////// MOT DE PASSE
+    private ?string $hashMotPasse = null; //////// MOT DE PASSE
 
-    #[ORM\Column]
+    #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.', groups: ['inscription'])]
+    #[Assert\Length(
+        min: 8,
+        max: 50,
+        minMessage: 'Le mot de passe doit faire au moins {{ min }} caractères.',
+        maxMessage: 'Le mot de passe ne doit pas dépasser {{ max }} caractères.',
+        groups: ['registration']
+    )]
+    private ?string $motPasse = null;
+    #[ORM\Column (options: ['default' => true])]
     private ?bool $actif = null; //////// ACTIF?
+
+    public function __construct() {
+        $this->actif = true;
+    }
 
     public function getId(): ?int
     {
@@ -123,18 +146,29 @@ class User
         return $this;
     }
 
+    public function getHashMotPasse(): ?string
+    {
+        return $this->hashMotPasse;
+    }
+
+    public function setHashMotPasse(string $hashMotPasse): static
+    {
+        $this->hashMotPasse = $hashMotPasse;
+
+        return $this;
+    }
+
+
     public function getMotPasse(): ?string
     {
         return $this->motPasse;
     }
 
-    public function setMotPasse(string $motPasse): static
+    public function setMotPasse(?string $motPasse): static
     {
         $this->motPasse = $motPasse;
-
         return $this;
     }
-
     public function isActif(): ?bool
     {
         return $this->actif;
