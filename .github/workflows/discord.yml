@@ -23,16 +23,21 @@ jobs:
           for commit in $(jq -c '.[]' <<< "$COMMITS_JSON"); do
             SHA=$(jq -r '.id' <<< "$commit")
             SHORT_SHA=${SHA:0:7}
-            MESSAGE=$(jq -r '.message' <<< "$commit")
+
+            # Escape commit message safely
+            MESSAGE=$(jq -r '.message' <<< "$commit" | sed 's/"/\\"/g')
+
             URL=$(jq -r '.url' <<< "$commit")
 
+            # Fetch file list safely
             FILES=$(curl -s \
               -H "Authorization: token $GH_TOKEN" \
-              $URL | jq -r '.files[] | "- \(.filename) (\(.status))"' )
+              $URL | jq -r '.files[] | "- \(.filename) (\(.status))"' | sed 's/"/\\"/g')
 
+            # Build embed JSON safely
             EMBED=$(jq -n \
               --arg title "Commit $SHORT_SHA" \
-              --arg description "**Message :** $MESSAGE\n\n**Fichiers :**\n$FILES\n\n[Voir sur GitHub]($URL)" \
+              --arg description "**Message :**\n$MESSAGE\n\n**Fichiers :**\n$FILES\n\n[Voir sur GitHub]($URL)" \
               --arg author "$AUTHOR" \
               --arg avatar "$AVATAR" \
               '{
@@ -47,8 +52,9 @@ jobs:
             EMBEDS=$(jq -c --argjson embed "$EMBED" '. += [$embed]' <<< "$EMBEDS")
           done
 
+          # Replace ROLE_ID with your Discord role ID
           PAYLOAD=$(jq -n \
-            --arg content "<@&1477979874806202472>" \
+            --arg content "<@&ROLE_ID>" \
             --argjson embeds "$EMBEDS" \
             '{content: $content, embeds: $embeds}')
 
