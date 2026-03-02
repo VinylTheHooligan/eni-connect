@@ -18,63 +18,55 @@ jobs:
           BRANCH="${{ github.ref_name }}"
           COMMITS_JSON='${{ toJson(github.event.commits) }}'
 
-          # Si aucun commit (cas rare mais possible)
-          if [ "$COMMITS_JSON" = "null" ] || [ -z "$COMMITS_JSON" ]; then
-            {
-              echo "payload<<EOF"
-              echo "{\"content\":\"Aucun commit détecté.\"}"
-              echo "EOF"
-            } >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
           EMBEDS="[]"
 
-          # Boucle robuste qui ne casse pas le JSON
-          while IFS= read -r commit; do
+          for commit in $(jq -c '.[]' <<< "$COMMITS_JSON"); do
             SHA=$(jq -r '.id' <<< "$commit")
             SHORT_SHA=${SHA:0:7}
 
-            MESSAGE=$(jq -r '.message' <<< "$commit" | sed 's/"/\\"/g')
+            # Message commit échappé
+            MESSAGE=$(jq -r '.message' <<< "$commit" | jq -Rs .)
+
             URL=$(jq -r '.url' <<< "$commit")
 
-            # Récupération des fichiers modifiés
+            # Liste des fichiers modifiés
             FILES=$(curl -s \
               -H "Authorization: token $GH_TOKEN" \
-              "$URL" | jq -r '.files[]? | "- \(.filename) (\(.status))"' | sed 's/"/\\"/g')
+              $URL | jq -r '.files[] | "- \(.filename) (\(.status))"' | jq -Rs .)
 
+            # Timestamp ISO8601
+            TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+            # Construction embed
             EMBED=$(jq -n \
               --arg title "Commit $SHORT_SHA" \
-              --arg description "**Message :**\n$MESSAGE\n\n**Fichiers :**\n$FILES\n\n[Voir sur GitHub]($URL)" \
+              --argjson message "$MESSAGE" \
+              --argjson files "$FILES" \
               --arg author "$AUTHOR" \
               --arg avatar "$AVATAR" \
+              --arg url "$URL" \
+              --arg ts "$TS" \
               '{
                 title: $title,
-                description: $description,
+                description: ("**Message :**\n" + ($message|fromjson) + "\n\n**Fichiers :**\n" + ($files|fromjson) + "\n\n[Voir sur GitHub](" + $url + ")"),
                 color: 3447003,
                 author: { name: $author, icon_url: $avatar },
                 footer: { text: "Notification GitHub → Discord" },
-                timestamp: now
+                timestamp: $ts
               }')
 
             EMBEDS=$(jq -c --argjson embed "$EMBED" '. += [$embed]' <<< "$EMBEDS")
-          done < <(jq -c '.[]' <<< "$COMMITS_JSON")
+          done
 
-          # Construction finale du payload
           PAYLOAD=$(jq -n \
             --arg content "<@&1477979874806202472>" \
             --argjson embeds "$EMBEDS" \
             '{content: $content, embeds: $embeds}')
 
-          # Sortie multi-ligne correcte pour GitHub Actions
-          {
-            echo "payload<<EOF"
-            echo "$PAYLOAD"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          echo "payload=$PAYLOAD" >> $GITHUB_OUTPUT
 
       - name: Send to Discord
         run: |
           curl -H "Content-Type: application/json" \
-               -d "${{ steps.build.outputs.payload }}" \
+               -d '${{ steps.build.outputs.payload }}' \
                ${{ secrets.DISCORD_WEBHOOK }}
