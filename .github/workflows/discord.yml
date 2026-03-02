@@ -45,3 +45,7 @@ jobs:
                -X POST \
                -d "$EMBEDS" \
                "$DISCORD_WEBHOOK"
+      - name: Debug commits
+        run: |
+          echo "COMMITS_JSON:"
+          echo '${{ toJson(github.event.commits) }}'
