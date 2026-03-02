@@ -18,23 +18,31 @@ jobs:
           BRANCH="${{ github.ref_name }}"
           COMMITS_JSON='${{ toJson(github.event.commits) }}'
 
+          # Si aucun commit (cas rare mais possible)
+          if [ "$COMMITS_JSON" = "null" ] || [ -z "$COMMITS_JSON" ]; then
+            {
+              echo "payload<<EOF"
+              echo "{\"content\":\"Aucun commit détecté.\"}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           EMBEDS="[]"
 
-          for commit in $(jq -c '.[]' <<< "$COMMITS_JSON"); do
+          # Boucle robuste qui ne casse pas le JSON
+          while IFS= read -r commit; do
             SHA=$(jq -r '.id' <<< "$commit")
             SHORT_SHA=${SHA:0:7}
 
-            # Escape commit message safely
             MESSAGE=$(jq -r '.message' <<< "$commit" | sed 's/"/\\"/g')
-
             URL=$(jq -r '.url' <<< "$commit")
 
-            # Fetch file list safely
+            # Récupération des fichiers modifiés
             FILES=$(curl -s \
               -H "Authorization: token $GH_TOKEN" \
-              $URL | jq -r '.files[] | "- \(.filename) (\(.status))"' | sed 's/"/\\"/g')
+              "$URL" | jq -r '.files[]? | "- \(.filename) (\(.status))"' | sed 's/"/\\"/g')
 
-            # Build embed JSON safely
             EMBED=$(jq -n \
               --arg title "Commit $SHORT_SHA" \
               --arg description "**Message :**\n$MESSAGE\n\n**Fichiers :**\n$FILES\n\n[Voir sur GitHub]($URL)" \
@@ -50,18 +58,23 @@ jobs:
               }')
 
             EMBEDS=$(jq -c --argjson embed "$EMBED" '. += [$embed]' <<< "$EMBEDS")
-          done
+          done < <(jq -c '.[]' <<< "$COMMITS_JSON")
 
-          # Replace ROLE_ID with your Discord role ID
+          # Construction finale du payload
           PAYLOAD=$(jq -n \
             --arg content "<@&ROLE_ID>" \
             --argjson embeds "$EMBEDS" \
             '{content: $content, embeds: $embeds}')
 
-          echo "payload=$PAYLOAD" >> $GITHUB_OUTPUT
+          # Sortie multi-ligne correcte pour GitHub Actions
+          {
+            echo "payload<<EOF"
+            echo "$PAYLOAD"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Send to Discord
         run: |
           curl -H "Content-Type: application/json" \
-               -d '${{ steps.build.outputs.payload }}' \
+               -d "${{ steps.build.outputs.payload }}" \
                ${{ secrets.DISCORD_WEBHOOK }}
