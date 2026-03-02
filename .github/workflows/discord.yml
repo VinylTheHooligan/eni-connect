@@ -62,7 +62,7 @@ jobs:
 
           # Construction finale du payload
           PAYLOAD=$(jq -n \
-            --arg content "<@&ROLE_ID>" \
+            --arg content "<@&1477979874806202472>" \
             --argjson embeds "$EMBEDS" \
             '{content: $content, embeds: $embeds}')
 
