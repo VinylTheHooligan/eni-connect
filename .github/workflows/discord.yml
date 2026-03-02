@@ -30,12 +30,13 @@ jobs:
                   description: ("**Auteur :** " + $author + "\n**Branche :** " + $branch),
                   color: 5814783,
                   fields: (
-                    .[] | {
+                    . as $commits |
+                    $commits | map({
                       name: ("📝 " + (.id[0:7])),
                       value: ("**Message :** " + .message + "\n**Auteur :** " + .author.name),
                       inline: false
-                    }
-                  ) | [inputs]
+                    })
+                  )
                 }
               ]
             }
@@ -45,7 +46,3 @@ jobs:
                -X POST \
                -d "$EMBEDS" \
                "$DISCORD_WEBHOOK"
-      - name: Debug commits
-        run: |
-          echo "COMMITS_JSON:"
-          echo '${{ toJson(github.event.commits) }}'
