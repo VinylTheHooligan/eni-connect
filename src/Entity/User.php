@@ -23,7 +23,7 @@ class User
         max: 150, maxMessage: 'Le nom ne doit pas dépasser {{ max }} caractères.',
     )]
     #[ORM\Column(length: 150)]
-    private ?string $nom = null; //////// NOM
+    private ?string $nom = null; ///////// NOM
 
     #[Assert\NotBlank(message: 'Le prénom est obligatoire.')]
     #[Assert\Length(
