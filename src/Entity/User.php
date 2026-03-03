@@ -77,7 +77,7 @@ class User
     private ?string $motPasse = null; //////// MOT DE PASSE CLAIRE
 
     #[ORM\Column (options: ['default' => true])]
-    private ?bool $actif = true; //////// ACTIF?
+    private bool $actif = true; //////// ACTIF?
 
     public function getId(): ?int
     {
