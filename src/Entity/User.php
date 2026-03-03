@@ -7,11 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte lié à cette email.')]
+#[UniqueEntity(fields: ['pseudo'], message: 'Il existe déjà un compte lié à ce pseudonyme.')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_PSEUDO', fields: ['pseudo'])]
-#[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte lié à cette email.')]
-#[UniqueEntity(fields: ['pseudo'], message: 'Il existe déjà un compte lié à ce pseudonyme.')]
 class User
 {
     #[ORM\Id]
