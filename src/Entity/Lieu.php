@@ -6,7 +6,13 @@ use App\Repository\LieuRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[UniqueEntity(
+    fields: ['nom', 'rue', 'ville'],
+    message: 'Ce lieu existe déjà dans cette ville',
+)]
 #[ORM\Entity(repositoryClass: LieuRepository::class)]
 class Lieu
 {
@@ -15,9 +21,17 @@ class Lieu
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\Length(
+        min: 1, minMessage: 'Le nom du lieu doit contenir au minimum {{ min }} caractère.',
+        max: 180, maxMessage: 'Le nom du lieu doit contenir au maximum {{ max }} caractères.',
+    )]
     #[ORM\Column(length: 180)]
     private ?string $nom = null;
 
+    #[Assert\Length(
+        min: 5, minMessage: 'La rue doit contenir au minimum {{ min }} caractère.',
+        max: 200, maxMessage: 'La rue doit contenir au maximum {{ max }} caractères.'
+    )]
     #[ORM\Column(length: 255)]
     private ?string $rue = null;
 

@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte lié à cette email.')]
@@ -16,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     new ORM\UniqueConstraint(name: 'uniq_user_email', columns: ['email']),
     new ORM\UniqueConstraint(name: 'uniq_user_pseudo', columns: ['pseudo']),
 ])]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -80,6 +82,9 @@ class User
     )]
     private ?string $motPasse = null; //////// MOT DE PASSE CLAIRE
 
+    #[ORM\Column(type: 'json')]                     ///////// ROLES
+    private array $roles = [];
+    
     #[ORM\Column (options: ['default' => true])]
     private bool $actif = true;
 
@@ -178,7 +183,6 @@ class User
         return $this;
     }
 
-
     public function getMotPasse(): ?string
     {
         return $this->motPasse;
@@ -189,6 +193,19 @@ class User
         $this->motPasse = $motPasse;
         return $this;
     }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
     public function isActif(): ?bool
     {
         return $this->actif;
@@ -247,5 +264,20 @@ class User
     {
         $this->inscriptions->removeElement($inscription);
         return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+        
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->motPasse;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
     }
 }

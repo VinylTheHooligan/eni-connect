@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use OutOfRangeException;
 
 #[ORM\Entity(repositoryClass: VilleRepository::class)]
 class Ville
@@ -16,16 +17,26 @@ class Ville
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\Length(
+        min: 1, minMessage: 'La ville doit contenir au minimum {{ min }} caractère.',
+        max: 50, maxMessage: 'La ville doit contenir au maximum {{ max }} caractères.',
+    )]
     #[ORM\Column(length: 100)]
     private ?string $nom = null;
 
     #[Assert\NotBlank(message: 'Le code postal obligatoire.')]
+    #[Assert\Range(
+        min: 5,
+        max: 5,
+        notInRangeMessage: 'Le code postal doit contenir précisément {{ max }} chiffres.',
+    )]
     #[ORM\Column(length: 5)]
     private ?string $codePostal = null;
 
     /**
      * @var Collection<int, Lieu>
      */
+    #[Assert\NotBlank(message: 'La "ville" doit être obligatoire.')]
     #[ORM\OneToMany(targetEntity: Lieu::class, mappedBy: 'ville')]
     private Collection $lieux;
 
