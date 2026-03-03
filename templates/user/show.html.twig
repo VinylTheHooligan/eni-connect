@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{# Titre de la page avec le nom complet du participant #}
+{% block title %}Profil de {{ user.prenom }} {{ user.nom }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+
+                {# Nom complet en titre principal #}
+                <h1 class="mb-4">{{ user.prenom }} {{ user.nom }}</h1>
+
+                {# Carte Bootstrap pour afficher les infos du participant #}
+                <div class="card">
+                    <div class="card-body">
+
+                        {# Affichage du pseudo #}
+                        <p><strong>Pseudo :</strong> {{ user.pseudo }}</p>
+
+                        {# Affichage de l'email #}
+                        <p><strong>Email :</strong> {{ user.email }}</p>
+
+                        {# Le téléphone est optionnel, on vérifie s'il existe avant d'afficher #}
+                        {% if user.telephone %}
+                            <p><strong>Téléphone :</strong> {{ user.telephone }}</p>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                {# Bouton retour vers mon propre profil #}
+                <a href="{{ path('app_profil') }}" class="btn btn-secondary mt-3">Retour</a>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
