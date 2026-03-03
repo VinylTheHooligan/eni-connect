@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -10,8 +12,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte lié à cette email.')]
 #[UniqueEntity(fields: ['pseudo'], message: 'Il existe déjà un compte lié à ce pseudonyme.')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_PSEUDO', fields: ['pseudo'])]
+#[ORM\Table(name: '`user`', uniqueConstraints: [
+    new ORM\UniqueConstraint(name: 'uniq_user_email', columns: ['email']),
+    new ORM\UniqueConstraint(name: 'uniq_user_pseudo', columns: ['pseudo']),
+])]
 class User
 {
     #[ORM\Id]
@@ -77,7 +81,25 @@ class User
     private ?string $motPasse = null; //////// MOT DE PASSE CLAIRE
 
     #[ORM\Column (options: ['default' => true])]
-    private bool $actif = true; //////// ACTIF?
+    private bool $actif = true;
+
+    /**
+     * @var Collection<int, Sortie>
+     */
+    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'organisateur')]
+    private Collection $sorties;
+
+    /**
+     * @var Collection<int, Inscription>
+     */
+    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'participant')]
+    private Collection $inscriptions;
+
+    public function __construct()
+    {
+        $this->sorties = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
+    } //////// ACTIF?
 
     public function getId(): ?int
     {
@@ -176,6 +198,54 @@ class User
     {
         $this->actif = $actif;
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getSorties(): Collection
+    {
+        return $this->sorties;
+    }
+
+    public function addSorty(Sortie $sorty): static
+    {
+        if (!$this->sorties->contains($sorty)) {
+            $this->sorties->add($sorty);
+            $sorty->setOrganisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSorty(Sortie $sorty): static
+    {
+        $this->sorties->removeElement($sorty);
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Inscription>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(Inscription $inscription): static
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->setParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(Inscription $inscription): static
+    {
+        $this->inscriptions->removeElement($inscription);
         return $this;
     }
 }
