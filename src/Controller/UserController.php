@@ -10,20 +10,29 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[IsGranted('ROLE_USER')] // seuls les connectés accèdent au profil
 final class UserController extends AbstractController
 {
     // Tâche 3 - Gérer son profil
     #[Route('/profil', name: 'app_profil')]
-    public function editProfil(Request $request, EntityManagerInterface $em): Response
+    public function edit(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
     {
-        $user = $this->getUser(); // récupère l'utilisateur connecté
+        $user = $this->getUser();
 
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            // Si un nouveau mot de passe a été saisi
+            if ($user->getMotPasse()) {
+                $hashedPassword = $passwordHasher->hashPassword($user, $user->getMotPasse());
+                $user->setHashMotPasse($hashedPassword);
+                $user->setMotPasse(null); // on efface le mot de passe en clair
+            }
+
             $em->persist($user);
             $em->flush();
             $this->addFlash('success', 'Profil mis à jour !');
