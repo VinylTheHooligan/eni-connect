@@ -9,7 +9,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_PSEUDO', fields: ['pseudo'])]
 #[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte lié à cette email.')]
+#[UniqueEntity(fields: ['pseudo'], message: 'Il existe déjà un compte lié à ce pseudonyme.')]
 class User
 {
     #[ORM\Id]
@@ -27,8 +29,8 @@ class User
 
     #[Assert\NotBlank(message: 'Le prénom est obligatoire.')]
     #[Assert\Length(
-        min: 2, minMessage: 'Le prénom doit faire au moins {{ limit }} caractères.',
-        max: 150, maxMessage: 'Le prénom ne doit pas dépasser {{ limit }} caractères.',
+        min: 2, minMessage: 'Le prénom doit faire au moins {{ min }} caractères.',
+        max: 150, maxMessage: 'Le prénom ne doit pas dépasser {{ max }} caractères.',
     )]
     #[ORM\Column(length: 150)]
     private ?string $prenom = null; //////// PRENOM
@@ -51,19 +53,18 @@ class User
     #[Assert\Regex(
         pattern: '/^\d{10}$/',
         message: 'Le téléphone doit contenir exactement 10 chiffres.',
-        groups: ['Default']
     )]
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $telephone = null; //////// TELEPHONE
 
-    #[Assert\Email(message: 'L’email est obligatoire.')]
+    #[Assert\NotBlank(message: 'L’email est obligatoire.')]
     #[Assert\Email(message: 'L’email n’est pas valide.')]
     #[Assert\Length(max: 180, maxMessage: 'L’email ne doit pas dépasser {{ max }} caractères.')]
     #[ORM\Column(length: 180)]
     private ?string $email = null; //////// EMAIL
 
     #[ORM\Column(length: 250)]
-    private ?string $hashMotPasse = null; //////// MOT DE PASSE
+    private ?string $hashMotPasse = null; //////// MOT DE PASSE HASHÉ
 
     #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.', groups: ['inscription'])]
     #[Assert\Length(
@@ -71,15 +72,12 @@ class User
         max: 50,
         minMessage: 'Le mot de passe doit faire au moins {{ min }} caractères.',
         maxMessage: 'Le mot de passe ne doit pas dépasser {{ max }} caractères.',
-        groups: ['registration']
+        groups: ['inscription']
     )]
-    private ?string $motPasse = null;
-    #[ORM\Column (options: ['default' => true])]
-    private ?bool $actif = null; //////// ACTIF?
+    private ?string $motPasse = null; //////// MOT DE PASSE CLAIRE
 
-    public function __construct() {
-        $this->actif = true;
-    }
+    #[ORM\Column (options: ['default' => true])]
+    private ?bool $actif = true; //////// ACTIF?
 
     public function getId(): ?int
     {
