@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{# Titre de la page de gestion du profil #}
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+
+                <h1 class="mb-4">Mon profil</h1>
+
+                {# Message de succès après modification du profil #}
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+
+                {# Formulaire de modification du profil lié à UserType #}
+                {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
+
+                {# Nom de l'utilisateur #}
+                <div class="col-md-6">
+                    {{ form_label(form.nom) }}
+                    {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.nom) }}
+                </div>
+
+                {# Prénom de l'utilisateur #}
+                <div class="col-md-6">
+                    {{ form_label(form.prenom) }}
+                    {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.prenom) }}
+                </div>
+
+                {# Pseudo unique entre tous les participants #}
+                <div class="col-md-6">
+                    {{ form_label(form.pseudo) }}
+                    {{ form_widget(form.pseudo, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.pseudo) }}
+                </div>
+
+                {# Téléphone optionnel #}
+                <div class="col-md-6">
+                    {{ form_label(form.telephone) }}
+                    {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.telephone) }}
+                </div>
+
+                {# Email unique entre tous les participants #}
+                <div class="col-md-12">
+                    {{ form_label(form.email) }}
+                    {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.email) }}
+                </div>
+
+                {# Nouveau mot de passe - optionnel, laisser vide pour ne pas changer #}
+                <div class="col-md-12">
+                    {{ form_label(form.motPasse.first) }}
+                    {{ form_widget(form.motPasse.first, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.motPasse.first) }}
+                </div>
+
+                {# Confirmation du nouveau mot de passe #}
+                <div class="col-md-12">
+                    {{ form_label(form.motPasse.second) }}
+                    {{ form_widget(form.motPasse.second, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.motPasse.second) }}
+                </div>
+
+                {# Bouton de sauvegarde #}
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+
+                {{ form_end(form) }}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
