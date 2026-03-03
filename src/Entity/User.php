@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte lié à cette email.')]
@@ -12,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_PSEUDO', fields: ['pseudo'])]
-class User
+class User implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -77,7 +78,10 @@ class User
     private ?string $motPasse = null; //////// MOT DE PASSE CLAIRE
 
     #[ORM\Column (options: ['default' => true])]
-    private bool $actif = true; //////// ACTIF?
+    private bool $actif = true;
+
+    #[ORM\Column]
+    private array $roles = []; //////// ACTIF?
 
     public function getId(): ?int
     {
@@ -177,5 +181,26 @@ class User
         $this->actif = $actif;
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function eraseCredentials(): void
+    {}
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
     }
 }
