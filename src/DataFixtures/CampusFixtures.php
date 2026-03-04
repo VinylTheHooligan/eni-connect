@@ -3,22 +3,27 @@
 namespace App\DataFixtures;
 
 use App\Entity\Campus;
+use App\Services\FixturesDataProvider as FixturesData;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
 class CampusFixtures extends Fixture
 {
-    public function load(ObjectManager $manager): void
+    public function load(ObjectManager $om): void
     {
-        $faker = Factory::create('fr_FR');
+        $faker = FixturesData::faker();
 
-        for ($i = 0; $i < 15; $i++)
+        for ($i = 1; $i >= FixturesData::getCampusCompte(); $i++)
         {
             $campus = new Campus();
 
-            $campus->setNom('Campus de ');
+            $campus->setNom('Campus de ' . $faker->city());
+
+            $om->persist($campus);
+
+            $this->addReference('campus' . $i, $campus);
         }
 
-        $manager->flush();
+        $om->flush();
     }
 }
