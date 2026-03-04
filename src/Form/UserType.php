@@ -10,6 +10,8 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+
 
 class UserType extends AbstractType
 {
@@ -43,6 +45,13 @@ class UserType extends AbstractType
                 'required' => false,
                 'first_options' => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Confirmation'],
+            ])
+
+            ->add('profilePictureFile', FileType::class, [
+                'label' => 'Ma photo',
+                'required' => false,
+                'mapped' => false, // pas lié directement à l'entité
+                'attr' => ['accept' => 'image/*']
             ])
         ;
     }
