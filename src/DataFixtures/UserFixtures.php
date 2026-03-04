@@ -23,9 +23,9 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
     {
         $faker = FixturesData::faker();
         
-        $this->userCreation(FixturesData::getUserCount(), $faker, $om);
-        $this->managerCreation($faker, $om);
         $this->adminCreation($faker, $om);
+        $this->organizerCreation($faker, $om);
+        $this->userCreation(FixturesData::getUserCount(), $faker, $om);
 
         $om->flush();
     }
@@ -59,9 +59,9 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         }
     }
 
-    private function managerCreation(Generator $faker, ObjectManager $om)
+    private function organizerCreation(Generator $faker, ObjectManager $om)
     {
-        for ($i = 1; $i <= FixturesData::getCampusCount(); $i++)
+        for ($i = 1; $i <= FixturesData::getOrganizerCount(); $i++)
         {
             $organizer = new User();
 
