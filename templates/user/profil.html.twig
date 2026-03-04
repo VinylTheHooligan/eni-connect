@@ -20,30 +20,30 @@
 
                 {# Nom de l'utilisateur #}
                 <div class="col-md-6">
-                    {{ form_label(form.nom) }}
-                    {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(form.nom) }}
+                    {{ form_label(form.lastName) }}
+                    {{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.lastName) }}
                 </div>
 
                 {# Prénom de l'utilisateur #}
                 <div class="col-md-6">
-                    {{ form_label(form.prenom) }}
-                    {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(form.prenom) }}
+                    {{ form_label(form.firstName) }}
+                    {{ form_widget(form.firstName, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.firstName) }}
                 </div>
 
                 {# Pseudo unique entre tous les participants #}
                 <div class="col-md-6">
-                    {{ form_label(form.pseudo) }}
-                    {{ form_widget(form.pseudo, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(form.pseudo) }}
+                    {{ form_label(form.username) }}
+                    {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.username) }}
                 </div>
 
                 {# Téléphone optionnel #}
                 <div class="col-md-6">
-                    {{ form_label(form.telephone) }}
-                    {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(form.telephone) }}
+                    {{ form_label(form.phoneNumber) }}
+                    {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.phoneNumber) }}
                 </div>
 
                 {# Email unique entre tous les participants #}
@@ -55,16 +55,16 @@
 
                 {# Nouveau mot de passe - optionnel, laisser vide pour ne pas changer #}
                 <div class="col-md-12">
-                    {{ form_label(form.motPasse.first) }}
-                    {{ form_widget(form.motPasse.first, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(form.motPasse.first) }}
+                    {{ form_label(form.plainPassword.first) }}
+                    {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.plainPassword.first) }}
                 </div>
 
                 {# Confirmation du nouveau mot de passe #}
                 <div class="col-md-12">
-                    {{ form_label(form.motPasse.second) }}
-                    {{ form_widget(form.motPasse.second, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(form.motPasse.second) }}
+                    {{ form_label(form.plainPassword.second) }}
+                    {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.plainPassword.second) }}
                 </div>
 
                 {# Bouton de sauvegarde #}
