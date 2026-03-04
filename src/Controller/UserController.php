@@ -26,17 +26,18 @@ final class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // Si un nouveau mot de passe a été saisi
             if ($user->getPlainPassword()) {
                 $hashedPassword = $passwordHasher->hashPassword($user, $user->getPlainPassword());
                 $user->setPasswordHash($hashedPassword);
-                $user->setPlainPassword(null); // on efface le mot de passe en clair
+                $user->setPlainPassword(null);
             }
 
             $em->persist($user);
             $em->flush();
             $this->addFlash('success', 'Profil mis à jour !');
-            return $this->redirectToRoute('app_profil');
+
+            // Redirige vers le show après sauvegarde
+            return $this->redirectToRoute('app_profil_show', ['id' => $user->getId()]);
         }
 
         return $this->render('user/profil.html.twig', [

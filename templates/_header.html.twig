@@ -32,8 +32,9 @@
                         <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
                     </li>
 
+                    {# Mon profil - redirige vers le show de l'utilisateur connecté #}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_profil') }}">Mon profil</a>
+                        <a class="nav-link" href="{{ path('app_profil_show', {'id': app.user.id}) }}">Mon profil</a>
                     </li>
 
                     <li class="nav-item">

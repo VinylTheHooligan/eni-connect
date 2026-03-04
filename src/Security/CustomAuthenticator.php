@@ -52,7 +52,10 @@ class CustomAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        return new RedirectResponse($this->router->generate('app_home'));
+        // Redirige vers le show de l'utilisateur connecté après login
+        return new RedirectResponse($this->router->generate('app_profil_show', [
+            'id' => $token->getUser()->getId()
+        ]));
     }
 
     protected function getLoginUrl(Request $request): string
