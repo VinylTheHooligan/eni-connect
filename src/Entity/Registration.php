@@ -3,18 +3,18 @@
 namespace App\Entity;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use App\Repository\InscriptionRepository;
+use App\Repository\RegistrationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[UniqueEntity(fields: ['participant', 'sortie'], message: 'Vous êtes déjà inscrit à cette sortie.')]
-#[ORM\Entity(repositoryClass: InscriptionRepository::class)]
+#[UniqueEntity(fields: ['participant', 'outing'], message: 'Vous êtes déjà inscrit à cette sortie.')]
+#[ORM\Entity(repositoryClass: RegistrationRepository::class)]
 #[ORM\Table(
     name: 'inscription',
     uniqueConstraints: [
         new ORM\UniqueConstraint(name: 'uniq_participant_sortie', columns: ['participant_id', 'sortie_id'])
     ]
 )]
-class Inscription
+class Registration
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,15 +22,15 @@ class Inscription
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $dateInscription = null;
+    private ?\DateTimeImmutable $registrationDate = null;
 
-    #[ORM\ManyToOne(inversedBy: 'inscriptions')]
+    #[ORM\ManyToOne(inversedBy: 'registrations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $participant = null;
 
-    #[ORM\ManyToOne(inversedBy: 'inscriptions')]
+    #[ORM\ManyToOne(inversedBy: 'registrations')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Sortie $sortie = null;
+    private ?Outing $outing = null;
 
     public function getId(): ?int
     {
@@ -38,17 +38,17 @@ class Inscription
     }
 
     public function __construct() {
-        $this->dateInscription = new \DateTimeImmutable();
+        $this->registrationDate = new \DateTimeImmutable();
     }
 
-    public function getDateInscription(): ?\DateTimeImmutable
+    public function getRegistrationDate(): ?\DateTimeImmutable
     {
-        return $this->dateInscription;
+        return $this->registrationDate;
     }
 
-    public function setDateInscription(\DateTimeImmutable $dateInscription): static
+    public function setRegistrationDate(\DateTimeImmutable $registrationDate): static
     {
-        $this->dateInscription = $dateInscription;
+        $this->registrationDate = $registrationDate;
 
         return $this;
     }
@@ -65,14 +65,14 @@ class Inscription
         return $this;
     }
 
-    public function getSortie(): ?Sortie
+    public function getOuting(): ?Outing
     {
-        return $this->sortie;
+        return $this->outing;
     }
 
-    public function setSortie(?Sortie $sortie): static
+    public function setOuting(?Outing $outing): static
     {
-        $this->sortie = $sortie;
+        $this->outing = $outing;
 
         return $this;
     }

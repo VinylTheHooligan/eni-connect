@@ -6,7 +6,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 
-class SortieFixtures extends Fixture
+class OutingFixtures extends Fixture
 {
     public function load(ObjectManager $om): void
     {
@@ -14,11 +14,7 @@ class SortieFixtures extends Fixture
 
         $faker = Factory::create('fr_FR');
 
-        for ($i = 0; $i < $count; $i++)
-        {
-
-        }
-
         $om->flush();
     }
 }
+

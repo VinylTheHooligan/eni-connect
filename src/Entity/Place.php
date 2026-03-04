@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Repository\LieuRepository;
+use App\Repository\PlaceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,11 +10,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity(
-    fields: ['nom', 'rue', 'ville'],
+    fields: ['name', 'street', 'city'],
     message: 'Ce lieu existe déjà dans cette ville',
 )]
-#[ORM\Entity(repositoryClass: LieuRepository::class)]
-class Lieu
+#[ORM\Entity(repositoryClass: PlaceRepository::class)]
+class Place
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -26,14 +26,14 @@ class Lieu
         max: 180, maxMessage: 'Le nom du lieu doit contenir au maximum {{ max }} caractères.',
     )]
     #[ORM\Column(length: 180)]
-    private ?string $nom = null;
+    private ?string $name = null;
 
     #[Assert\Length(
         min: 5, minMessage: 'La rue doit contenir au minimum {{ min }} caractère.',
         max: 200, maxMessage: 'La rue doit contenir au maximum {{ max }} caractères.'
     )]
     #[ORM\Column(length: 255)]
-    private ?string $rue = null;
+    private ?string $street = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $latitude = null;
@@ -41,14 +41,14 @@ class Lieu
     #[ORM\Column(nullable: true)]
     private ?float $longitude = null;
 
-    #[ORM\ManyToOne(inversedBy: 'lieux')]
+    #[ORM\ManyToOne(inversedBy: 'places')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Ville $ville = null;
+    private ?City $city = null;
 
     /**
-     * @var Collection<int, Sortie>
+     * @var Collection<int, Outing>
      */
-    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'lieu')]
+    #[ORM\OneToMany(targetEntity: Outing::class, mappedBy: 'place')]
     private Collection $sorties;
 
     public function __construct()
@@ -61,26 +61,26 @@ class Lieu
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): static
+    public function setName(string $name): static
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getRue(): ?string
+    public function getStreet(): ?string
     {
-        return $this->rue;
+        return $this->street;
     }
 
-    public function setRue(string $rue): static
+    public function setStreet(string $street): static
     {
-        $this->rue = $rue;
+        $this->street = $street;
 
         return $this;
     }
@@ -109,39 +109,39 @@ class Lieu
         return $this;
     }
 
-    public function getVille(): ?Ville
+    public function getCity(): ?City
     {
-        return $this->ville;
+        return $this->city;
     }
 
-    public function setVille(?Ville $ville): static
+    public function setCity(?City $city): static
     {
-        $this->ville = $ville;
+        $this->city = $city;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Sortie>
+     * @return Collection<int, Outing>
      */
     public function getSorties(): Collection
     {
         return $this->sorties;
     }
 
-    public function addSorty(Sortie $sorty): static
+    public function addOuting(Outing $outing): static
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties->add($sorty);
-            $sorty->setLieu($this);
+        if (!$this->sorties->contains($outing)) {
+            $this->sorties->add($outing);
+            $outing->setPlace($this);
         }
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): static
+    public function removeOuting(Outing $outing): static
     {
-        $this->sorties->removeElement($sorty);
+        $this->sorties->removeElement($outing);
         return $this;
     }
 }

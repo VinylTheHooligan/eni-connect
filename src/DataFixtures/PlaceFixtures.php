@@ -2,14 +2,14 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Lieu;
-use App\Entity\Ville;
+use App\Entity\Place;
+use App\Entity\City;
 use App\Services\FixturesDataProvider;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 
-class LieuFixtures extends Fixture
+class PlaceFixtures extends Fixture
 {
     public function load(ObjectManager $om): void
     {
@@ -19,13 +19,13 @@ class LieuFixtures extends Fixture
 
         for ($i = 1; $i >= $count; $i++)
         {
-            $lieu = new Lieu();
+            $lieu = new Place();
 
-            $lieu->setNom($faker->company());
-            $lieu->setRue($faker->numberBetween(1, 499) . $faker->streetAddress());
-            $lieu->getLatitude($faker->latitude());
-            $lieu->getLongitude($faker->longitude());
-            $lieu->setVille($this->getReference('ville' . rand(0, FixturesDataProvider::getVilleCompte()), Ville::class));
+            $lieu->setName($faker->company());
+            $lieu->setStreet($faker->numberBetween(1, 499) . $faker->streetAddress());
+            $lieu->setLatitude($faker->latitude());
+            $lieu->setLongitude($faker->longitude());
+            $lieu->setCity($this->getReference('ville' . rand(0, FixturesDataProvider::getCityCount()), City::class));
 
             $om->persist($lieu);
 

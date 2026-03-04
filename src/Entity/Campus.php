@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[UniqueEntity(fields: ['nom'], message: 'Ce campus existe déjà.')]
+#[UniqueEntity(fields: ['name'], message: 'Ce campus existe déjà.')]
 #[ORM\Entity(repositoryClass: CampusRepository::class)]
 class Campus
 {
@@ -24,17 +24,17 @@ class Campus
         max: 50, maxMessage: 'Le nom doit contenir au maximum {{ max }} caractères.',
     )]
     #[ORM\Column(length: 50)]
-    private ?string $nom = null;
+    private ?string $name = null;
 
     /**
-     * @var Collection<int, Sortie>
+     * @var Collection<int, Outing>
      */
-    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'campus')]
-    private Collection $sorties;
+    #[ORM\OneToMany(targetEntity: Outing::class, mappedBy: 'campus')]
+    private Collection $events;
 
     public function __construct()
     {
-        $this->sorties = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -42,39 +42,39 @@ class Campus
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): static
+    public function setName(string $name): static
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Sortie>
+     * @return Collection<int, Outing>
      */
-    public function getSorties(): Collection
+    public function getEvents(): Collection
     {
-        return $this->sorties;
+        return $this->events;
     }
 
-    public function addSorty(Sortie $sorty): static
+    public function addEvent(Outing $event): static
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties->add($sorty);
-            $sorty->setCampus($this);
+        if (!$this->events->contains($event)) {
+            $this->events->add($event);
+            $event->setCampus($this);
         }
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): static
+    public function removeEvent(Outing $event): static
     {
-        $this->sorties->removeElement($sorty);
+        $this->events->removeElement($event);
         return $this;
     }
 }

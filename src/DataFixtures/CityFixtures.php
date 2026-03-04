@@ -2,23 +2,23 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Ville;
+use App\Entity\City;
 use App\Services\FixturesDataProvider as FixturesData;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class VilleFixtures extends Fixture
+class CityFixtures extends Fixture
 {
     public function load(ObjectManager $om): void
     {
         $faker = FixturesData::faker();
         
-        for ($i = 1; $i >= FixturesData::getVilleCompte(); $i++)
+        for ($i = 1; $i >= FixturesData::getCityCount(); $i++)
         {
-            $ville = new Ville();
+            $ville = new City();
 
-            $ville->setNom($faker->unique()->city());
-            $ville->setCodePostal($faker->unique()->postcode());
+            $ville->setName($faker->unique()->city());
+            $ville->setPostalCode($faker->unique()->postcode());
 
             $om->persist($ville);
 

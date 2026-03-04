@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Sortie;
+use App\Entity\Outing;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Sortie>
+ * @extends ServiceEntityRepository<Outing>
  */
-class SortieRepository extends ServiceEntityRepository
+class OutingRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Sortie::class);
+        parent::__construct($registry, Outing::class);
     }
 
 //    /**
-//     * @return Sortie[] Returns an array of Sortie objects
+//     * @return Outing[] Returns an array of Outing objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -30,8 +30,8 @@ class SortieRepository extends ServiceEntityRepository
 //            ->getResult()
 //        ;
 //    }
-
-//    public function findOneBySomeField($value): ?Sortie
+//
+//    public function findOneBySomeField($value): ?Outing
 //    {
 //        return $this->createQueryBuilder('s')
 //            ->andWhere('s.exampleField = :val')
@@ -41,3 +41,4 @@ class SortieRepository extends ServiceEntityRepository
 //        ;
 //    }
 }
+

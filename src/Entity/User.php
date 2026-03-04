@@ -12,11 +12,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte lié à cette email.')]
-#[UniqueEntity(fields: ['pseudo'], message: 'Il existe déjà un compte lié à ce pseudonyme.')]
+#[UniqueEntity(fields: ['username'], message: 'Il existe déjà un compte lié à ce pseudonyme.')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`', uniqueConstraints: [
     new ORM\UniqueConstraint(name: 'uniq_user_email', columns: ['email']),
-    new ORM\UniqueConstraint(name: 'uniq_user_pseudo', columns: ['pseudo']),
+    new ORM\UniqueConstraint(name: 'uniq_user_username', columns: ['username']),
 ])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -31,7 +31,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         max: 150, maxMessage: 'Le nom ne doit pas dépasser {{ max }} caractères.',
     )]
     #[ORM\Column(length: 150)]
-    private ?string $nom = null; ///////// NOM
+    private ?string $lastName = null; ///////// NOM
 
     #[Assert\NotBlank(message: 'Le prénom est obligatoire.')]
     #[Assert\Length(
@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         max: 150, maxMessage: 'Le prénom ne doit pas dépasser {{ max }} caractères.',
     )]
     #[ORM\Column(length: 150)]
-    private ?string $prenom = null; //////// PRENOM
+    private ?string $firstName = null; //////// PRENOM
 
     #[Assert\NotBlank(message: 'Le pseudo est obligatoire.')]
     #[Assert\Regex(
@@ -50,7 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         max: 150,
     )]
     #[ORM\Column(length: 150)]
-    private ?string $pseudo = null; //////// PSEUDO
+    private ?string $username = null; //////// PSEUDO
 
     #[Assert\Length(
         min: 10,
@@ -61,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         message: 'Le téléphone doit contenir exactement 10 chiffres.',
     )]
     #[ORM\Column(length: 10, nullable: true)]
-    private ?string $telephone = null; //////// TELEPHONE
+    private ?string $phoneNumber = null; //////// TELEPHONE
 
     #[Assert\NotBlank(message: 'L’email est obligatoire.')]
     #[Assert\Email(message: 'L’email n’est pas valide.')]
@@ -70,7 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null; //////// EMAIL
 
     #[ORM\Column(length: 250)]
-    private ?string $hashMotPasse = null; //////// MOT DE PASSE HASHÉ
+    private ?string $passwordHash = null; //////// MOT DE PASSE HASHÉ
 
     #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.', groups: ['inscription'])]
     #[Assert\Length(
@@ -80,30 +80,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxMessage: 'Le mot de passe ne doit pas dépasser {{ max }} caractères.',
         groups: ['inscription']
     )]
-    private ?string $motPasse = null; //////// MOT DE PASSE CLAIRE
+    private ?string $plainPassword = null; //////// MOT DE PASSE CLAIRE
 
     #[ORM\Column(type: 'json')]                     ///////// ROLES
     private array $roles = [];
     
     #[ORM\Column (options: ['default' => true])]
-    private bool $actif = true;
+    private bool $isActive = true;
 
     /**
-     * @var Collection<int, Sortie>
+     * @var Collection<int, Outing>
      */
-    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'organisateur')]
-    private Collection $sorties;
+    #[ORM\OneToMany(targetEntity: Outing::class, mappedBy: 'organizer')]
+    private Collection $outings;
 
     /**
-     * @var Collection<int, Inscription>
+     * @var Collection<int, Registration>
      */
-    #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'participant')]
-    private Collection $inscriptions;
+    #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'participant')]
+    private Collection $registrations;
 
     public function __construct()
     {
-        $this->sorties = new ArrayCollection();
-        $this->inscriptions = new ArrayCollection();
+        $this->outings = new ArrayCollection();
+        $this->registrations = new ArrayCollection();
     } //////// ACTIF?
 
     public function getId(): ?int
@@ -111,50 +111,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getLastName(): ?string
     {
-        return $this->nom;
+        return $this->lastName;
     }
 
-    public function setNom(string $nom): static
+    public function setLastName(string $lastName): static
     {
-        $this->nom = $nom;
+        $this->lastName = $lastName;
 
         return $this;
     }
 
-    public function getPrenom(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->prenom;
+        return $this->firstName;
     }
 
-    public function setPrenom(string $prenom): static
+    public function setFirstName(string $firstName): static
     {
-        $this->prenom = $prenom;
+        $this->firstName = $firstName;
 
         return $this;
     }
 
-    public function getPseudo(): ?string
+    public function getUsername(): ?string
     {
-        return $this->pseudo;
+        return $this->username;
     }
 
-    public function setPseudo(string $pseudo): static
+    public function setUsername(string $username): static
     {
-        $this->pseudo = $pseudo;
+        $this->username = $username;
 
         return $this;
     }
 
-    public function getTelephone(): ?string
+    public function getPhoneNumber(): ?string
     {
-        return $this->telephone;
+        return $this->phoneNumber;
     }
 
-    public function setTelephone(?string $telephone): static
+    public function setPhoneNumber(?string $phoneNumber): static
     {
-        $this->telephone = $telephone;
+        $this->phoneNumber = $phoneNumber;
 
         return $this;
     }
@@ -171,26 +171,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getHashMotPasse(): ?string
+    public function getPasswordHash(): ?string
     {
-        return $this->hashMotPasse;
+        return $this->passwordHash;
     }
 
-    public function setHashMotPasse(string $hashMotPasse): static
+    public function setPasswordHash(string $passwordHash): static
     {
-        $this->hashMotPasse = $hashMotPasse;
+        $this->passwordHash = $passwordHash;
 
         return $this;
     }
 
-    public function getMotPasse(): ?string
+    public function getPlainPassword(): ?string
     {
-        return $this->motPasse;
+        return $this->plainPassword;
     }
 
-    public function setMotPasse(?string $motPasse): static
+    public function setPlainPassword(?string $plainPassword): static
     {
-        $this->motPasse = $motPasse;
+        $this->plainPassword = $plainPassword;
         return $this;
     }
 
@@ -206,63 +206,63 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isActif(): ?bool
+    public function isActive(): ?bool
     {
-        return $this->actif;
+        return $this->isActive;
     }
 
-    public function setActif(bool $actif): static
+    public function setIsActive(bool $isActive): static
     {
-        $this->actif = $actif;
+        $this->isActive = $isActive;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Sortie>
+     * @return Collection<int, Outing>
      */
-    public function getSorties(): Collection
+    public function getOutings(): Collection
     {
-        return $this->sorties;
+        return $this->outings;
     }
 
-    public function addSorty(Sortie $sorty): static
+    public function addOuting(Outing $outing): static
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties->add($sorty);
-            $sorty->setOrganisateur($this);
+        if (!$this->outings->contains($outing)) {
+            $this->outings->add($outing);
+            $outing->setOrganizer($this);
         }
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): static
+    public function removeOuting(Outing $outing): static
     {
-        $this->sorties->removeElement($sorty);
+        $this->outings->removeElement($outing);
         return $this;
     }
 
     /**
-     * @return Collection<int, Inscription>
+     * @return Collection<int, Registration>
      */
-    public function getInscriptions(): Collection
+    public function getRegistrations(): Collection
     {
-        return $this->inscriptions;
+        return $this->registrations;
     }
 
-    public function addInscription(Inscription $inscription): static
+    public function addRegistration(Registration $registration): static
     {
-        if (!$this->inscriptions->contains($inscription)) {
-            $this->inscriptions->add($inscription);
-            $inscription->setParticipant($this);
+        if (!$this->registrations->contains($registration)) {
+            $this->registrations->add($registration);
+            $registration->setParticipant($this);
         }
 
         return $this;
     }
 
-    public function removeInscription(Inscription $inscription): static
+    public function removeRegistration(Registration $registration): static
     {
-        $this->inscriptions->removeElement($inscription);
+        $this->registrations->removeElement($registration);
         return $this;
     }
 
@@ -273,7 +273,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getPassword(): ?string
     {
-        return $this->motPasse;
+        return $this->plainPassword;
     }
 
     public function getUserIdentifier(): string

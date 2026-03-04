@@ -8,11 +8,11 @@ use Faker\Generator;
 class FixturesDataProvider
 {
     //// COMPTEUR DE GENERATION : PERMET DE CHOISIR LE NOMBRE D'INSTANCE CREER DANS LES FIXTURES ////
-    private static int $villeCompte = 100;
-    private static int $lieuCompte = 150;
-    private static int $campusCompte = 20;
-    private static int $utilisateurCompte = 100;
-    private static int $gestionnaireCompte = 5;
+    private static int $cityCount = 100;
+    private static int $placeCount = 150;
+    private static int $campusCount = 20;
+    private static int $userCount = 100;
+    private static int $managerCount = 5;
 
     public function __construct()
     {}
@@ -22,28 +22,28 @@ class FixturesDataProvider
         return Factory::create('fr_FR');
     }
 
-    public static function getVilleCompte(): int
+    public static function getCityCount(): int
     {
-        return self::$villeCompte;
+        return self::$cityCount;
     }
 
-    public static function getLieuCompte()
+    public static function getPlaceCount()
     {
-        return self::$lieuCompte;
+        return self::$placeCount;
     }
 
-    public static function getCampusCompte()
+    public static function getCampusCount()
     {
-        return self::$campusCompte;
+        return self::$campusCount;
     }
 
-    public static function getUtilisateurCompte()
+    public static function getUserCount()
     {
-        return self::$utilisateurCompte;
+        return self::$userCount;
     }
 
-    public static function getGestionnaireCompte()
+    public static function getManagerCount()
     {
-        return self::$gestionnaireCompte;
+        return self::$managerCount;
     }
 }

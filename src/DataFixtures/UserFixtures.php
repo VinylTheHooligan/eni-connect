@@ -21,7 +21,7 @@ class UserFixtures extends Fixture
     {
         $faker = FixturesData::faker();
         
-        $this->userCreation(FixturesData::getUtilisateurCompte(), $faker, $om);
+        $this->userCreation(FixturesData::getUserCount(), $faker, $om);
         $this->adminCreation($faker, $om);
 
         $om->flush();
@@ -33,18 +33,18 @@ class UserFixtures extends Fixture
         {
             $user = new User();
 
-            $user->setPrenom($faker->firstName());
-            $user->setNom($faker->lastName());
-            $user->setPseudo('user' . $i);
+            $user->setFirstName($faker->firstName());
+            $user->setLastName($faker->lastName());
+            $user->setUsername('user' . $i);
 
             $user->setEmail('user' . $i . '@eni.fr');
             $user->setRoles(['ROLE_USER']);
 
-            $user->setHashMotPasse(
+            $user->setPasswordHash(
                 $this->hasher->hashPassword($user, '123456789')
             );
 
-            $user->setTelephone($faker->phoneNumber());
+            $user->setPhoneNumber($faker->phoneNumber());
         }
 
         $om->persist($user);
@@ -54,18 +54,18 @@ class UserFixtures extends Fixture
     {
         $admin = new User();
 
-        $admin->setPrenom($faker->firstName());
-        $admin->setNom($faker->lastName());
-        $admin->setPseudo('admin');
+        $admin->setFirstName($faker->firstName());
+        $admin->setLastName($faker->lastName());
+        $admin->setUsername('admin');
 
         $admin->setEmail('admin@eni.fr');
         $admin->setRoles(['ROLE_ADMIN']);
 
-        $admin->setHashMotPasse(
+        $admin->setPasswordHash(
             $this->hasher->hashPassword($admin, '123456789')
         );
 
-        $admin->setTelephone($faker->phoneNumber());
+        $admin->setPhoneNumber($faker->phoneNumber());
 
         $om->persist($admin);
     }

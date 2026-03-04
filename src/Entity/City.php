@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\VilleRepository;
+use App\Repository\CityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use OutOfRangeException;
 
-#[ORM\Entity(repositoryClass: VilleRepository::class)]
-class Ville
+#[ORM\Entity(repositoryClass: CityRepository::class)]
+class City
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,7 +22,7 @@ class Ville
         max: 50, maxMessage: 'La ville doit contenir au maximum {{ max }} caractères.',
     )]
     #[ORM\Column(length: 100)]
-    private ?string $nom = null;
+    private ?string $name = null;
 
     #[Assert\NotBlank(message: 'Le code postal obligatoire.')]
     #[Assert\Range(
@@ -31,18 +31,18 @@ class Ville
         notInRangeMessage: 'Le code postal doit contenir précisément {{ max }} chiffres.',
     )]
     #[ORM\Column(length: 5)]
-    private ?string $codePostal = null;
+    private ?string $postalCode = null;
 
     /**
-     * @var Collection<int, Lieu>
+     * @var Collection<int, Place>
      */
     #[Assert\NotBlank(message: 'La "ville" doit être obligatoire.')]
-    #[ORM\OneToMany(targetEntity: Lieu::class, mappedBy: 'ville')]
-    private Collection $lieux;
+    #[ORM\OneToMany(targetEntity: Place::class, mappedBy: 'city')]
+    private Collection $places;
 
     public function __construct()
     {
-        $this->lieux = new ArrayCollection();
+        $this->places = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -50,51 +50,51 @@ class Ville
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): static
+    public function setName(string $name): static
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getCodePostal(): ?string
+    public function getPostalCode(): ?string
     {
-        return $this->codePostal;
+        return $this->postalCode;
     }
 
-    public function setCodePostal(string $codePostal): static
+    public function setPostalCode(string $postalCode): static
     {
-        $this->codePostal = $codePostal;
+        $this->postalCode = $postalCode;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Lieu>
+     * @return Collection<int, Place>
      */
-    public function getLieux(): Collection
+    public function getPlaces(): Collection
     {
-        return $this->lieux;
+        return $this->places;
     }
 
-    public function addLieux(Lieu $lieux): static
+    public function addPlace(Place $place): static
     {
-        if (!$this->lieux->contains($lieux)) {
-            $this->lieux->add($lieux);
-            $lieux->setVille($this);
+        if (!$this->places->contains($place)) {
+            $this->places->add($place);
+            $place->setCity($this);
         }
 
         return $this;
     }
 
-    public function removeLieux(Lieu $lieux): static
+    public function removePlace(Place $place): static
     {
-        $this->lieux->removeElement($lieux);
+        $this->places->removeElement($place);
         return $this;
     }
 }
