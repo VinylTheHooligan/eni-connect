@@ -1,4 +1,8 @@
 security:
+    # Hiérarchie de rôles : un admin possède aussi ROLE_USER
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]
+
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
