@@ -11,8 +11,7 @@ final class MainController extends AbstractController
     #[Route('', name: 'app_home')]
     public function index(): Response
     {
-        return $this->render('main/index.html.twig', [
-            'controller_name' => 'MainController',
-        ]);
+        // Page d'accueil : redirection vers la liste des sorties
+        return $this->redirectToRoute('outing_list');
     }
 }
