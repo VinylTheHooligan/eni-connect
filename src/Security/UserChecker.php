@@ -15,7 +15,7 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
-        if (!$user->isActif()) {
+        if (!$user->isActive()) {
             throw new CustomUserMessageAccountStatusException(
                 'Votre compte est inactif. Contactez un administrateur.'
             );

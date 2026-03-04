@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-#[IsGranted('ROLE_USER')] // seuls les connectés accèdent au profil
+#[IsGranted('ROLE_USER')]
 final class UserController extends AbstractController
 {
     // Tâche 3 - Gérer son profil
@@ -27,10 +27,10 @@ final class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             // Si un nouveau mot de passe a été saisi
-            if ($user->getMotPasse()) {
-                $hashedPassword = $passwordHasher->hashPassword($user, $user->getMotPasse());
-                $user->setHashMotPasse($hashedPassword);
-                $user->setMotPasse(null); // on efface le mot de passe en clair
+            if ($user->getPlainPassword()) {
+                $hashedPassword = $passwordHasher->hashPassword($user, $user->getPlainPassword());
+                $user->setPasswordHash($hashedPassword);
+                $user->setPlainPassword(null); // on efface le mot de passe en clair
             }
 
             $em->persist($user);
@@ -43,6 +43,7 @@ final class UserController extends AbstractController
             'form' => $form,
         ]);
     }
+
     // Tâche 6 - Afficher le profil d'un participant
     #[Route('/profil/{id}', name: 'app_profil_show')]
     public function showProfil(User $user): Response
