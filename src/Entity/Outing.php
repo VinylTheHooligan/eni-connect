@@ -79,9 +79,12 @@ class Outing
     #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'outing', orphanRemoval: true,cascade: ['persist', 'remove'])]
     private Collection $registrations;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdDateTime = null;
+
     public function __construct() {
         $this->status = self::ETAT_CREATION;
-        $this->startDateTime = new \DateTimeImmutable();
+        $this->createdDateTime = new \DateTimeImmutable('now');
         $this->registrations = new ArrayCollection();
     }
     public function getId(): ?int
@@ -231,6 +234,18 @@ class Outing
     public function removeRegistration(Registration $registration): static
     {
         $this->registrations->removeElement($registration);
+        return $this;
+    }
+
+    public function getCreatedDateTime(): ?\DateTimeImmutable
+    {
+        return $this->createdDateTime;
+    }
+
+    public function setCreatedDateTime(\DateTimeImmutable $createdDateTime): static
+    {
+        $this->createdDateTime = $createdDateTime;
+
         return $this;
     }
 }
