@@ -30,11 +30,11 @@ class Campus
      * @var Collection<int, Outing>
      */
     #[ORM\OneToMany(targetEntity: Outing::class, mappedBy: 'campus')]
-    private Collection $events;
+    private Collection $outings;
 
     public function __construct()
     {
-        $this->events = new ArrayCollection();
+        $this->outings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -57,15 +57,15 @@ class Campus
     /**
      * @return Collection<int, Outing>
      */
-    public function getEvents(): Collection
+    public function getOutings(): Collection
     {
-        return $this->events;
+        return $this->outings;
     }
 
     public function addEvent(Outing $event): static
     {
-        if (!$this->events->contains($event)) {
-            $this->events->add($event);
+        if (!$this->outings->contains($event)) {
+            $this->outings->add($event);
             $event->setCampus($this);
         }
 
@@ -74,7 +74,7 @@ class Campus
 
     public function removeEvent(Outing $event): static
     {
-        $this->events->removeElement($event);
+        $this->outings->removeElement($event);
         return $this;
     }
 }
