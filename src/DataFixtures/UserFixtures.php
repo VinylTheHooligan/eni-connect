@@ -47,7 +47,10 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
                 $this->hasher->hashPassword($user, '123456789')
             );
 
-            $user->setPhoneNumber($faker->phoneNumber());
+            $user->setPhoneNumber(
+                $faker->randomElement(['06', '07']) . $faker->numerify('########')
+            );
+
             $user->setCampus($this->getReference('campus' . rand(1, FixturesData::getCampusCount()), Campus::class));
 
             $om->persist($user);
@@ -73,7 +76,10 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
                 $this->hasher->hashPassword($organizer, '123456789')
             );
 
-            $organizer->setPhoneNumber($faker->phoneNumber());
+            $organizer->setPhoneNumber(
+                $faker->randomElement(['06', '07']) . $faker->numerify('########')
+            );
+
             $organizer->setCampus($this->getReference('campus' . $i, Campus::class));
 
             $om->persist($organizer);
@@ -97,7 +103,9 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $this->hasher->hashPassword($admin, '123456789')
         );
 
-        $admin->setPhoneNumber($faker->phoneNumber());
+        $admin->setPhoneNumber(
+            $faker->randomElement(['06', '07']) . $faker->numerify('########')
+        );
         $admin->setCampus(null);
 
         $om->persist($admin);
