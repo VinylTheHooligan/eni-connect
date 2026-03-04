@@ -100,6 +100,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'participant')]
     private Collection $registrations;
 
+    #[ORM\ManyToOne(inversedBy: 'user')]
+    private ?Campus $campus = null;
+
     public function __construct()
     {
         $this->outings = new ArrayCollection();
@@ -279,5 +282,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->email;
+    }
+
+    public function getCampus(): ?Campus
+    {
+        return $this->campus;
+    }
+
+    public function setCampus(?Campus $campus): static
+    {
+        $this->campus = $campus;
+
+        return $this;
     }
 }
