@@ -2,14 +2,16 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Campus;
 use App\Entity\User;
 use App\Services\FixturesDataProvider as FixturesData;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Faker\Generator;
 
-class UserFixtures extends Fixture
+class UserFixtures extends Fixture implements DependentFixtureInterface
 {
 
     public function __construct(
@@ -22,6 +24,7 @@ class UserFixtures extends Fixture
         $faker = FixturesData::faker();
         
         $this->userCreation(FixturesData::getUserCount(), $faker, $om);
+        $this->managerCreation($faker, $om);
         $this->adminCreation($faker, $om);
 
         $om->flush();
@@ -29,7 +32,7 @@ class UserFixtures extends Fixture
 
     private function userCreation(int $count, Generator $faker, ObjectManager $om): void
     {
-        for ($i = 0; $i < $count; $i++)
+        for ($i = 1; $i <= $count; $i++)
         {
             $user = new User();
 
@@ -45,9 +48,38 @@ class UserFixtures extends Fixture
             );
 
             $user->setPhoneNumber($faker->phoneNumber());
-        }
+            $user->setCampus($this->getReference('campus' . rand(1, FixturesData::getCampusCount()), Campus::class));
 
-        $om->persist($user);
+            $om->persist($user);
+
+            $this->addReference('user' . $i, $user);
+        }
+    }
+
+    private function managerCreation(Generator $faker, ObjectManager $om)
+    {
+        for ($i = 1; $i <= FixturesData::getCampusCount(); $i++)
+        {
+            $organizer = new User();
+
+            $organizer->setFirstName($faker->firstName());
+            $organizer->setLastName($faker->lastName());
+            $organizer->setUsername('manager' . $i);
+
+            $organizer->setEmail('organizer' . $i . '@eni.fr');
+            $organizer->setRoles(['ROLE_ORGANIZER']);
+
+            $organizer->setPasswordHash(
+                $this->hasher->hashPassword($organizer, '123456789')
+            );
+
+            $organizer->setPhoneNumber($faker->phoneNumber());
+            $organizer->setCampus($this->getReference('campus' . $i, Campus::class));
+
+            $om->persist($organizer);
+
+            $this->addReference('organizer' . $i, $organizer);
+        }
     }
 
     private function adminCreation(Generator $faker, ObjectManager $om): void
@@ -66,7 +98,15 @@ class UserFixtures extends Fixture
         );
 
         $admin->setPhoneNumber($faker->phoneNumber());
+        $admin->setCampus(null);
 
         $om->persist($admin);
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            CampusFixtures::class,
+        ];
     }
 }

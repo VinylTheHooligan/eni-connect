@@ -11,8 +11,8 @@ class FixturesDataProvider
     private static int $cityCount = 100;
     private static int $placeCount = 150;
     private static int $campusCount = 20;
-    private static int $userCount = 100;
-    private static int $managerCount = 5;
+    private static int $userCount = 200;
+    private static int $organizerCount = 5;
 
     public function __construct()
     {}
@@ -42,8 +42,8 @@ class FixturesDataProvider
         return self::$userCount;
     }
 
-    public static function getManagerCount()
+    public static function getOrganizerCount()
     {
-        return self::$managerCount;
+        return self::$organizerCount;
     }
 }

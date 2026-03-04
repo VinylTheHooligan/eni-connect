@@ -13,7 +13,7 @@ class CampusFixtures extends Fixture
     {
         $faker = FixturesData::faker();
 
-        for ($i = 1; $i >= FixturesData::getCampusCount(); $i++)
+        for ($i = 1; $i <= FixturesData::getCampusCount(); $i++)
         {
             $campus = new Campus();
 

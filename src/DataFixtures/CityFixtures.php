@@ -13,16 +13,16 @@ class CityFixtures extends Fixture
     {
         $faker = FixturesData::faker();
         
-        for ($i = 1; $i >= FixturesData::getCityCount(); $i++)
+        for ($i = 1; $i <= FixturesData::getCityCount(); $i++)
         {
-            $ville = new City();
+            $town = new City();
 
-            $ville->setName($faker->unique()->city());
-            $ville->setPostalCode($faker->unique()->postcode());
+            $town->setName($faker->unique()->city());
+            $town->setPostalCode($faker->unique()->postcode());
 
-            $om->persist($ville);
+            $om->persist($town);
 
-            $this->addReference('ville' . $i, $ville);
+            $this->addReference('ville' . $i, $town);
         }
 
         $om->flush();
