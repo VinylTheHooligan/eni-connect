@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[UniqueEntity(fields: ['participant', 'outing'], message: 'Vous êtes déjà inscrit à cette sortie.')]
 #[ORM\Entity(repositoryClass: RegistrationRepository::class)]
 #[ORM\Table(
-    name: 'inscription',
+    name: 'registration',
     uniqueConstraints: [
         new ORM\UniqueConstraint(name: 'uniq_participant_sortie', columns: ['participant_id', 'sortie_id'])
     ]

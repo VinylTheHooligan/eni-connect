@@ -72,13 +72,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 250)]
     private ?string $passwordHash = null; //////// MOT DE PASSE HASHÉ
 
-    #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.', groups: ['inscription'])]
+    #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.', groups: ['registration'])]
     #[Assert\Length(
         min: 8,
         max: 50,
         minMessage: 'Le mot de passe doit faire au moins {{ min }} caractères.',
         maxMessage: 'Le mot de passe ne doit pas dépasser {{ max }} caractères.',
-        groups: ['inscription']
+        groups: ['registration']
     )]
     private ?string $plainPassword = null; //////// MOT DE PASSE CLAIRE
 
