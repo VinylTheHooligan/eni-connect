@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une sortie{% endblock %}
+
+{% block body %}
+<h1>Créer une sortie</h1>
+
+{{ form_start(outingForm) }}
+
+    {{ form_row(outingForm.name) }}
+    {{ form_row(outingForm.startDateTime) }}
+    {{ form_row(outingForm.registrationDeadline) }}
+    {{ form_row(outingForm.maxRegistrations) }}
+    {{ form_row(outingForm.duration) }}
+    {{ form_row(outingForm.eventInfo) }}
+    {{ form_row(outingForm.campus) }}
+    {{ form_row(outingForm.place) }}
+
+    <button type="submit" name="action" value="save">Enregistrer</button>
+    <button type="submit" name="action" value="publish">Publier</button>
+    <a href="{{ path('outing_list') }}">Retour à la liste</a>
+
+{{ form_end(outingForm) }}
+{% endblock %}

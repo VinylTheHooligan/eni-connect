@@ -4,14 +4,8 @@
 
 {% block body %}
 
-    {# Logo en haut à gauche - en dehors du bloc centré #}
-    <div class="d-flex align-items-center mb-5">
-        <img src="{{ asset('images/SortirComB.png') }}" alt="Logo Sortir.com" height="180">
-        {#<h1 class="ms-2">Sortir.com</h1>#}
-    </div>
-
     {# Formulaire centré séparément #}
-    <div class="row justify-content-center">
+    <div class="container min-vh-100 d-flex justify-content-center align-items-center">
         <div class="col-md-3">
 
                 {# Affichage si l'utilisateur est déjà connecté #}
@@ -52,7 +46,7 @@
 
                     {# Bouton connexion #}
                     <div class="d-grid mb-3">
-                        <button class="btn btn-outline-success" type="submit">Se connecter</button>
+                        <button class="btn btn-primary" type="submit">Se connecter</button>
                     </div>
 
                     {# Mot de passe oublié - itération 3 #}

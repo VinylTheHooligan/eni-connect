@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sorties - Accueil | {{ parent() }}{% endblock %}
+
+{% block body %}
+
+<h1>Page d'accueil</h1>
+
+<form method="get">
+    <div>
+        <label>Campus</label>
+        <select name="campus">
+            <option value="">Tous</option>
+            {# options campus depuis le contrôleur si besoin #}
+        </select>
+    </div>
+
+    <div>
+        <label>Le nom de la sortie contient</label>
+        <input type="text" name="q" value="{{ app.request.get('q') }}">
+    </div>
+
+    <div>
+        <label>Entre</label>
+        <input type="date" name="dateFrom" value="{{ app.request.get('dateFrom') }}">
+        <label>et</label>
+        <input type="date" name="dateTo" value="{{ app.request.get('dateTo') }}">
+    </div>
+
+    {# cases à cocher (je suis organisateur, inscrit, non inscrit, terminées, etc.) #}
+
+    <button type="submit">Rechercher</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nom de la sortie</th>
+            <th>Date de la sortie</th>
+            <th>Clôture</th>
+            <th>Inscrits/Places</th>
+            <th>État</th>
+            <th>Organisateur</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for outing in outings %}
+        <tr>
+            <td>{{ outing.name }}</td>
+            <td>{{ outing.startDateTime|date('d/m/Y H:i') }}</td>
+            <td>{{ outing.registrationDeadline|date('d/m/Y') }}</td>
+            <td>{{ outing.registrations|length }}/{{ outing.maxRegistrations }}</td>
+            <td>{{ outing.status }}</td>
+            <td>{{ outing.organizer.username ?? outing.organizer.email }}</td>
+            <td>
+                {# liens "Afficher", "S'inscrire", etc. selon ton futur contrôleur #}
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="7">Aucune sortie trouvée.</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ path('outing_create') }}">Créer une sortie</a>
+{% endblock %}
