@@ -124,6 +124,7 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
+            MyAccountFixtures::class,
             UserFixtures::class,
             CampusFixtures::class,
             PlaceFixtures::class,

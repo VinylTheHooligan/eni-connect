@@ -31,7 +31,7 @@ class RegistrationFixtures extends Fixture implements DependentFixtureInterface
             $registrationOrganizer->setRegistrationDate($this->generateRegistrationDate($faker, $outing));
             $registrationOrganizer->setParticipant($organizer);
             
-            $this->userRegistered[] = $registrationOrganizer;
+            $this->userRegistered[] = $organizer;
 
             $om->persist($registrationOrganizer);
 
@@ -46,35 +46,17 @@ class RegistrationFixtures extends Fixture implements DependentFixtureInterface
     {
         $userCount = FixturesData::getUserCount();
 
-        for ($i = 1; $i <= $nbParticipant; $i++)
+        for ($i = 1; $i <= rand(0, $nbParticipant); $i++)
         {
-            $uniqueUser;
-
-            for ($j = 1; $j <= $userCount; $j++)
-            {
-                $user = $this->getReference('user' . rand(1, $userCount), User::class);
-            
-                if (in_array($user, $this->userRegistered)) continue;
-                else 
-                {
-                    $uniqueUser = $user;
-                    break;
-                }
-            }
-
-            if (!$uniqueUser) {
-                continue;
-            }
+            $user = $this->getReference('user' . rand(1, $userCount), User::class);
             
             $registration = new Registration();
 
             $registration->setOuting($outing);
-            $registration->setParticipant($uniqueUser);
+            $registration->setParticipant($user);
             $registration->setRegistrationDate($this->generateRegistrationDate($faker, $outing));
 
             $om->persist($registration);
-
-            $this->userRegistered[] = $uniqueUser;
         }
     }
 
