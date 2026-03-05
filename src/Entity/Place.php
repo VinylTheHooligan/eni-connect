@@ -49,11 +49,11 @@ class Place
      * @var Collection<int, Outing>
      */
     #[ORM\OneToMany(targetEntity: Outing::class, mappedBy: 'place')]
-    private Collection $sorties;
+    private Collection $outings;
 
     public function __construct()
     {
-        $this->sorties = new ArrayCollection();
+        $this->outings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,15 +124,15 @@ class Place
     /**
      * @return Collection<int, Outing>
      */
-    public function getSorties(): Collection
+    public function getOutings(): Collection
     {
-        return $this->sorties;
+        return $this->outings;
     }
 
     public function addOuting(Outing $outing): static
     {
-        if (!$this->sorties->contains($outing)) {
-            $this->sorties->add($outing);
+        if (!$this->outings->contains($outing)) {
+            $this->outings->add($outing);
             $outing->setPlace($this);
         }
 
@@ -141,7 +141,7 @@ class Place
 
     public function removeOuting(Outing $outing): static
     {
-        $this->sorties->removeElement($outing);
+        $this->outings->removeElement($outing);
         return $this;
     }
 }

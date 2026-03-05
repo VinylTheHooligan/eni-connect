@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Outing;
 use App\Form\OutingType;
 use App\Repository\OutingRepository;
+use App\Repository\CampusRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,15 +16,29 @@ use Symfony\Component\Routing\Attribute\Route;
 class OutingController extends AbstractController
 {
     #[Route('', name: 'list', methods: ['GET'])]
-    public function list(OutingRepository $outingRepository, Request $request): Response
+    public function list(OutingRepository $outingRepository, CampusRepository $campusRepository, Request $request): Response
     {
-        // TODO: récupérer les filtres depuis $request (campus, texte, cases à cocher, dates…)
-        // TODO: appeler un OutingRepository::search(...) que tu écriras ensuite
-        $outings = $outingRepository->findAll();
+        $campuses = $campusRepository->findAll();
+        $campusId = $request->query->get('campus'); 
+        $filters = [
+            'campus' => $campusId,
+            'q' => $request->query->get('q'),
+            'dateFrom' => $request->query->get('dateFrom'),
+            'dateTo' => $request->query->get('dateTo'),
+            'isOrganizer' => $request->query->getBoolean('isOrganizer'),
+            'isRegistered' => $request->query->getBoolean('isRegistered'),
+            'isNotRegistered' => $request->query->getBoolean('isNotRegistered'),
+            'isPast' => $request->query->getBoolean('isPast'),
+        ];
+
+        
+        $outings = $outingRepository->search($filters, $this->getUser());
 
         return $this->render('outing/index.html.twig', [
             'outings' => $outings,
-            // 'filters' => $filters éventuels pour réafficher le formulaire
+            'campuses' => $campuses,
+            'filters' => $filters,
+   
         ]);
     }
 
