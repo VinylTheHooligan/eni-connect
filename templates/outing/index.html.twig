@@ -190,14 +190,14 @@
                                     {% if isOrganizer %}
                                         {# Sortie en création : Modifier / Publier / Supprimer #}
                                         {% if status == 'creation' %}
-                                            | <a href="{{ path('outing_edit', {'id': outing.id}) }}" class="link-primary">Modifier</a>
-                                            | <a href="{{ path('outing_publish', {'id': outing.id}) }}" class="link-primary">Publier</a>
-                                            | <a href="{{ path('outing_edit', {'id': outing.id}) }}" class="link-primary">Supprimer</a>
+                                            | <a href="{{ path('manage_edit', {'id': outing.id}) }}" class="link-primary">Modifier</a>
+                                            | <a href="{{ path('manage_publish', {'id': outing.id}) }}" class="link-primary">Publier</a>
+                                            | <a href="{{ path('manage_edit', {'id': outing.id}) }}" class="link-primary">Supprimer</a>
                                         {% endif %}
 
                                         {# Sortie ouverte : possibilité d'annuler #}
                                         {% if status == 'ouverte' %}
-                                            | <a href="{{ path('outing_cancel', {'id': outing.id}) }}" class="link-primary">Annuler</a>
+                                            | <a href="{{ path('manage_cancel', {'id': outing.id}) }}" class="link-primary">Annuler</a>
                                         {% endif %}
                                     {% endif %}
                                 {% endif %}
@@ -213,7 +213,7 @@
             </div>
 
             <div class="mt-3">
-                <a href="{{ path('gestion_create') }}" class="btn btn-outline-dark">
+                <a href="{{ path('manage_create') }}" class="btn btn-outline-dark">
                     Créer une sortie
                 </a>
             </div>

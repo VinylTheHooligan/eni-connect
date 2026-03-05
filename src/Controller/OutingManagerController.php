@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/sorties/gestion', name: 'gestion_')]
+#[Route('/sorties/gestion', name: 'manage_')]
 #[IsGranted('ROLE_ORGANIZER')]
 final class OutingManagerController extends AbstractController
 {
@@ -61,7 +61,7 @@ final class OutingManagerController extends AbstractController
         $form = $this->createForm(OutingType::class, $outing);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) 
+        if ($form->isSubmitted() && $form->isValid())
         {
             $action = $request->request->get('action');
 
@@ -108,10 +108,10 @@ final class OutingManagerController extends AbstractController
         return $this->redirectToRoute('outing_list');
     }
 
-    #[Route('/annuler', name: 'cancel', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    #[Route('/{id}/annuler', name: 'cancel', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function cancel(Outing $outing, Request $request, EntityManagerInterface $em): Response
     {
-        
+
         if ($outing->getOrganizer() !== $this->getUser())
         {
             throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette sortie.');
@@ -127,6 +127,7 @@ final class OutingManagerController extends AbstractController
             $this->addFlash('success', 'La sortie a bien été annulé !');
 
             $em->flush();
+            return $this->redirectToRoute('outing_list');
         }
 
         return $this->render('outing/cancel.html.twig', [
