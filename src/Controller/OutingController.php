@@ -7,6 +7,7 @@ use App\Entity\Registration;
 use App\Entity\User;
 use App\Repository\OutingRepository;
 use App\Repository\CampusRepository;
+use App\Services\OutingStatusUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class OutingController extends AbstractController
 {
     #[Route('', name: 'list', methods: ['GET'])]
-    public function list(OutingRepository $outingRepository, CampusRepository $campusRepository, Request $request): Response
+    public function list(OutingStatusUpdater $outingStatusUpdater, OutingRepository $outingRepository, CampusRepository $campusRepository, Request $request): Response
     {
         $campuses = $campusRepository->findAll();
 
@@ -46,7 +47,10 @@ class OutingController extends AbstractController
             'isPast' => $request->query->getBoolean('isPast'),
         ];
 
-        $outings = $outingRepository->search($filters, $user);
+        // à chaque visite, update le status de tout les outings
+        $outings = $outingStatusUpdater->updateStatuses(
+            $outingRepository->search($filters, $user)
+        );
 
         return $this->render('outing/index.html.twig', [
             'outings' => $outings,
@@ -56,9 +60,11 @@ class OutingController extends AbstractController
     }
 
     #[Route('/{id}', name: 'detail', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function detail($id, OutingRepository $outingRepository): Response
+    public function detail(OutingStatusUpdater $outingStatusUpdater, $id, OutingRepository $outingRepository): Response
     {
-        $outing = $outingRepository->find($id);
+        $outing = $outingStatusUpdater([ 
+            $outingRepository->find($id) 
+        ]);
 
         return $this->render('outing/detail.html.twig', [
             'outing' => $outing,
