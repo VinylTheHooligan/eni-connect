@@ -54,7 +54,6 @@ class CustomAuthenticator extends AbstractLoginFormAuthenticator
     {
         // Redirige vers la page accueil après connection
         return new RedirectResponse($this->router->generate('outing_list', [
-            'id' => $token->getUser()->getId()
         ]));
     }
 
