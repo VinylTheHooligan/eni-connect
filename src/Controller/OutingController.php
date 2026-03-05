@@ -2,8 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Outing;
+use App\Entity\Registration;
+use App\Entity\User;
 use App\Repository\OutingRepository;
 use App\Repository\CampusRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

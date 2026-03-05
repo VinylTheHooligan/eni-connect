@@ -11,11 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/sorties/gestion', name: 'gestion_')]
 #[IsGranted('ROLE_ORGANIZER')]
 final class OutingManagerController extends AbstractController
 {
-    #[Route('/creer', name: 'create', methods: ['GET', 'POST'])]
+    #[Route('/sorties/creer', name: 'outing_create', methods: ['GET', 'POST'])]
     public function create(Request $request, EntityManagerInterface $em): Response
     {
         $outing = new Outing();
@@ -25,13 +24,20 @@ final class OutingManagerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Par défaut l’état est déjà ETAT_CREATION dans le constructeur
+            $action = $request->request->get('action');
+
+            if ($action === 'publish') {
+                $outing->setStatus(Outing::ETAT_OUVERTE);
+                $this->addFlash('success', 'La sortie a bien été créée et publiée.');
+            } else {
+                // Par défaut l’état est déjà ETAT_CREATION dans le constructeur
+                $this->addFlash('success', 'La sortie a bien été créée et est en cours de création.');
+            }
+
             $em->persist($outing);
             $em->flush();
 
-            $this->addFlash('success', 'La sortie a bien été créée.');
-
-            return $this->redirectToRoute('outing_list');
+            return $this->redirectToRoute('outing_detail', ['id' => $outing->getId()]);
         }
 
         return $this->render('outing/create.html.twig', [
@@ -40,7 +46,7 @@ final class OutingManagerController extends AbstractController
     }
 
     // modification d'une sortie les zobs !! :)
-    #[Route('/{id}/modifier', name: 'edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    #[Route('/sorties/{id}/modifier', name: 'outing_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function edit(Outing $outing, Request $request, EntityManagerInterface $em): Response
     {
         // seulemtn l'organisateur peut modifier la sortie
