@@ -1,0 +1,48 @@
+name: Discord Commit Notifier
+
+on:
+  push:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          COMMITS: ${{ toJson(github.event.commits) }}
+          AUTHOR: ${{ github.event.pusher.name }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          echo "$COMMITS" > commits.json
+
+          EMBEDS=$(jq -c --arg repo "$REPO" \
+                        --arg author "$AUTHOR" \
+                        --arg branch "$BRANCH" \
+                        '
+            {
+              username: "GitHub Bot",
+              embeds: [
+                {
+                  title: ("📌 Nouveau push sur " + $repo),
+                  description: ("**Auteur :** " + $author + "\n**Branche :** " + $branch),
+                  color: 5814783,
+                  fields: (
+                    . as $commits |
+                    $commits | map({
+                      name: ("📝 " + (.id[0:7])),
+                      value: ("**Message :** " + .message + "\n**Auteur :** " + .author.name),
+                      inline: false
+                    })
+                  )
+                }
+              ]
+            }
+          ' commits.json)
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$EMBEDS" \
+               "$DISCORD_WEBHOOK"

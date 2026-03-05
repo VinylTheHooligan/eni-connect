@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+
+        <h2 class="text-center mb-4">Mon profil</h2>
+
+        {{ form_start(form) }}
+        <div class="row">
+
+            {# Colonne gauche - Photo placeholder (itération 2) #}
+            <div class="col-md-2 text-center">
+                <img src="{{ asset('images/avatar-placeholder.png') }}"
+                     alt="Photo de profil"
+                     class="img-thumbnail"
+                     style="max-width: 130px;">
+            </div>
+
+            {# Colonne centre - Formulaire #}
+            <div class="col-md-7">
+
+                {# Campus non modifiable #}
+                <div class="row mb-3 align-items-center">
+                    <label class="col-sm-4 col-form-label fw-bold">Campus</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control"
+                               value="{{ app.user.campus }}" disabled >
+                    </div>
+                </div>
+
+                {# Pseudo #}
+                <div class="row mb-3 align-items-center">
+                    <div class="col-sm-4 fw-bold">{{ form_label(form.username) }}</div>
+                    <div class="col-sm-8">
+                        {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.username) }}
+                    </div>
+                </div>
+
+                {# Prénom #}
+                <div class="row mb-3 align-items-center">
+                    <div class="col-sm-4 fw-bold">{{ form_label(form.firstName) }}</div>
+                    <div class="col-sm-8">
+                        {{ form_widget(form.firstName, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.firstName) }}
+                    </div>
+                </div>
+
+                {# Nom #}
+                <div class="row mb-3 align-items-center">
+                    <div class="col-sm-4 fw-bold">{{ form_label(form.lastName) }}</div>
+                    <div class="col-sm-8">
+                        {{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.lastName) }}
+                    </div>
+                </div>
+
+                {# Téléphone #}
+                <div class="row mb-3 align-items-center">
+                    <div class="col-sm-4 fw-bold">{{ form_label(form.phoneNumber) }}</div>
+                    <div class="col-sm-8">
+                        {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.phoneNumber) }}
+                    </div>
+                </div>
+
+                {# Email #}
+                <div class="row mb-3 align-items-center">
+                    <div class="col-sm-4 fw-bold">{{ form_label(form.email) }}</div>
+                    <div class="col-sm-8">
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+                </div>
+
+                {# Mot de passe #}
+                <div class="row mb-3 align-items-center">
+                    <div class="col-sm-4 fw-bold">{{ form_label(form.plainPassword.first) }}</div>
+                    <div class="col-sm-8">
+                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.plainPassword.first) }}
+                    </div>
+                </div>
+
+                {# Confirmation #}
+                <div class="row mb-3 align-items-center">
+                    <div class="col-sm-4 fw-bold">{{ form_label(form.plainPassword.second) }}</div>
+                    <div class="col-sm-8">
+                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.plainPassword.second) }}
+                    </div>
+                </div>
+
+                {# Ma photo - itération 2 commentée #}
+                {# <div class="row mb-3 align-items-center">
+                <label class="col-sm-4 col-form-label fw-bold">Ma photo</label>
+                <div class="col-sm-8">
+                    <button type="button" class="btn btn-secondary">Télécharger</button>
+                </div>
+            </div> #}
+
+        </div>
+
+        {# Boutons bas de page #}
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <a href="{{ path('app_profil_show', {'id': app.user.id}) }}"
+                   class="btn btn-secondary me-2">Annuler</a>
+                <button type="submit" class="btn btn-primary px-4">Enregistrer</button>
+            </div>
+        </div>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

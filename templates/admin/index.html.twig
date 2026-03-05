@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration - Sortir.com{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Administration</h1>
+
+    <p>Bienvenue {{ user.username ?? user.email }}.</p>
+
+    <ul>
+        <li><a href="{{ path('outing_list') }}">Gérer les sorties</a></li>
+        <li><a href="{{ path('app_profil') }}">Gérer mon profil</a></li>
+        {# ici tu pourras ajouter des liens : gestion des utilisateurs, des campus, etc. #}
+    </ul>
+</div>
+{% endblock %}

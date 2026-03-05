@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - Sortir.com{% endblock %}
+
+{% block body %}
+
+    {# Formulaire centré séparément #}
+    <div class="container min-vh-100 d-flex justify-content-center align-items-center">
+        <div class="col-md-3">
+
+                {# Affichage si l'utilisateur est déjà connecté #}
+                {% if app.user %}
+                    <div class="alert alert-info">
+                        Vous êtes connecté en tant que {{ app.user.userIdentifier }},
+                        <a href="{{ logout_path() }}">Se déconnecter</a>
+                    </div>
+                {% endif %}
+
+                {# Message d'erreur de connexion (compte inactif, mauvais mdp...) #}
+                {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                    </div>
+                {% endif %}
+
+                <form method="post">
+                    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+                    {# Login : email ou pseudo selon tâche 1 #}
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Identifiant</label>
+                        <input type="text" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="username" required autofocus>
+                    </div>
+
+                    {# Mot de passe #}
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mot de passe</label>
+                        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
+                    </div>
+
+                    {# Se souvenir de moi - tâche 2 #}
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" name="_remember_me" id="_remember_me" class="form-check-input">
+                        <label for="_remember_me" class="form-check-label">Se souvenir de moi</label>
+                    </div>
+
+                    {# Bouton connexion #}
+                    <div class="d-grid mb-3">
+                        <button class="btn btn-primary" type="submit">Se connecter</button>
+                    </div>
+
+                    {# Mot de passe oublié - itération 3 #}
+                    <div class="text-center">
+                        <a href="#">Mot de passe oublié ?</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+{% endblock %}
