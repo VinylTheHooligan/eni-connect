@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier une sortie{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h1 class="h4 text-center mb-4">Modifier la sortie : {{ outing.name }}</h1>
+
+                {{ form_start(outingForm) }}
+
+                <div class="row">
+                    {# Colonne gauche : champs principaux #}
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            {{ form_label(outingForm.name) }}
+                            {{ form_widget(outingForm.name, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                            {{ form_errors(outingForm.name) }}
+                        </div>
+                        <div class="mb-2">
+                            {{ form_label(outingForm.startDateTime) }}
+                            {{ form_widget(outingForm.startDateTime, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                            {{ form_errors(outingForm.startDateTime) }}
+                        </div>
+                        <div class="mb-2">
+                            {{ form_label(outingForm.registrationDeadline) }}
+                            {{ form_widget(outingForm.registrationDeadline, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                            {{ form_errors(outingForm.registrationDeadline) }}
+                        </div>
+                        <div class="mb-2">
+                            {{ form_label(outingForm.maxRegistrations) }}
+                            {{ form_widget(outingForm.maxRegistrations, {'attr': {'class': 'form-control form-control-sm', 'min': 1}}) }}
+                            {{ form_errors(outingForm.maxRegistrations) }}
+                        </div>
+                        <div class="mb-2">
+                            {{ form_label(outingForm.duration) }}
+                            {{ form_widget(outingForm.duration, {'attr': {'class': 'form-control form-control-sm', 'min': 0}}) }}
+                            {{ form_errors(outingForm.duration) }}
+                        </div>
+                    </div>
+
+                    {# Colonne droite : campus et lieu #}
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            {{ form_label(outingForm.campus) }}
+                            {{ form_widget(outingForm.campus, {'attr': {'class': 'form-select form-select-sm'}}) }}
+                            {{ form_errors(outingForm.campus) }}
+                        </div>
+                        <div class="mb-2">
+                            {{ form_label(outingForm.place) }}
+                            {{ form_widget(outingForm.place, {'attr': {'class': 'form-select form-select-sm'}}) }}
+                            {{ form_errors(outingForm.place) }}
+                        </div>
+                    </div>
+                </div>
+
+                {# Description sur toute la largeur #}
+                <div class="mt-3">
+                    {{ form_label(outingForm.eventInfo) }}
+                    {{ form_widget(outingForm.eventInfo, {'attr': {'class': 'form-control', 'rows': 5}}) }}
+                    {{ form_errors(outingForm.eventInfo) }}
+                </div>
+
+                {# Boutons #}
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="submit" name="action" value="save" class="btn btn-outline-dark px-4">
+                        Enregistrer
+                    </button>
+                    <button type="submit" name="action" value="publish" class="btn btn-outline-dark px-4">
+                        Publier
+                    </button>
+                    <button type="submit" name="action" value="delete" class="btn btn-outline-danger px-4">Supprimer
+                    </button>
+                    <a href="{{ path('outing_list') }}" class="btn btn-outline-secondary px-4">
+                        Retour à la liste
+                    </a>
+                </div>
+
+                {{ form_end(outingForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
