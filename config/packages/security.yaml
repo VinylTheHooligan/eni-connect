@@ -3,6 +3,8 @@ security:
     # Hiérarchie de rôles : un admin possède aussi ROLE_USER
     role_hierarchy:
         ROLE_ADMIN: [ROLE_USER]
+        ROLE_ORGANIZER: [ROLE_PARTICIPANT]
+        ROLE_PARTICIPANT: [ROLE_USER]
 
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
@@ -46,6 +48,9 @@ security:
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profil, roles: ROLE_USER }
+        - { path: ^/sorties, roles: ROLE_USER }
+        - { path: ^/sorties/creer, roles: ROLE_ORGANIZER }
+        - { path: ^/sorties/modifier, roles: ROLE_ORGANIZER }
 
 when@test:
     security:

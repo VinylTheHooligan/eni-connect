@@ -56,6 +56,8 @@ class RegistrationFixtures extends Fixture implements DependentFixtureInterface
             $registration->setParticipant($user);
             $registration->setRegistrationDate($this->generateRegistrationDate($faker, $outing));
 
+            $user->setRoles(['ROLE_PARTICIPANT']);
+
             $om->persist($registration);
         }
     }
