@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Outing;
+use App\Form\CancelOutingType;
 use App\Form\OutingType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -57,7 +58,8 @@ final class OutingManagerController extends AbstractController
         $form = $this->createForm(OutingType::class, $outing);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
             $action = $request->request->get('action');
 
             if ($action === 'delete') {
@@ -79,6 +81,33 @@ final class OutingManagerController extends AbstractController
         }
 
         return $this->render('outing/edit.html.twig', [
+            'outingForm' => $form->createView(),
+            'outing' => $outing,
+        ]);
+    }
+
+    #[Route('/annuler', name: 'cancel', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    public function cancel(Outing $outing, Request $request, EntityManagerInterface $em): Response
+    {
+        
+        if ($outing->getOrganizer() !== $this->getUser())
+        {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette sortie.');
+        }
+
+        $form = $this->createForm(CancelOutingType::class, $outing);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+
+            $outing->setStatus(Outing::ETAT_ANNULEE);
+            $this->addFlash('success', 'La sortie a bien été annulé !');
+
+            $em->flush();
+        }
+
+        return $this->render('outing/cancel.html.twig', [
             'outingForm' => $form->createView(),
             'outing' => $outing,
         ]);

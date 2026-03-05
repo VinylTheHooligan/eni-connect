@@ -2,7 +2,7 @@
 security:
     # Hiérarchie de rôles : un admin possède aussi ROLE_USER
     role_hierarchy:
-        ROLE_ADMIN: [ROLE_USER]
+        ROLE_ADMIN: [ROLE_ORGANIZER]
         ROLE_ORGANIZER: [ROLE_PARTICIPANT]
         ROLE_PARTICIPANT: [ROLE_USER]
 
