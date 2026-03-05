@@ -65,44 +65,6 @@ class OutingController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/publier', name: 'publish', requirements: ['id' => '\d+'], methods: ['POST','GET'])]
-    public function publish(Outing $outing, EntityManagerInterface $em): Response
-    {
-        if ($outing->getOrganizer() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas publier cette sortie.');
-        }
-
-        if ($outing->getStatus() !== Outing::ETAT_CREATION) {
-            $this->addFlash('warning', 'Seules les sorties en cours de création peuvent être publiées.');
-            return $this->redirectToRoute('outing_list');
-        }
-
-        $outing->setStatus(Outing::ETAT_OUVERTE);
-        $em->flush();
-
-        $this->addFlash('success', 'La sortie a été publiée.');
-        return $this->redirectToRoute('outing_list');
-    }
-
-    #[Route('/{id}/annuler', name: 'cancel', requirements: ['id' => '\d+'], methods: ['POST','GET'])]
-    public function cancel(Outing $outing, EntityManagerInterface $em): Response
-    {
-        if ($outing->getOrganizer() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas annuler cette sortie.');
-        }
-
-        if ($outing->getStatus() !== Outing::ETAT_OUVERTE) {
-            $this->addFlash('warning', 'Seules les sorties ouvertes peuvent être annulées.');
-            return $this->redirectToRoute('outing_list');
-        }
-
-        $outing->setStatus(Outing::ETAT_ANNULEE);
-        $em->flush();
-
-        $this->addFlash('success', 'La sortie a été annulée.');
-        return $this->redirectToRoute('outing_list');
-    }
-
     #[Route('/{id}/inscription', name: 'register', requirements: ['id' => '\d+'], methods: ['POST','GET'])]
     public function register(Outing $outing, EntityManagerInterface $em): Response
     {

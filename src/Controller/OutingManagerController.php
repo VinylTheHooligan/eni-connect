@@ -89,6 +89,25 @@ final class OutingManagerController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/publier', name: 'publish', requirements: ['id' => '\d+'], methods: ['POST','GET'])]
+    public function publish(Outing $outing, EntityManagerInterface $em): Response
+    {
+        if ($outing->getOrganizer() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas publier cette sortie.');
+        }
+
+        if ($outing->getStatus() !== Outing::ETAT_CREATION) {
+            $this->addFlash('warning', 'Seules les sorties en cours de création peuvent être publiées.');
+            return $this->redirectToRoute('outing_list');
+        }
+
+        $outing->setStatus(Outing::ETAT_OUVERTE);
+        $em->flush();
+
+        $this->addFlash('success', 'La sortie a été publiée.');
+        return $this->redirectToRoute('outing_list');
+    }
+
     #[Route('/annuler', name: 'cancel', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function cancel(Outing $outing, Request $request, EntityManagerInterface $em): Response
     {
