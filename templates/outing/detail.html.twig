@@ -115,6 +115,11 @@
                 </tbody>
             </table>
         </div>
+        <div class="mt-3">
+            <a href="{{ path('outing_list') }}" class="btn btn-outline-secondary px-4">
+                Retour à la liste
+            </a>
+        </div>
 
         {# Bouton Modifier visible uniquement pour l'organisateur #}
         {% if app.user == outing.organizer %}
