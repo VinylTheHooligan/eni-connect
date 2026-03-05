@@ -104,7 +104,7 @@ class OutingController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/{id}', name: 'detail', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function detail($id, OutingRepository $outingRepository): Response
     {
         $outing = $outingRepository->find($id);
