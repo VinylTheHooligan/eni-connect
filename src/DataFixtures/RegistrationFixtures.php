@@ -46,10 +46,21 @@ class RegistrationFixtures extends Fixture implements DependentFixtureInterface
     {
         $userCount = FixturesData::getUserCount();
 
+        $alreayRegistered = [];
+
         for ($i = 1; $i <= rand(0, $nbParticipant); $i++)
-        {
+        {   
+            $user = null;
+
+            do
+            {
+                $userId = rand(1, $userCount);
+            } while (in_array($userId, $alreayRegistered));
+
             $user = $this->getReference('user' . rand(1, $userCount), User::class);
-            
+
+            $alreayRegistered[] = $userId;
+                        
             $registration = new Registration();
 
             $registration->setOuting($outing);
@@ -59,6 +70,12 @@ class RegistrationFixtures extends Fixture implements DependentFixtureInterface
             $user->setRoles(['ROLE_PARTICIPANT']);
 
             $om->persist($registration);
+
+            // si le nombre maximal d'inscription est atteint
+            if ($outing->getRegistrations()->count() >= $outing->getMaxRegistrations())
+            {
+                $outing->setStatus(Outing::ETAT_CLOTUREE);
+            }
         }
     }
 
