@@ -19,7 +19,7 @@ class OutingController extends AbstractController
     public function list(OutingRepository $outingRepository, CampusRepository $campusRepository, Request $request): Response
     {
         $campuses = $campusRepository->findAll();
-        $campusId = $request->query->get('campus'); 
+        $campusId = $request->query->get('campus');
         $filters = [
             'campus' => $campusId,
             'q' => $request->query->get('q'),
@@ -31,14 +31,14 @@ class OutingController extends AbstractController
             'isPast' => $request->query->getBoolean('isPast'),
         ];
 
-        
+
         $outings = $outingRepository->search($filters, $this->getUser());
 
         return $this->render('outing/index.html.twig', [
             'outings' => $outings,
             'campuses' => $campuses,
             'filters' => $filters,
-   
+
         ]);
     }
 
@@ -66,7 +66,7 @@ class OutingController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/{id}', name: 'detail', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function detail($id, OutingRepository $outingRepository): Response
     {
         $outing = $outingRepository->find($id);
