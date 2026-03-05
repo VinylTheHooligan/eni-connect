@@ -149,16 +149,58 @@
                             <td>{{ outing.registrations|length }}/{{ outing.maxRegistrations }}</td>
                             <td>{{ outing.status }}</td>
                             <td>
-                                {# Filtre si l'utilisateur courant est inscrit #}
-                                {% if app.user and outing.registrations|filter(r => r.participant == app.user)|length > 0 %}
+                                {# Est-ce que l'utilisateur courant est inscrit ? (comparaison par id pour éviter les soucis de proxy Doctrine) #}
+                                {% set isRegistered = false %}
+                                {% if app.user %}
+                                    {% set isRegistered = outing.registrations|filter(r => r.participant and r.participant.id == app.user.id)|length > 0 %}
+                                {% endif %}
+                                {% if isRegistered %}
                                     X
                                 {% endif %}
                             </td>
-                            <td>{{ outing.organizer.username ?? outing.organizer.email }}</td>
                             <td>
-                                {# todos: placeholders d’actions, à brancher sur les routes plus tard #}
+                                {% if outing.organizer %}
+                                    <a href="{{ path('app_profil_show', {'id': outing.organizer.id}) }}">
+                                        {{ outing.organizer.username ?? outing.organizer.email }}
+                                    </a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {# Actions dynamiques selon statut et rôle (maquette page accueil) #}
+                                {% set isOrganizer = app.user and app.user == outing.organizer %}
+                                {% set status = outing.status %}
+
+                                {# Toujours : lien Afficher #}
                                 <a href="{{ path('outing_detail', {id: outing.id}) }}" class="link-primary">Afficher</a>
-                                {# todos : autres actions selon le statut : S'inscrire, Se désister, Annuler, etc #}
+
+                                {% if app.user %}
+                                    {# PARTICIPANT (non organisateur) #}
+                                    {% if not isOrganizer %}
+                                        {# Inscription / désistement possibles uniquement si la sortie est ouverte #}
+                                        {% if status == 'ouverte' %}
+                                            {% if isRegistered %}
+                                                | <a href="{{ path('outing_unregister', {'id': outing.id}) }}" class="link-primary">Se désister</a>
+                                            {% else %}
+                                                | <a href="{{ path('outing_register', {'id': outing.id}) }}" class="link-primary">S'inscrire</a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+
+                                    {# ORGANISATEUR #}
+                                    {% if isOrganizer %}
+                                        {# Sortie en création : Modifier / Publier / Supprimer #}
+                                        {% if status == 'creation' %}
+                                            | <a href="{{ path('outing_edit', {'id': outing.id}) }}" class="link-primary">Modifier</a>
+                                            | <a href="{{ path('outing_publish', {'id': outing.id}) }}" class="link-primary">Publier</a>
+                                            | <a href="{{ path('outing_edit', {'id': outing.id}) }}" class="link-primary">Supprimer</a>
+                                        {% endif %}
+
+                                        {# Sortie ouverte : possibilité d'annuler #}
+                                        {% if status == 'ouverte' %}
+                                            | <a href="{{ path('outing_cancel', {'id': outing.id}) }}" class="link-primary">Annuler</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
                             </td>
                         </tr>
                     {% else %}
