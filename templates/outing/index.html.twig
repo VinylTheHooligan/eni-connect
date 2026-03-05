@@ -32,7 +32,13 @@
                             <label for="campus" class="form-label mb-1">Campus</label>
                             <select id="campus" name="campus" class="form-select form-select-sm w-auto">
                                 <option value="">Tous</option>
-                                {# TODO: options campus depuis le contrôleur #}
+                                {% for campus in campuses %}
+                                    <option value="{{ campus.id }}"
+                                            {% if filters.campus is defined and filters.campus == campus.id %}
+                                            selected{% endif %}>
+                                        {{ campus.name }}
+                                    </option>
+                                {% endfor %}
                             </select>
                         </div>
 

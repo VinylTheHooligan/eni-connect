@@ -59,17 +59,17 @@ class Outing
     private ?string $status = null;  //Permet de gérer les états : En création, Ouverte, Clôturée, Annulée et Archivé.
 
     #[Assert\NotNull]
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\ManyToOne(inversedBy: 'outings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $organizer = null;
 
     #[Assert\NotNull]
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\ManyToOne(inversedBy: 'outings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Campus $campus = null;
 
     #[Assert\NotNull]
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\ManyToOne(inversedBy: 'outings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Place $place = null;
 
