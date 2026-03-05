@@ -67,7 +67,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
             $organizer->setFirstName($faker->firstName());
             $organizer->setLastName($faker->lastName());
-            $organizer->setUsername('manager' . $i);
+            $organizer->setUsername('organizer' . $i);
 
             $organizer->setEmail('organizer' . $i . '@eni.fr');
             $organizer->setRoles(['ROLE_ORGANIZER']);

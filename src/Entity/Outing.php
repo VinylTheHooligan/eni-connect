@@ -82,6 +82,9 @@ class Outing
     #[ORM\Column]
     private ?\DateTimeImmutable $createdDateTime = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private ?bool $published = false;
+
     public function __construct() {
         $this->status = self::ETAT_CREATION;
         $this->createdDateTime = new \DateTimeImmutable('now');
@@ -245,6 +248,18 @@ class Outing
     public function setCreatedDateTime(\DateTimeImmutable $createdDateTime): static
     {
         $this->createdDateTime = $createdDateTime;
+
+        return $this;
+    }
+
+    public function isPublished(): ?bool
+    {
+        return $this->published;
+    }
+
+    public function setPublished(bool $published): static
+    {
+        $this->published = $published;
 
         return $this;
     }

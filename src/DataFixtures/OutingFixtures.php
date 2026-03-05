@@ -56,6 +56,8 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
                 $this->checkAssigned('place', FixturesData::getPlaceCount(), $this->placeAssigned), Place::class)
             );
 
+            $outing->setPublished(true);
+
             $om->persist($outing);
 
             $this->addReference('outing' . $i, $outing);
