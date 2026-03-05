@@ -68,11 +68,17 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
     {
         $now = new \DateTimeImmutable('now');
         $start = $datesTimes['dateStart'];
+        $limit = $datesTimes['dateLimit'];
         $timeOutingEnd = (clone $start)->modify('+' . $outing->getDuration() . ' minutes');
 
         if ($now < $start)
         {
             return Outing::ETAT_OUVERTE;
+        }
+
+        if ($now >= $limit && $now < $start)
+        {
+            return Outing::ETAT_CLOTUREE;
         }
 
         if ($now >= $start && $now < $timeOutingEnd)

@@ -51,6 +51,7 @@ security:
         - { path: ^/sorties, roles: ROLE_USER }
         - { path: ^/sorties/creer, roles: ROLE_ORGANIZER }
         - { path: ^/sorties/modifier, roles: ROLE_ORGANIZER }
+        - { path: ^/sorties/delete, roles: ROLE_ORGANIZER }
 
 when@test:
     security:
