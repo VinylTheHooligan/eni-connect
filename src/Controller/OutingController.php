@@ -62,9 +62,9 @@ class OutingController extends AbstractController
     #[Route('/{id}', name: 'detail', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function detail(OutingStatusUpdater $outingStatusUpdater, $id, OutingRepository $outingRepository): Response
     {
-        $outing = $outingStatusUpdater([ 
+        $outing = $outingStatusUpdater->updateStatuses([ 
             $outingRepository->find($id) 
-        ]);
+        ])[0];
 
         return $this->render('outing/detail.html.twig', [
             'outing' => $outing,
