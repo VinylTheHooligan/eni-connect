@@ -50,4 +50,14 @@ class OutingController extends AbstractController
             'outingForm' => $form->createView(),
         ]);
     }
+
+    #[Route('/{id}', name: 'detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function detail($id, OutingRepository $outingRepository): Response
+    {
+        $outing = $outingRepository->find($id);
+
+        return $this->render('outing/detail.html.twig', [
+            'outing' => $outing,
+        ]);
+    }
 }

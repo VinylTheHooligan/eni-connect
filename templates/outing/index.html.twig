@@ -151,7 +151,7 @@
                             <td>{{ outing.organizer.username ?? outing.organizer.email }}</td>
                             <td>
                                 {# todos: placeholders d’actions, à brancher sur les routes plus tard #}
-                                <a href="#" class="link-primary">Afficher</a>
+                                <a href="{{ path('outing_detail', {id: outing.id}) }}" class="link-primary">Afficher</a>
                                 {# todos : autres actions selon le statut : S'inscrire, Se désister, Annuler, etc #}
                             </td>
                         </tr>
