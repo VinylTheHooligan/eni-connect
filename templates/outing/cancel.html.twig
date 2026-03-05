@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Annuler une sortie{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <h1 class="h4 text-center mb-4">Annuler la sortie : {{ outing.name }}</h1>
+
+                {{ form_start(cancelForm) }}
+
+                <div class="mb-3">
+                    {{ form_label(cancelForm.cancelReason) }}
+                    {{ form_widget(cancelForm.cancelReason, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(cancelForm.cancelReason) }}
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <button type="submit" class="btn btn-danger px-4">
+                        Confirmer l'annulation
+                    </button>
+                    <a href="{{ path('outing_detail', {'id': outing.id}) }}" class="btn btn-outline-secondary px-4">
+                        Retour à la sortie
+                    </a>
+                </div>
+
+                {{ form_end(cancelForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
