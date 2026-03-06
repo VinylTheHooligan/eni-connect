@@ -4,21 +4,58 @@
 
 {% block body %}
     <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-lg-6">
-                <h1 class="h4 text-center mb-4">Annuler la sortie : {{ outing.name }}</h1>
+        <h1 class="h4 text-center mb-4">Annuler une sortie</h1>
 
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8">
+                <div class="mb-2 row">
+                    <label class="col-sm-4 col-form-label fw-semibold">Nom de la sortie</label>
+                    <div class="col-sm-8">
+                        <p class="form-control-plaintext mb-0">{{ outing.name }}</p>
+                    </div>
+                </div>
+                <div class="mb-2 row">
+                    <label class="col-sm-4 col-form-label fw-semibold">Date et heure de la sortie</label>
+                    <div class="col-sm-8">
+                        <p class="form-control-plaintext mb-0">{{ outing.startDateTime|date('d/m/Y H:i') }}</p>
+                    </div>
+                </div>
+                <div class="mb-2 row">
+                    <label class="col-sm-4 col-form-label fw-semibold">Campus</label>
+                    <div class="col-sm-8">
+                        <p class="form-control-plaintext mb-0">{{ outing.campus.name }}</p>
+                    </div>
+                </div>
+                <div class="mb-2 row">
+                    <label class="col-sm-4 col-form-label fw-semibold">Lieu</label>
+                    <div class="col-sm-8">
+                        <p class="form-control-plaintext mb-0">{{ outing.place.name }}</p>
+                    </div>
+                </div>
+                <div class="mb-2 row">
+                    <label class="col-sm-4 col-form-label fw-semibold">Ville</label>
+                    <div class="col-sm-8">
+                        <p class="form-control-plaintext mb-0">{{ outing.place.city.name }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
                 {{ form_start(cancelForm) }}
 
-                <div class="mb-3">
-                    {{ form_label(cancelForm.cancelReason) }}
-                    {{ form_widget(cancelForm.cancelReason, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_errors(cancelForm.cancelReason) }}
+                <div class="mb-3 row">
+                    <label class="col-sm-4 col-form-label fw-semibold">Motif</label>
+                    <div class="col-sm-8">
+                        {{ form_widget(cancelForm.cancelReason, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                        {{ form_errors(cancelForm.cancelReason) }}
+                    </div>
                 </div>
 
-                <div class="d-flex justify-content-center gap-3 mt-4">
+                <div class="mt-4 d-flex justify-content-center gap-3">
                     <button type="submit" class="btn btn-danger px-4">
-                        Confirmer l'annulation
+                        Enregistrer
                     </button>
                     <a href="{{ path('outing_detail', {'id': outing.id}) }}" class="btn btn-outline-secondary px-4">
                         Retour à la sortie
