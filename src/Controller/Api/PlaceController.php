@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Api\Controller;
 
 use App\Entity\Campus;
 use App\Repository\PlaceRepository;
