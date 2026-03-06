@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="h4 text-center mb-4">{{ title }}</h1>
+
+        {{ form_start(form) }}
+        <div class="mb-3" style="max-width: 400px;">
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.name) }}
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-outline-dark">Enregistrer</button>
+            <a href="{{ path('app_admin_campuses') }}" class="btn btn-outline-secondary">Annuler</a>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

@@ -8,13 +8,13 @@
     <h1 class="h4 text-center mb-4">Page d'administration</h1>
 
     <p class="text-center mb-4">
-        Bienvenue {{ user.username ?? user.email }}.
+        Bienvenue {{ app.user.username ?? app.user.email }}.
     </p>
 
     <div class="d-flex justify-content-center mb-4">
         <div class="btn-group" role="group" aria-label="Navigation administration">
             {# Gérer les campus – à brancher sur la future page de gestion des campus #}
-            <a href="#"
+            <a href="{{ path('app_admin_campuses') }}"
                class="btn btn-outline-dark">
                 Gérer les campus
             </a>

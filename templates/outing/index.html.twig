@@ -151,7 +151,7 @@
                             </td>
 
                             <td>
-                                {% set isOrganizer = app.user and app.user == outing.organizer %}
+                                {% set isOrganizer = app.user and app.user.id == outing.organizer.id %}
                                 {% set status = outing.status %}
 
                                 <a href="{{ path('outing_detail', {id: outing.id}) }}" class="link-primary">Afficher</a>

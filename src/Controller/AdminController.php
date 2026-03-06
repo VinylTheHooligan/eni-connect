@@ -15,6 +15,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Entity\Campus;
+use App\Repository\CampusRepository;
+use App\Form\CampusType;
 
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/admin')]
@@ -168,5 +171,80 @@ class AdminController extends AbstractController
             'title' => 'Modifier une ville',
         ]);
     }
+    #[Route('/admin/campus', name: 'app_admin_campuses', methods: ['GET'])]
+    public function campuses(CampusRepository $campusRepository, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
+        $query = $request->query->getString('q');
+        $sort = $request->query->getString('sort', 'name');
+        $order = $request->query->getString('order', 'asc');
+
+        $campuses = $campusRepository->findBySearch($query, $sort, $order);
+
+        return $this->render('admin/campuses.html.twig', [
+            'campuses' => $campuses,
+        ]);
+    }
+    #[Route('/admin/campus/{id}/modifier', name: 'app_admin_campus_edit', methods: ['GET', 'POST'])]
+    public function editCampus(Campus $campus, Request $request, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $form = $this->createForm(CampusType::class, $campus);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Le campus a été modifié.');
+            return $this->redirectToRoute('app_admin_campuses');
+        }
+
+        return $this->render('admin/campus_form.html.twig', [
+            'form' => $form,
+            'title' => 'Modifier un campus',
+        ]);
+    }
+
+    #[Route('/admin/campus/{id}/supprimer', name: 'app_admin_campus_delete', methods: ['POST'])]
+    public function deleteCampus(Campus $campus, Request $request, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if (!$this->isCsrfTokenValid('delete_campus_' . $campus->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('app_admin_campuses');
+        }
+
+        try {
+            $em->remove($campus);
+            $em->flush();
+            $this->addFlash('success', 'Le campus a été supprimé.');
+        } catch (\Throwable $e) {
+            $this->addFlash('danger', 'Impossible de supprimer ce campus car il est utilisé.');
+        }
+
+        return $this->redirectToRoute('app_admin_campuses');
+    }
+    #[Route('/admin/campus/ajouter', name: 'app_admin_campus_add', methods: ['GET', 'POST'])]
+    public function addCampus(Request $request, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $campus = new Campus();
+        $form = $this->createForm(CampusType::class, $campus);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($campus);
+            $em->flush();
+            $this->addFlash('success', 'Le campus a été ajouté.');
+            return $this->redirectToRoute('app_admin_campuses');
+        }
+
+        return $this->render('admin/campus_form.html.twig', [
+            'form' => $form,
+            'title' => 'Ajouter un campus',
+        ]);
+    }
 }
