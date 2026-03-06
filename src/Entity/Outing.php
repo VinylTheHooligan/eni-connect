@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\OutingRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\Collection;
@@ -277,5 +278,71 @@ class Outing
         $this->cancelReason = $cancelReason;
 
         return $this;
+    }
+
+    public function isRegistered(User $user): bool
+    {
+        foreach ($this->registrations as $registration)
+        {
+            if ($registration->getParticipant() === $user)
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    public function getRegistrationFor(User $user): ?Registration
+    {
+        foreach ($this->registrations as $registration)
+        {
+            if ($registration->getParticipant() === $user)
+            {
+                return $registration;
+            }
+        }
+
+        return null;
+    }
+
+    public function isOpen(): bool
+    {
+        if ($this->getStatus() === self::ETAT_OUVERTE)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public function isRegistrationDeadlinePassed(): bool
+    {
+        $now = new DateTimeImmutable();
+
+        if ($this->getRegistrationDeadline() < $now)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public function isMaxRegistrationsReached(): bool
+    {
+        if ($this->getRegistrations()->count() >= $this->getMaxRegistrations())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public function isStarted(): bool
+    {
+        $now = new DateTimeImmutable();
+
+        if ($this->getStartDateTime() <= $now)
+        {
+            return true;
+        }
+        return false;
     }
 }
