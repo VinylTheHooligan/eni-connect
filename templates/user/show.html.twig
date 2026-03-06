@@ -21,9 +21,11 @@
 
                 {# Campus #}
                 <div class="row mb-3 align-items-center">
-                    <div class="col-sm-4 fw-bold">Campus</div>
+                    <label class="col-sm-4 col-form-label fw-bold">Campus</label>
                     <div class="col-sm-8">
-                        <span class="form-control-plaintext">{{ user.campus }}</span>
+                        <span class="form-control-plaintext">
+                            {{ user.campus ? user.campus.name : '-' }}
+                        </span>
                     </div>
                 </div>
 
