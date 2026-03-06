@@ -59,17 +59,10 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $query = $request->query->getString('q');
+        $sort = $request->query->getString('sort', 'name');
+        $order = $request->query->getString('order', 'asc');
 
-        if ($query !== '') {
-            $queryBuilder = $cityRepository->createQueryBuilder('c')
-                ->where('LOWER(c.name) LIKE :query')
-                ->setParameter('query', '%'.mb_strtolower($query).'%')
-                ->orderBy('c.name', 'ASC');
-
-            $cities = $queryBuilder->getQuery()->getResult();
-        } else {
-            $cities = $cityRepository->findBy([], ['name' => 'ASC']);
-        }
+        $cities = $cityRepository->findBySearch($query, $sort, $order);
 
         return $this->render('admin/cities.html.twig', [
             'cities' => $cities,

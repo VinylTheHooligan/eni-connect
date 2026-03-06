@@ -58,8 +58,29 @@
         <table class="table table-sm table-striped table-bordered align-middle">
             <thead class="table-light">
             <tr>
-                <th style="min-width: 220px;">Ville</th>
-                <th style="min-width: 140px;">Code postal</th>
+            <tr>
+                <th style="min-width: 220px;">
+                    <a href="?q={{ app.request.get('q') }}&sort=name&order={{ app.request.get('sort') == 'name' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
+                        Ville
+                        {% if app.request.get('sort') == 'name' %}
+                            {{ app.request.get('order') == 'asc' ? '▲' : '▼' }}
+                        {% else %}
+                            ↕
+                        {% endif %}
+                    </a>
+                </th>
+                <th style="min-width: 140px;">
+                    <a href="?q={{ app.request.get('q') }}&sort=postalCode&order={{ app.request.get('sort') == 'postalCode' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
+                        Code postal
+                        {% if app.request.get('sort') == 'postalCode' %}
+                            {{ app.request.get('order') == 'asc' ? '▲' : '▼' }}
+                        {% else %}
+                            ↕
+                        {% endif %}
+                    </a>
+                </th>
+                <th style="min-width: 180px;">Actions</th>
+            </tr>
                 <th style="min-width: 180px;">Actions</th>
             </tr>
             </thead>
