@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gérer les villes{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+
+    <h1 class="h4 text-center mb-4">Gérer les villes</h1>
+
+    {# Flash messages #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+
+    <div class="row align-items-start g-3 mb-3">
+        {# Filtre villes (maquette: "Le nom contient" + bouton Rechercher) #}
+        <div class="col-lg-6">
+            <form method="get" action="{{ path('app_admin_cities') }}">
+                <fieldset class="border rounded p-3">
+                    <legend class="float-none w-auto px-2 fs-6 mb-0">Filtrer les villes</legend>
+
+                    <label for="q" class="form-label mt-2 mb-1">Le nom contient</label>
+                    <div class="d-flex gap-2">
+                        <input
+                            id="q"
+                            type="text"
+                            name="q"
+                            value="{{ app.request.get('q') }}"
+                            class="form-control"
+                            style="max-width: 260px;"
+                            placeholder="search"
+                            aria-label="Filtrer par nom de ville"
+                        >
+                        <button type="submit" class="btn btn-outline-dark">Rechercher</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+
+        {# Colonne droite laissée vide pour l’instant (alignement maquette) #}
+        <div class="col-lg-6"></div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h6 mb-0">Liste des villes</h2>
+        <a href="{{ path('app_admin_city_add') }}" class="btn btn-sm btn-outline-dark">
+            Ajouter une ville
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-striped table-bordered align-middle">
+            <thead class="table-light">
+            <tr>
+                <th style="min-width: 220px;">Ville</th>
+                <th style="min-width: 140px;">Code postal</th>
+                <th style="min-width: 180px;">Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {# Lignes existantes #}
+            {% for city in cities %}
+                <tr>
+                    <td class="text-uppercase">{{ city.name }}</td>
+                    <td>{{ city.postalCode }}</td>
+                    <td>
+                        <a
+                            href="{{ path('app_admin_city_edit', { id: city.id }) }}"
+                            class="link-primary text-decoration-none"
+                        >
+                            Modifier
+                        </a>
+
+                        <span class="mx-1">|</span>
+
+                        {# Suppression (POST recommandé) #}
+                        <form
+                            method="post"
+                            action="{{ path('app_admin_city_delete', { id: city.id }) }}"
+                            class="d-inline"
+                            onsubmit="return confirm('Confirmer la suppression de la ville ?');"
+                        >
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_city_' ~ city.id) }}">
+                            <button type="submit" class="btn btn-link link-primary p-0 align-baseline text-decoration-none">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">Aucune ville trouvée.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-3">
+        <a href="{{ path('app_admin') }}" class="btn btn-outline-secondary">Retour</a>
+    </div>
+</div>
+{% endblock %}
