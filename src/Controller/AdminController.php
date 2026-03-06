@@ -35,7 +35,7 @@ class AdminController extends AbstractController
         $order = $request->query->getString('order', 'asc');
 
         if ($query) {
-            $users = $userRepository->findBySearch($query, $sort; $order);
+            $users = $userRepository->findBySearch($query, $sort, $order);
         } else {
             $users = $userRepository->findAll();
         }
