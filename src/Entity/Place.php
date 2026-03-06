@@ -51,6 +51,10 @@ class Place
     #[ORM\OneToMany(targetEntity: Outing::class, mappedBy: 'place')]
     private Collection $outings;
 
+    #[ORM\ManyToOne(inversedBy: 'places')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Campus $campus = null;
+
     public function __construct()
     {
         $this->outings = new ArrayCollection();
@@ -142,6 +146,18 @@ class Place
     public function removeOuting(Outing $outing): static
     {
         $this->outings->removeElement($outing);
+        return $this;
+    }
+
+    public function getCampus(): ?Campus
+    {
+        return $this->campus;
+    }
+
+    public function setCampus(?Campus $campus): static
+    {
+        $this->campus = $campus;
+
         return $this;
     }
 }

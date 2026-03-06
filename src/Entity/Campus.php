@@ -38,10 +38,17 @@ class Campus
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'campus')]
     private Collection $user;
 
+    /**
+     * @var Collection<int, Place>
+     */
+    #[ORM\OneToMany(targetEntity: Place::class, mappedBy: 'campus', orphanRemoval: true)]
+    private Collection $places;
+
     public function __construct()
     {
         $this->outings = new ArrayCollection();
         $this->user = new ArrayCollection();
+        $this->places = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -109,6 +116,36 @@ class Campus
             // set the owning side to null (unless already changed)
             if ($user->getCampus() === $this) {
                 $user->setCampus(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Place>
+     */
+    public function getPlaces(): Collection
+    {
+        return $this->places;
+    }
+
+    public function addPlace(Place $place): static
+    {
+        if (!$this->places->contains($place)) {
+            $this->places->add($place);
+            $place->setCampus($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlace(Place $place): static
+    {
+        if ($this->places->removeElement($place)) {
+            // set the owning side to null (unless already changed)
+            if ($place->getCampus() === $this) {
+                $place->setCampus(null);
             }
         }
 
