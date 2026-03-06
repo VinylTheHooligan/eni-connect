@@ -158,13 +158,7 @@
                                     X
                                 {% endif %}
                             </td>
-                            <td>
-                                {% if outing.organizer %}
-                                    <a href="{{ path('app_profil_show', {'id': outing.organizer.id}) }}">
-                                        {{ outing.organizer.username ?? outing.organizer.email }}
-                                    </a>
-                                {% endif %}
-                            </td>
+
                             <td>
                                 {# Actions dynamiques selon statut et rôle (maquette page accueil) #}
                                 {% set isOrganizer = app.user and app.user == outing.organizer %}

@@ -28,12 +28,11 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $q = $request->query->getString('q');
+        $sort = $request->query->getString('sort', 'lastName'); // par défaut tri par nom
+        $order = $request->query->getString('order', 'asc');
 
-        if ($q) {
-            $users = $userRepository->findBySearch($q);
-        } else {
-            $users = $userRepository->findAll();
-        }
+        $users = $userRepository->findBySearch($q, $sort, $order);
+
 
         return $this->render('admin/users.html.twig', [
             'users' => $users,
