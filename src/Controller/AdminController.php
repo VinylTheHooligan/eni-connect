@@ -202,7 +202,6 @@ class AdminController extends AbstractController
     #[Route('/admin/campus', name: 'app_admin_campuses', methods: ['GET'])]
     public function campuses(CampusRepository $campusRepository, Request $request): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $query = $request->query->getString('q');
         $sort = $request->query->getString('sort', 'name');
@@ -217,7 +216,6 @@ class AdminController extends AbstractController
     #[Route('/admin/campus/{id}/modifier', name: 'app_admin_campus_edit', methods: ['GET', 'POST'])]
     public function editCampus(Campus $campus, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $form = $this->createForm(CampusType::class, $campus);
         $form->handleRequest($request);
@@ -237,7 +235,6 @@ class AdminController extends AbstractController
     #[Route('/admin/campus/{id}/supprimer', name: 'app_admin_campus_delete', methods: ['POST'])]
     public function deleteCampus(Campus $campus, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         if (!$this->isCsrfTokenValid('delete_campus_' . $campus->getId(), $request->request->get('_token'))) {
             $this->addFlash('danger', 'Jeton CSRF invalide.');
@@ -257,7 +254,6 @@ class AdminController extends AbstractController
     #[Route('/admin/campus/ajouter', name: 'app_admin_campus_add', methods: ['GET', 'POST'])]
     public function addCampus(Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $campus = new Campus();
         $form = $this->createForm(CampusType::class, $campus);
