@@ -131,7 +131,7 @@ final class OutingManagerController extends AbstractController
         }
 
         return $this->render('outing/cancel.html.twig', [
-            'outingForm' => $form->createView(),
+            'cancelForm' => $form->createView(),
             'outing' => $outing,
         ]);
     }
