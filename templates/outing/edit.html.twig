@@ -8,7 +8,11 @@
             <div class="col-lg-10">
                 <h1 class="h4 text-center mb-4">Modifier la sortie : {{ outing.name }}</h1>
 
-                {{ form_start(outingForm) }}
+                {{ form_start(outingForm, {
+                attr: {
+                    'data-controller': 'place'
+                }
+                }) }}
 
                 <div class="row">
                     {# Colonne gauche : champs principaux #}
@@ -42,15 +46,91 @@
 
                     {# Colonne droite : campus et lieu #}
                     <div class="col-md-6">
-                        <div class="mb-2">
-                            {{ form_label(outingForm.campus) }}
-                            {{ form_widget(outingForm.campus, {'attr': {'class': 'form-select form-select-sm'}}) }}
-                            {{ form_errors(outingForm.campus) }}
-                        </div>
-                        <div class="mb-2">
-                            {{ form_label(outingForm.place) }}
-                            {{ form_widget(outingForm.place, {'attr': {'class': 'form-select form-select-sm'}}) }}
-                            {{ form_errors(outingForm.place) }}
+                    <div class="mb-2">
+                        {{ form_label(outingForm.campus) }}
+
+                        {% if is_granted('ROLE_ORGANIZER') %}
+                            {# Champ désactivé pour l’affichage #}
+                            {{ form_widget(outingForm.campus, {
+                                attr: {
+                                    class: 'form-select form-select-sm',
+                                    'data-place-target': 'campus',
+                                    'data-action': 'change->place#updatePlaces',
+                                    disabled: true
+                                }
+                            }) }}
+
+                            {# Champ caché pour envoyer la vraie valeur #}
+                            <input type="hidden"
+                                   name="{{ outingForm.campus.vars.full_name }}"
+                                   value="{{ outingForm.campus.vars.value }}">
+                        {% else %}
+                            {# Admin : champ normal #}
+                            {{ form_widget(outingForm.campus, {
+                                attr: {
+                                    class: 'form-select form-select-sm',
+                                    'data-place-target': 'campus',
+                                    'data-action': 'change->place#updatePlaces'
+                                }
+                            }) }}
+                        {% endif %}
+
+                        {{ form_errors(outingForm.campus) }}
+                    </div>
+                    <div class="mb-2">
+                        <label for="city-select">Ville</label>
+                        <select id="city-select"
+                                class="form-select form-select-sm"
+                                data-place-target="city"
+                                data-action="change->place#filterPlaces">
+                            <option value="">Toutes les villes</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        {{ form_label(outingForm.place) }}
+                        {{ form_widget(outingForm.place, {
+                            attr: {
+                                class: 'form-select form-select-sm',
+                                'data-place-target': 'place',
+                                'data-action': 'change->place#fillAddress',
+                            }
+                        }) }}
+                        {{ form_errors(outingForm.place) }}
+                    </div>
+                    <div class="mb-2">
+                        <label>Rue</label>
+                        <input type="text"
+                               class="form-control form-control-sm"
+                               data-place-target="street"
+                               disabled>
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Code postal</label>
+                        <input type="text"
+                            class="form-control form-control-sm"
+                            data-place-target="postalCode"
+                            disabled>
+                    </div>
+
+                    <div class="mb-2">
+                        <div class="d-flex gap-2">
+                            <div>
+                                <label>Latitude</label>
+                                <input type="text"
+                                       class="form-control form-control-sm"
+                                       placeholder="Latitude"
+                                       data-place-target="latitude"
+                                       disabled>
+                            </div>
+                            <div>
+                                <label>Longitude</label>
+                                <input type="text"
+                                   class="form-control form-control-sm"
+                                   placeholder="Longitude"
+                                   data-place-target="longitude"
+                                   disabled>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -67,9 +147,12 @@
                     <button type="submit" name="action" value="save" class="btn btn-outline-dark px-4">
                         Enregistrer
                     </button>
-                    <button type="submit" name="action" value="publish" class="btn btn-outline-dark px-4">
-                        Publier
-                    </button>
+                    {% if not outing.isPublished %}
+                        <button type="submit" name="action" value="publish" class="btn btn-outline-dark px-4">
+                            Publier
+                        </button>
+                    {% endif %}
+                    
                     <button type="submit" name="action" value="delete" class="btn btn-outline-danger px-4">Supprimer
                     </button>
                     <a href="{{ path('outing_list') }}" class="btn btn-outline-secondary px-4">

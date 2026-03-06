@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Outing;
+use App\Entity\Registration;
+use App\Entity\User;
 use App\Form\CancelOutingType;
 use App\Form\OutingType;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,8 +22,15 @@ final class OutingManagerController extends AbstractController
     #[Route('/creer', name: 'create', methods: ['GET', 'POST'])]
     public function create(Request $request, EntityManagerInterface $em): Response
     {
+        $user = $this->getUser();
         $outing = new Outing();
-        $outing->setOrganizer($this->getUser());
+        $outing->setOrganizer($user);
+        
+        /** @var User $user **/
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $outing->setCampus($user->getCampus());
+        }
+
 
         $form = $this->createForm(OutingType::class, $outing);
         $form->handleRequest($request);
@@ -37,7 +47,18 @@ final class OutingManagerController extends AbstractController
                 $this->addFlash('success', 'La sortie a bien été créée et est en cours de création.');
             }
 
+            $outing->setCampus($user->getCampus());
+            $outing->setOrganizer($user);
+
+            $now = new DateTimeImmutable();
+
+            $registration = new Registration();
+            $registration->setOuting($outing);
+            $registration->setParticipant($user);
+            $registration->setRegistrationDate($now);
+
             $em->persist($outing);
+            $em->persist($registration);
             $em->flush();
 
             $this->addFlash('success', 'La sortie a bien été créée.');
@@ -74,6 +95,7 @@ final class OutingManagerController extends AbstractController
 
             if ($action === 'publish') {
                 $outing->setStatus(Outing::ETAT_OUVERTE);
+                $outing->setPublished(true);
                 $this->addFlash('success', 'La sortie a été publiée !');
             } else {
                 $this->addFlash('success', 'La sortie a bien été modifiée.');
