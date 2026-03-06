@@ -6,15 +6,26 @@
     <div class="container mt-4">
         <h1 class="h4 text-center mb-4">Gérer les utilisateurs</h1>
 
-        {# Filtre #}
-        <form method="get" class="mb-3">
-            <strong>Filtrer les utilisateurs</strong><br>
-            <label class="mt-2">Le nom contient</label>
-            <div class="d-flex gap-2 mt-1">
-                <input type="text" name="q" value="{{ app.request.get('q') }}" class="form-control" style="max-width: 260px;">
-                <button type="submit" class="btn btn-outline-dark">Rechercher</button>
+
+        <div class="row align-items-start g-3 mb-3">
+            {# Filtre #}
+            <div class="col-lg-6">
+                <form method="get" action="{{ path('app_admin_users') }}">
+                    <fieldset class="border rounded p-3">
+                        <legend class="float-none w-auto px-2 fs-6 mb-0">Filtrer les utilisateurs</legend>
+                        <label for="q" class="form-label mt-2 mb-1">Le nom contient</label>
+                        <div class="d-flex gap-2">
+                            <input id="q" type="text" name="q" value="{{ app.request.get('q') }}"
+                                   class="form-control" style="max-width: 260px;" placeholder="search">
+                            <button type="submit" class="btn btn-outline-dark">Rechercher</button>
+                        </div>
+                    </fieldset>
+                </form>
             </div>
-        </form>
+
+        {# Colonne droite laissée vide pour l’instant (alignement maquette) #}
+        <div class="col-lg-6"></div>
+    </div>
 
         <table class="table table-sm table-striped table-bordered">
             <thead class="table-light">
