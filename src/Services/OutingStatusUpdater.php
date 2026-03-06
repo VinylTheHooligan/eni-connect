@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class OutingStatusUpdater {
 
-    private const TIME_BEFORE_ARCHIVED = '+7 days';
+    private const TIME_BEFORE_ARCHIVED = '+1 month';
 
     public function __construct(private EntityManagerInterface $em)
     {}

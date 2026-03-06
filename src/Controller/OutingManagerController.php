@@ -12,8 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/sorties/gestion', name: 'manage_')]
 #[IsGranted('ROLE_ORGANIZER')]
+#[Route('/sorties/gestion', name: 'manage_')]
 final class OutingManagerController extends AbstractController
 {
     #[Route('/creer', name: 'create', methods: ['GET', 'POST'])]
@@ -53,7 +53,7 @@ final class OutingManagerController extends AbstractController
     #[Route('/{id}/modifier', name: 'edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function edit(Outing $outing, Request $request, EntityManagerInterface $em): Response
     {
-        // seulemtn l'organisateur peut modifier la sortie
+        // seul l'organisateur peut modifier la sortie
         if ($outing->getOrganizer() !== $this->getUser()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette sortie.');
         }

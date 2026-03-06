@@ -6,6 +6,16 @@
     <div class="container mt-4">
         <h1 class="h4 text-center mb-4">Gérer les utilisateurs</h1>
 
+        {# Flash messages #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('warning') %}
+            <div class="alert alert-warning">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('danger') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
 
         <div class="row align-items-start g-3 mb-3">
             {# Filtre #}
@@ -26,6 +36,13 @@
         {# Colonne droite laissée vide pour l’instant (alignement maquette) #}
         <div class="col-lg-6"></div>
     </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="h6 mb-0">Liste des utilisateurs</h2>
+            <a href="{{ path('app_admin_user_add') }}" class="btn btn-sm btn-outline-dark">
+                Ajouter un utilisateur
+            </a>
+        </div>
 
         <table class="table table-sm table-striped table-bordered">
             <thead class="table-light">

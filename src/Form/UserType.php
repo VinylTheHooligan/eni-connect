@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -54,12 +55,29 @@ class UserType extends AbstractType
                 'attr' => ['accept' => 'image/*']
             ])
         ;
+
+        if ($options['include_roles'] ?? false) {
+            $builder->add('mainRole', ChoiceType::class, [
+                'label' => 'Rôle',
+                'choices' => [
+                    'Utilisateur' => 'ROLE_USER',
+                    'Organisateur' => 'ROLE_ORGANIZER',
+                    'Administrateur' => 'ROLE_ADMIN',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'mapped' => false,
+                'data' => $options['default_role'] ?? 'ROLE_USER',
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'include_roles' => false,
+            'default_role' => 'ROLE_USER',
         ]);
     }
 }
