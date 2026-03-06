@@ -7,21 +7,20 @@ use App\Entity\User;
 use App\Repository\OutingRepository;
 use App\Repository\CampusRepository;
 use App\Services\OutingControllerService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/sorties', name: 'outing_')]
 #[IsGranted('ROLE_USER')]
+#[Route('/sorties', name: 'outing_')]
 class OutingController extends AbstractController
 {
     public function __construct(
-        private OutingRepository $outingRepository,
-        private CampusRepository $campusRepository,
-        private OutingControllerService $ocs,
+        private readonly OutingRepository $outingRepository,
+        private readonly CampusRepository $campusRepository,
+        private readonly OutingControllerService $ocs,
     )
     {}
 
@@ -75,7 +74,7 @@ class OutingController extends AbstractController
     public function register(Outing $outing): Response
     {
         $user = $this->getUser();
-        if (!$user) {
+        if (!$user instanceof User) {
             return $this->redirectToRoute('app_login');
         }
 
@@ -89,7 +88,7 @@ class OutingController extends AbstractController
     public function unregister(Outing $outing): Response
     {
         $user = $this->getUser();
-        if (!$user) {
+        if (!$user instanceof User) {
             return $this->redirectToRoute('app_login');
         }
 
