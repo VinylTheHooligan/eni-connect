@@ -18,9 +18,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class OutingController extends AbstractController
 {
     public function __construct(
-        private OutingRepository $outingRepository,
-        private CampusRepository $campusRepository,
-        private OutingControllerService $ocs,
+        private readonly OutingRepository $outingRepository,
+        private readonly CampusRepository $campusRepository,
+        private readonly OutingControllerService $ocs,
     )
     {}
 
