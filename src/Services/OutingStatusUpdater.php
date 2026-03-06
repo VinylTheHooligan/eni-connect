@@ -24,6 +24,7 @@ class OutingStatusUpdater {
         {
             /** @var Outing $outing */
 
+            if ($outing->getStatus() === Outing::ETAT_CREATION) continue;
             if ($outing->getStatus() === Outing::ETAT_HISTORISEE) continue;
 
             $limit = $outing->getRegistrationDeadline();
