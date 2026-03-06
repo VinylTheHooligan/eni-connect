@@ -34,11 +34,7 @@ class AdminController extends AbstractController
         $sort = $request->query->getString('sort', 'lastName'); // par défaut tri par nom
         $order = $request->query->getString('order', 'asc');
 
-        if ($query) {
-            $users = $userRepository->findBySearch($query, $sort, $order);
-        } else {
-            $users = $userRepository->findAll();
-        }
+        $users = $userRepository->findBySearch($query, $sort, $order);
 
         return $this->render('admin/users.html.twig', [
             'users' => $users,
