@@ -8,10 +8,6 @@
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
             <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         {% endblock %}
-
-        {% block javascripts %}
-            <script src="{{ asset('js/app.js') }}" defer></script>
-        {% endblock %}
     </head>
     <body>
         <header>
@@ -23,5 +19,16 @@
         <footer>
             {% include "_footer.html.twig" %}
         </footer>
+
+        {% block javascripts %}
+            <script src="https://unpkg.com/@hotwired/stimulus@3.2.1/dist/stimulus.umd.js"></script>
+            <script>
+                window.Stimulus = Stimulus.Application.start();
+            </script>
+            <script type="module">
+                import placeController from '/js/place_controller.js';
+                Stimulus.register('place', placeController);
+            </script>
+        {% endblock %}
     </body>
 </html>
