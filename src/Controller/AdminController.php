@@ -133,6 +133,34 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/villes/ajouter-inline', name: 'app_admin_city_add_inline', methods: ['POST'])]
+    public function addCityInline(Request $request, EntityManagerInterface $em): Response
+    {
+        if (!$this->isCsrfTokenValid('add_city_inline', $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('app_admin_cities');
+        }
+
+        $name = trim((string) $request->request->get('name', ''));
+        $postalCode = trim((string) $request->request->get('postalCode', ''));
+
+        if ($name === '' || $postalCode === '') {
+            $this->addFlash('warning', 'Veuillez renseigner la ville et le code postal.');
+            return $this->redirectToRoute('app_admin_cities');
+        }
+
+        $city = new City();
+        $city->setName($name);
+        $city->setPostalCode($postalCode);
+
+        $em->persist($city);
+        $em->flush();
+
+        $this->addFlash('success', 'La ville a été ajoutée.');
+
+        return $this->redirectToRoute('app_admin_cities');
+    }
+
     #[Route('/villes/{id}/supprimer', name: 'app_admin_city_delete', methods: ['POST'])]
     public function deleteCity(City $city, Request $request, EntityManagerInterface $em): Response
     {
