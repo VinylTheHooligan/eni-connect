@@ -54,10 +54,12 @@
         </a>
     </div>
 
-    <div class="table-responsive">
+    {# Formulaire en ligne pour ajouter une ville directement dans le tableau #}
+    <form id="city-inline-form" method="post" action="{{ path('app_admin_city_add_inline') }}"></form>
+
+    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
         <table class="table table-sm table-striped table-bordered align-middle">
             <thead class="table-light">
-            <tr>
             <tr>
                 <th style="min-width: 220px;">
                     <a href="?q={{ app.request.get('q') }}&sort=name&order={{ app.request.get('sort') == 'name' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
@@ -79,8 +81,6 @@
                         {% endif %}
                     </a>
                 </th>
-                <th style="min-width: 180px;">Actions</th>
-            </tr>
                 <th style="min-width: 180px;">Actions</th>
             </tr>
             </thead>
@@ -120,6 +120,45 @@
                     <td colspan="3" class="text-center">Aucune ville trouvée.</td>
                 </tr>
             {% endfor %}
+
+            {# Ligne d'ajout direct d'une ville #}
+            <tr class="table-secondary">
+                <td>
+                    <input
+                        form="city-inline-form"
+                        type="text"
+                        name="name"
+                        class="form-control form-control-sm"
+                        placeholder="Nouvelle ville"
+                        aria-label="Nom de la nouvelle ville"
+                    >
+                </td>
+                <td>
+                    <input
+                        form="city-inline-form"
+                        type="text"
+                        name="postalCode"
+                        class="form-control form-control-sm"
+                        placeholder="Code postal"
+                        aria-label="Code postal de la nouvelle ville"
+                    >
+                </td>
+                <td>
+                    <input
+                        form="city-inline-form"
+                        type="hidden"
+                        name="_token"
+                        value="{{ csrf_token('add_city_inline') }}"
+                    >
+                    <button
+                        form="city-inline-form"
+                        type="submit"
+                        class="btn btn-sm btn-outline-primary"
+                    >
+                        Ajouter
+                    </button>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
