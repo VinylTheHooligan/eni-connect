@@ -31,9 +31,11 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $query = $request->query->getString('q');
+        $sort = $request->query->getString('sort', 'lastName'); // par défaut tri par nom
+        $order = $request->query->getString('order', 'asc');
 
         if ($query) {
-            $users = $userRepository->findBySearch($query);
+            $users = $userRepository->findBySearch($query, $sort; $order);
         } else {
             $users = $userRepository->findAll();
         }

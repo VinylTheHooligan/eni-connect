@@ -150,13 +150,7 @@
                                 {% endif %}
                                 {% if isRegistered %}X{% endif %}
                             </td>
-                            <td>
-                                {% if outing.organizer %}
-                                    <a href="{{ path('app_profil_show', {'id': outing.organizer.id}) }}">
-                                        {{ outing.organizer.username ?? outing.organizer.email }}
-                                    </a>
-                                {% endif %}
-                            </td>
+
                             <td>
                                 {% set isOrganizer = app.user and app.user == outing.organizer %}
                                 {% set status = outing.status %}

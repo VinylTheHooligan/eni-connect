@@ -19,9 +19,37 @@
         <table class="table table-sm table-striped table-bordered">
             <thead class="table-light">
             <tr>
-                <th>Pseudo</th>
-                <th>Nom</th>
-                <th>Prénom</th>
+                <th>
+                    <a href="?q={{ app.request.get('q') }}&sort=username&order={{ app.request.get('sort') == 'username' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
+                        Pseudo
+                        {% if app.request.get('sort') == 'username' %}
+                            {{ app.request.get('order') == 'asc' ? '▲' : '▼' }}
+                        {% else %}
+                            ↕
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?q={{ app.request.get('q') }}&sort=lastName&order={{ app.request.get('sort') == 'lastName' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
+                        Nom
+                        {% if app.request.get('sort') == 'lastName' %}
+                            {{ app.request.get('order') == 'asc' ? '▲' : '▼' }}
+                        {% else %}
+                            ↕
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="?q={{ app.request.get('q') }}&sort=lastName&order={{ app.request.get('sort') == 'lastName' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
+                        Nom
+                        {% if app.request.get('sort') == 'lastName' %}
+                            {{ app.request.get('order') == 'asc' ? '▲' : '▼' }}
+                        {% else %}
+                            ↕
+                        {% endif %}
+                    </a>
+                </th>
+                <th><a href="?q={{ app.request.get('q') }}&sort=firstName" class="text-dark">Prénom</a></th>
                 <th>Email</th>
                 <th>Campus</th>
                 <th>Rôles</th>
