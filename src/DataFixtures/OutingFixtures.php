@@ -15,7 +15,6 @@ use Faker\Generator;
 
 class OutingFixtures extends Fixture implements DependentFixtureInterface
 {
-    private array $campusAssigned = [];
     private array $placeAssigned = [];
 
     public function load(ObjectManager $om): void
@@ -47,14 +46,12 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
 
             $outing->setStatus($this->statusCheck($datesTimes, $outing));
 
-            $outing->setOrganizer($this->getReference('organizer' . $i, User::class));
+            $organizer = $this->getReference('organizer' . $i, User::class);
+            
+            $outing->setOrganizer($organizer);
 
-            $outing->setCampus($this->getReference(
-                $this->checkAssigned('campus', FixturesData::getCampusCount(), $this->campusAssigned), Campus::class)
-            );
-            $outing->setPlace($this->getReference(
-                $this->checkAssigned('place', FixturesData::getPlaceCount(), $this->placeAssigned), Place::class)
-            );
+            $outing->setCampus($organizer->getCampus());
+            $this->setPlaceByCampus($organizer, $outing);
 
             $outing->setPublished(true);
 
@@ -64,6 +61,43 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
         }
 
         $om->flush();
+    }
+
+    private function setPlaceByCampus(User $organizer, Outing &$outing): void
+    {
+        $campus = $organizer->getCampus();
+
+        $campusPlaces = [];
+
+        for ($i = 1; $i <= FixturesData::getPlaceCount(); $i++)
+        {
+            /** @var Place $place */
+            $place = $this->getReference('place' . $i, Place::class);
+
+            if ($place->getCampus() === $campus)
+            {
+                $campusPlaces['place' . $i] = $place;
+            }
+        }
+
+        if (empty($campusPlaces)) 
+        {
+            throw new \RuntimeException("Aucune place trouvée pour le campus " . $campus->getName());
+        }
+
+        $available = array_diff_key($campusPlaces, array_flip($this->placeAssigned));
+
+        if (empty($available))
+        {
+            throw new \RuntimeException("Toutes les places du campus " . $campus->getName() . " ont déjà été assignées.");
+        }
+
+        $ref = array_rand($available);
+        $place = $available[$ref];
+
+        $this->placeAssigned[] = $ref;
+
+        $outing->setPlace($place);
     }
 
     private function statusCheck(array $datesTimes, Outing $outing): string
