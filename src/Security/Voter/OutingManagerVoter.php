@@ -55,7 +55,7 @@ final class OutingManagerVoter extends Voter
         $isOwner = $outing->getOrganizer() === $user;
         $isAdmin = in_array('ROLE_ADMIN', $user->getRoles(), true);
 
-        if (!$isOwner && !$isAdmin)    
+        if (!$isOwner && !$isAdmin)
         {
             return false;
         }
@@ -64,7 +64,7 @@ final class OutingManagerVoter extends Voter
         {
             // Edit si la sortie est en création ou ouverte
             self::EDIT => $outing->getStatus() === Outing::ETAT_CREATION
-                && $outing->getStatus() === Outing::ETAT_OUVERTE,
+                || $outing->getStatus() === Outing::ETAT_OUVERTE,
 
             // Publish seulement si en création ET date limite non dépassée
             self::PUBLISH =>
