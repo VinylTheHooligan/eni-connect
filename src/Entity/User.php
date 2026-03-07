@@ -84,7 +84,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'json')]                     ///////// ROLES
     private array $roles = [];
-    
+
     #[ORM\Column (options: ['default' => true])]
     private bool $isActive = true;
 
@@ -108,6 +108,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->outings = new ArrayCollection();
         $this->registrations = new ArrayCollection();
     } //////// ACTIF?
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $profilePicture = null;
+
+    public function getProfilePicture(): ?string
+    {
+        return $this->profilePicture;
+    }
+
+    public function setProfilePicture(?string $profilePicture): static
+    {
+        $this->profilePicture = $profilePicture;
+        return $this;
+    }
 
     public function getId(): ?int
     {
@@ -271,7 +285,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        
+
     }
 
     public function getPassword(): ?string
