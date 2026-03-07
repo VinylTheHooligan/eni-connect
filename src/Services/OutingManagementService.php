@@ -16,14 +16,14 @@ class OutingManagementService
     )
     {}
 
-    public function initializeOuting(User $organizer, bool $isAdmin): Outing
+    public function initializeOuting(User $user, bool $isAdmin): Outing
     {
         $outing = new Outing();
 
         if (!$isAdmin)
         {
-            $outing->setOrganizer($organizer);
-            $outing->setCampus($organizer->getCampus());
+            $outing->setOrganizer($user);
+            $outing->setCampus($user->getCampus());
         }
 
         return $outing;
