@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Entity\Campus;
 use App\Repository\PlaceRepository;
@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class PlaceController extends AbstractController
+final class APIPlaceController extends AbstractController
 {
     #[Route('/places/by-campus/{id}', name: 'places_by_campus')]
     public function byCampus(Campus $campus, PlaceRepository $placeRepository): Response

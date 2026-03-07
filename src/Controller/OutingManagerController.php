@@ -7,7 +7,8 @@ use App\Entity\Registration;
 use App\Entity\User;
 use App\Form\CancelOutingType;
 use App\Form\OutingType;
-use DateTimeImmutable;
+use App\Security\Voter\OutingManagerVoter;
+use App\Services\OutingManagementService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,49 +20,44 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/sorties/gestion', name: 'manage_')]
 final class OutingManagerController extends AbstractController
 {
-    #[Route('/creer', name: 'create', methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $em): Response
-    {
-        $user = $this->getUser();
-        $outing = new Outing();
-        $outing->setOrganizer($user);
-        
-        /** @var User $user **/
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            $outing->setCampus($user->getCampus());
-        }
 
+    public function __construct(
+        private OutingManagementService $oms
+    )
+    {}
+
+    #[Route('/creer', name: 'create', methods: ['GET', 'POST'])]
+    public function create(Request $request): Response
+    {
+
+        $this->denyAccessUnlessGranted(OutingManagerVoter::CREATE);
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $outing = $this->oms->initializeOuting($user, $this->isGranted('ROLE_ADMIN'));
 
         $form = $this->createForm(OutingType::class, $outing);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid())
+            {
             // Par défaut l’état est déjà ETAT_CREATION dans le constructeur
             $action = $request->request->get('action');
 
-            if ($action === 'publish') {
-                $outing->setStatus(Outing::ETAT_OUVERTE);
+            if ($action === 'publish')
+            {
+                $this->oms->publish($outing);
                 $this->addFlash('success', 'La sortie a bien été créée et publiée.');
-            } else {
+            } else
+            {
                 // Par défaut l’état est déjà ETAT_CREATION dans le constructeur
                 $this->addFlash('success', 'La sortie a bien été créée et est en cours de création.');
             }
 
-            $outing->setCampus($user->getCampus());
-            $outing->setOrganizer($user);
+            $registration = $this->oms->autoRegisterOrganizer($outing, $user);
 
-            $now = new DateTimeImmutable();
-
-            $registration = new Registration();
-            $registration->setOuting($outing);
-            $registration->setParticipant($user);
-            $registration->setRegistrationDate($now);
-
-            $em->persist($outing);
-            $em->persist($registration);
-            $em->flush();
-
-            $this->addFlash('success', 'La sortie a bien été créée.');
+            $this->oms->save([$outing, $registration]);
 
             return $this->redirectToRoute('outing_detail', ['id' => $outing->getId()]);
         }
@@ -72,12 +68,9 @@ final class OutingManagerController extends AbstractController
     }
 
     #[Route('/{id}/modifier', name: 'edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
-    public function edit(Outing $outing, Request $request, EntityManagerInterface $em): Response
+    public function edit(Outing $outing, Request $request): Response
     {
-        // seul l'organisateur peut modifier la sortie
-        if ($outing->getOrganizer() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette sortie.');
-        }
+        $this->denyAccessUnlessGranted(OutingManagerVoter::EDIT, $outing);
 
         $form = $this->createForm(OutingType::class, $outing);
         $form->handleRequest($request);
@@ -87,21 +80,23 @@ final class OutingManagerController extends AbstractController
             $action = $request->request->get('action');
 
             if ($action === 'delete') {
-                $em->remove($outing);
-                $em->flush();
+                $this->denyAccessUnlessGranted(OutingManagerVoter::DELETE, $outing);
+                $this->oms->delete($outing);
+                $this->oms->save($outing);
                 $this->addFlash('success', 'La sortie a bien été supprimée.');
                 return $this->redirectToRoute('outing_list');
             }
 
             if ($action === 'publish') {
-                $outing->setStatus(Outing::ETAT_OUVERTE);
-                $outing->setPublished(true);
+                $this->denyAccessUnlessGranted(OutingManagerVoter::PUBLISH, $outing);
+                $this->oms->publish($outing);
                 $this->addFlash('success', 'La sortie a été publiée !');
             } else {
                 $this->addFlash('success', 'La sortie a bien été modifiée.');
             }
 
-            $em->flush();
+            $this->oms->save($outing);
+
             return $this->redirectToRoute('outing_detail', ['id' => $outing->getId()]);
         }
 
@@ -112,21 +107,15 @@ final class OutingManagerController extends AbstractController
     }
 
     #[Route('/{id}/publier', name: 'publish', requirements: ['id' => '\d+'], methods: ['POST','GET'])]
-    public function publish(Outing $outing, EntityManagerInterface $em): Response
+    public function publish(Outing $outing): Response
     {
-        if ($outing->getOrganizer() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas publier cette sortie.');
-        }
+        $this->denyAccessUnlessGranted(OutingManagerVoter::PUBLISH, $outing);
 
-        if ($outing->getStatus() !== Outing::ETAT_CREATION) {
-            $this->addFlash('warning', 'Seules les sorties en cours de création peuvent être publiées.');
-            return $this->redirectToRoute('outing_list');
-        }
-
-        $outing->setStatus(Outing::ETAT_OUVERTE);
-        $em->flush();
+        $this->oms->publish($outing);
+        $this->oms->save($outing);
 
         $this->addFlash('success', 'La sortie a été publiée.');
+
         return $this->redirectToRoute('outing_list');
     }
 
@@ -134,21 +123,17 @@ final class OutingManagerController extends AbstractController
     public function cancel(Outing $outing, Request $request, EntityManagerInterface $em): Response
     {
 
-        if ($outing->getOrganizer() !== $this->getUser())
-        {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette sortie.');
-        }
+        $this->denyAccessUnlessGranted(OutingManagerVoter::CANCEL, $outing);
 
         $form = $this->createForm(CancelOutingType::class, $outing);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid())
         {
+            $this->oms->cancel($outing);
+            $this->oms->save($outing);
 
-            $outing->setStatus(Outing::ETAT_ANNULEE);
             $this->addFlash('success', 'La sortie a bien été annulé !');
-
-            $em->flush();
             return $this->redirectToRoute('outing_list');
         }
 
