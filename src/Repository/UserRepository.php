@@ -35,6 +35,16 @@ class UserRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findOneByIdentifier(string $identifier): ?User
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.email = :id OR u.username = :id')
+            ->setParameter('id', $identifier)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */
