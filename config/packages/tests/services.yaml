@@ -1,0 +1,4 @@
+services:
+    App\EventListener\OutingStatusRequestListener:
+        autoconfigure: false
+        tags: []

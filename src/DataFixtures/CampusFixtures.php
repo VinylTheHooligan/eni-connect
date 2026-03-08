@@ -3,17 +3,22 @@
 namespace App\DataFixtures;
 
 use App\Entity\Campus;
-use App\Services\FixturesDataProvider as FixturesData;
+use App\Services\FixturesDataProvider;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
 class CampusFixtures extends Fixture
 {
+    public function __construct(
+        private FixturesDataProvider $provider,
+    )
+    {}
+
     public function load(ObjectManager $om): void
     {
-        $faker = FixturesData::faker();
+        $faker = $this->provider->faker();
 
-        for ($i = 1; $i <= FixturesData::getCampusCount(); $i++)
+        for ($i = 1; $i <= $this->provider->getCampusCount(); $i++)
         {
             $campus = new Campus();
 
