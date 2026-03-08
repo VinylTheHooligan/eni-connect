@@ -19,7 +19,7 @@
                     <div class="col-md-6">
                         <div class="mb-2">
                             {{ form_label(outingForm.name) }}
-                            {{ form_widget(outingForm.name, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                            {{ form_widget(outingForm.name, {'attr': 'disabledAttr', {'class': 'form-control form-control-sm'}}) }}
                             {{ form_errors(outingForm.name) }}
                         </div>
                         <div class="mb-2">
@@ -48,33 +48,19 @@
                     <div class="col-md-6">
                     <div class="mb-2">
                         {{ form_label(outingForm.campus) }}
-
-                        {% if is_granted('ROLE_ORGANIZER') %}
-                            {# Champ désactivé pour l’affichage #}
-                            {{ form_widget(outingForm.campus, {
-                                attr: {
-                                    class: 'form-select form-select-sm',
-                                    'data-place-target': 'campus',
-                                    'data-action': 'change->place#updatePlaces',
-                                    disabled: true
-                                }
-                            }) }}
-
-                            {# Champ caché pour envoyer la vraie valeur #}
-                            <input type="hidden"
-                                   name="{{ outingForm.campus.vars.full_name }}"
-                                   value="{{ outingForm.campus.vars.value }}">
-                        {% else %}
-                            {# Admin : champ normal #}
-                            {{ form_widget(outingForm.campus, {
-                                attr: {
-                                    class: 'form-select form-select-sm',
-                                    'data-place-target': 'campus',
-                                    'data-action': 'change->place#updatePlaces'
-                                }
-                            }) }}
-                        {% endif %}
-
+                        {# Champ désactivé pour l’affichage #}
+                        {{ form_widget(outingForm.campus, {
+                            attr: {
+                                class: 'form-select form-select-sm',
+                                'data-place-target': 'campus',
+                                'data-action': 'change->place#updatePlaces',
+                                disabled: true
+                            }
+                        }) }}
+                        {# Champ caché pour envoyer la vraie valeur #}
+                        <input type="hidden"
+                               name="{{ outingForm.campus.vars.full_name }}"
+                               value="{{ outingForm.campus.vars.value }}">
                         {{ form_errors(outingForm.campus) }}
                     </div>
                     <div class="mb-2">

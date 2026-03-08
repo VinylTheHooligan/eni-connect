@@ -24,6 +24,9 @@ class OutingManagementService
         {
             $outing->setOrganizer($user);
             $outing->setCampus($user->getCampus());
+        } else
+        {
+            
         }
 
         return $outing;
@@ -50,15 +53,16 @@ class OutingManagementService
         $this->em->remove($outing);
     }
 
-    public function autoRegisterOrganizer(Outing $outing, User $organizer): void
+    public function autoRegisterOrganizer(Outing $outing, User $organizer): Registration
     {
         $registration = new Registration();
         $registration->setOuting($outing);
         $registration->setParticipant($organizer);
         $registration->setRegistrationDate(new DateTimeImmutable());
-
-        $this->em->persist($registration);
+    
+        return $registration;
     }
+
 
     public function save(object|array $objects): void
     {
@@ -69,6 +73,11 @@ class OutingManagementService
 
         foreach ($objects as $object)
         {
+            if ($object === null)
+            {
+                continue;
+            }
+
             $this->em->persist($object);
         }
 
