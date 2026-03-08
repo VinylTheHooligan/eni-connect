@@ -6,7 +6,7 @@ use App\Entity\Campus;
 use App\Entity\Outing;
 use App\Entity\Place;
 use App\Entity\User;
-use App\Services\FixturesDataProvider as FixturesData;
+use App\Services\FixturesDataProvider;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -17,11 +17,16 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
 {
     private array $placeAssigned = [];
 
+    public function __construct(
+        private FixturesDataProvider $provider,
+    )
+    {}
+
     public function load(ObjectManager $om): void
     {
-        $faker = FixturesData::faker();
+        $faker = $this->provider->faker();
 
-        for ($i = 1; $i <= FixturesData::getOrganizerCount(); $i++)
+        for ($i = 1; $i <= $this->provider->getOrganizerCount(); $i++)
         {
             $outing = new Outing();
 
@@ -69,7 +74,7 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
 
         $campusPlaces = [];
 
-        for ($i = 1; $i <= FixturesData::getPlaceCount(); $i++)
+        for ($i = 1; $i <= $this->provider->getPlaceCount(); $i++)
         {
             /** @var Place $place */
             $place = $this->getReference('place' . $i, Place::class);
@@ -123,30 +128,6 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
         }
 
         return Outing::ETAT_TERMINEE;
-    }
-
-    // Entité : nom abstrait, désigne soit les lieux, soit les campus
-    private function checkAssigned(string $entityName, int $entitiesCount, array &$assignedArray): string
-    {
-        $allEntities = [];
-
-        for ($i = 1; $i <= $entitiesCount; $i++)
-        {
-            $allEntities[] = $entityName . $i;
-        }
-
-        $available = array_diff($allEntities, $assignedArray);
-
-        if (empty($available))
-        {
-            throw new \RuntimeException('Tous les entités ont déjà été assignés.');
-        }
-
-        $toAssigned = $available[array_rand($available)];
-
-        $assignedArray[] = $toAssigned;
-
-        return $toAssigned;
     }
 
     private function generateDatesTimes(Generator $faker): array

@@ -7,43 +7,71 @@ use Faker\Generator;
 
 class FixturesDataProvider
 {
-    //// COMPTEUR DE GENERATION : PERMET DE CHOISIR LE NOMBRE D'INSTANCE CREER DANS LES FIXTURES ////
-    private static int $cityCount = 100;
-    private static int $placeCount = 150;
-    private static int $campusCount = 20;
-    private static int $userCount = 200;
-    private static int $organizerCount = 5;
+    private int $cityCount = 100;
+    private int $placeCount = 150;
+    private int $campusCount = 20;
+    private int $userCount = 200;
+    private int $organizerCount = 5;
+
+    private Generator $faker;
 
     public function __construct()
-    {}
-
-    public static function faker(): Generator
     {
-        return Factory::create('fr_FR');
+        $this->faker = Factory::create('fr_FR');
     }
 
-    public static function getCityCount(): int
+    public function faker(): Generator
     {
-        return self::$cityCount;
+        return $this->faker;
     }
 
-    public static function getPlaceCount()
+    public function getCityCount(): int
     {
-        return self::$placeCount;
+        return $this->cityCount;
     }
 
-    public static function getCampusCount()
+    public function setCityCount(int $count): void
     {
-        return self::$campusCount;
+        $this->cityCount = $count;
     }
 
-    public static function getUserCount()
+    public function getPlaceCount(): int
     {
-        return self::$userCount;
+        return $this->placeCount;
     }
 
-    public static function getOrganizerCount()
+    public function setPlaceCount(int $count): void
     {
-        return self::$organizerCount;
+        $this->placeCount = $count;
+    }
+
+    public function getCampusCount(): int
+    {
+        return $this->campusCount;
+    }
+
+    public function setCampusCount(int $count): void
+    {
+        $this->campusCount = $count;
+    }
+
+    public function getUserCount(): int
+    {
+        return $this->userCount;
+    }
+
+    public function setUserCount(int $count): void
+    {
+        $this->userCount = $count;
+    }
+
+    public function getOrganizerCount(): int
+    {
+        return $this->organizerCount;
+    }
+
+    public function setOrganizerCount(int $count): void
+    {
+        $this->organizerCount = $count;
     }
 }

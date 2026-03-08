@@ -4,7 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Campus;
 use App\Entity\User;
-use App\Services\FixturesDataProvider as FixturesData;
+use App\Services\FixturesDataProvider;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -15,17 +15,18 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 {
 
     public function __construct(
-        private readonly UserPasswordHasherInterface $hasher
+        private readonly UserPasswordHasherInterface $hasher,
+        private FixturesDataProvider $provider,
     )
     {}
 
     public function load(ObjectManager $om): void
     {
-        $faker = FixturesData::faker();
+        $faker = $this->provider->faker();
         
         $this->adminCreation($faker, $om);
         $this->organizerCreation($faker, $om);
-        $this->userCreation(FixturesData::getUserCount(), $faker, $om);
+        $this->userCreation($this->provider->getUserCount(), $faker, $om);
 
         $om->flush();
     }
@@ -51,7 +52,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
                 $faker->randomElement(['06', '07']) . $faker->numerify('########')
             );
 
-            $user->setCampus($this->getReference('campus' . rand(1, FixturesData::getCampusCount()), Campus::class));
+            $user->setCampus($this->getReference('campus' . rand(1, $this->provider->getCampusCount()), Campus::class));
 
             $om->persist($user);
 
@@ -61,7 +62,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
     private function organizerCreation(Generator $faker, ObjectManager $om)
     {
-        for ($i = 1; $i <= FixturesData::getOrganizerCount(); $i++)
+        for ($i = 1; $i <= $this->provider->getOrganizerCount(); $i++)
         {
             $organizer = new User();
 

@@ -5,7 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Outing;
 use App\Entity\Registration;
 use App\Entity\User;
-use App\Services\FixturesDataProvider as FixturesData;
+use App\Services\FixturesDataProvider;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -16,12 +16,17 @@ class RegistrationFixtures extends Fixture implements DependentFixtureInterface
 {
     private array $userRegistered = [];
 
+    public function __construct(
+        private FixturesDataProvider $provider,
+    )
+    {}
+
     public function load(ObjectManager $om): void
     {
-        $faker = FixturesData::faker();
+        $faker = $this->provider->faker();
 
         // OrganizerCount est également le nombre de sorties, car 1 organizer par sortie
-        for ($i = 1; $i <= FixturesData::getOrganizerCount(); $i++)
+        for ($i = 1; $i <= $this->provider->getOrganizerCount(); $i++)
         {
             $outing = $this->getReference('outing' . $i, Outing::class);
             $organizer = $this->getReference('organizer' . $i, User::class);
@@ -44,7 +49,7 @@ class RegistrationFixtures extends Fixture implements DependentFixtureInterface
 
     private function createUserRegistrations(Generator $faker, Outing $outing, int $nbParticipant, ObjectManager $om)
     {
-        $userCount = FixturesData::getUserCount();
+        $userCount = $this->provider->getUserCount();
 
         $alreayRegistered = [];
 
