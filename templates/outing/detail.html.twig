@@ -115,20 +115,29 @@
                 </tbody>
             </table>
         </div>
-        <div class="mt-3">
-            <a href="{{ path('outing_list') }}" class="btn btn-outline-secondary px-4">
-                Retour à la liste
-            </a>
-        </div>
 
-        {# Bouton Modifier visible uniquement pour l'organisateur #}
-        {% if app.user == outing.organizer %}
+        <div class="d-flex gap-3">
             <div class="mt-3">
-                <a href="{{ path('manage_edit', {'id': outing.id}) }}" class="btn btn-outline-dark">
-                    Modifier
+                <a href="{{ path('outing_list') }}" class="btn btn-outline-secondary px-4">
+                    Retour à la liste
                 </a>
             </div>
-        {% endif %}
+            {# Bouton Modifier visible uniquement pour l'organisateur #}
+            {% if app.user == outing.organizer %}
+                <div class="mt-3">
+                    <a href="{{ path('manage_edit', {'id': outing.id}) }}" class="btn btn-outline-dark">
+                        Modifier
+                    </a>
+                </div>
+            {% endif %}
+            {% if is_granted('CANCEL', outing) %}
+                <div class="mt-3">
+                    <a href="{{ path('manage_cancel', {'id': outing.id}) }}" class="btn btn-outline-danger">
+                        Annuler la sortie
+                    </a>
+                </div>
+            {% endif %}
+        </div>
 
     </div>
 {% endblock %}

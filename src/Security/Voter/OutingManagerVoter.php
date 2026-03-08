@@ -22,7 +22,6 @@ final class OutingManagerVoter extends Voter
             return true;
         }
 
-
         return in_array($attribute, [
             self::EDIT,
             self::PUBLISH,
@@ -45,8 +44,7 @@ final class OutingManagerVoter extends Voter
         // Organisateur & admin peuvent créer des sorties
         if ($attribute === self::CREATE)
         {
-            return in_array('ROLE_ORGANIZER', $user->getRoles(), true)
-                || in_array('ROLE_ADMIN', $user->getRoles(), true);
+            return in_array('ROLE_ORGANIZER', $user->getRoles(), true);
         }
 
         /** @var Outing $outing */
@@ -54,6 +52,12 @@ final class OutingManagerVoter extends Voter
 
         $isOwner = $outing->getOrganizer() === $user;
         $isAdmin = in_array('ROLE_ADMIN', $user->getRoles(), true);
+
+        // L'admin ne peut que cancel l'outing à partir de là
+        if ($isAdmin && $attribute !== self::CANCEL)
+        {
+            return false;
+        }
 
         if (!$isOwner && !$isAdmin)
         {
