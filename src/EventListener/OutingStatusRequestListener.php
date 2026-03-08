@@ -18,7 +18,6 @@ final class OutingStatusRequestListener
     )
     {}
 
-    #[AsEventListener(event: KernelEvents::REQUEST)]
     public function onRequestEvent(RequestEvent $event): void
     {
         if (!$event->isMainRequest())
