@@ -39,9 +39,14 @@
 
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h2 class="h6 mb-0">Liste des utilisateurs</h2>
-            <a href="{{ path('app_admin_user_add') }}" class="btn btn-sm btn-outline-dark">
-                Ajouter un utilisateur
-            </a>
+            <div class="d-flex gap-2">
+                <a href="{{ path('app_admin_user_import') }}" class="btn btn-sm btn-outline-secondary">
+                    Importer un fichier CSV
+                </a>
+                <a href="{{ path('app_admin_user_add') }}" class="btn btn-sm btn-outline-dark">
+                    Ajouter un utilisateur
+                </a>
+            </div>
         </div>
 
         <table class="table table-sm table-striped table-bordered">
