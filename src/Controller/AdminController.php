@@ -9,6 +9,7 @@ use App\Entity\City;
 use App\Repository\CityRepository;
 use App\Form\CityType;
 use App\Form\UserType;
+use App\Form\UserImportType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -49,9 +50,8 @@ class AdminController extends AbstractController
     public function addUser(
         Request $request,
         EntityManagerInterface $em,
-        UserPasswordHasherInterface $passwordHasher
-    ): Response {
-
+        UserPasswordHasherInterface $passwordHasher): Response
+        {
         $user = new User();
         $user->setRoles(['ROLE_USER']);
         $user->setIsActive(true);
@@ -62,14 +62,16 @@ class AdminController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($user->getPlainPassword()) {
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            if ($user->getPlainPassword())
+            {
                 $hashedPassword = $passwordHasher->hashPassword($user, $user->getPlainPassword());
                 $user->setPasswordHash($hashedPassword);
                 $user->setPlainPassword(null);
             }
 
-            // 1 seul rôle stocké, l'héritage est géré par security.yaml
+            // 1 seul rôle est stocké, l'héritage est géré par security.yaml
             $selectedRole = $form->get('mainRole')->getData() ?? 'ROLE_USER';
             $user->setRoles([$selectedRole]);
 
@@ -97,6 +99,78 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('app_admin_users');
     }
 
+    #[Route('/utilisateurs/import', name: 'app_admin_user_import', methods: ['GET', 'POST'])]
+    public function importUsers(Request $request): Response
+    {
+        $form = $this->createForm(UserImportType::class);
+        $form->handleRequest($request);
+
+        $rows = null;
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $file = $form->get('file')->getData();
+            $hasHeader = (bool) $form->get('hasHeader')->getData();
+
+            if ($file)
+            {
+                $path = $file->getRealPath();
+                $handle = fopen($path, 'r');
+
+                if ($handle === false)
+                {
+                    $this->addFlash('danger', 'Impossible de lire le fichier CSV.');
+                } else {
+                    // 1) lecture d’une première ligne brute pour détecter le séparateur
+                    $firstLine = fgets($handle);
+                    $commaCount = substr_count($firstLine, ',');
+                    $semicolonCount = substr_count($firstLine, ';');
+                    $delimiter = $semicolonCount > $commaCount ? ';' : ',';
+
+                    // Retour au début du fichier pour lire proprement avec fgetcsv
+                    rewind($handle);
+
+                    if ($hasHeader)
+                    {
+                        // on saute la ligne d’en‑tête
+                        fgetcsv($handle, 0, $delimiter);
+                    }
+
+                    $rows = [];
+
+                    // La boucle Tant que pour : email, username, firstName, lastName, phone, campus, role
+                    while (($data = fgetcsv($handle, 0, $delimiter)) !== false)
+                    {
+                        // Verifier si on a bien 7 colonnes
+                        $data = array_pad($data, 7, null);
+
+                        $rows[] = [
+                            'email'     => $data[0],
+                            'username'  => $data[1],
+                            'firstName' => $data[2],
+                            'lastName'  => $data[3],
+                            'phone'     => $data[4],
+                            'campus'    => $data[5],
+                            'role'      => $data[6],
+                        ];
+                    }
+
+                    fclose($handle);
+
+                    if (empty($rows))
+                    {
+                        $this->addFlash('warning', 'Le fichier ne contient aucune ligne de données.');
+                    }
+                }
+            }
+        }
+
+        return $this->render('admin/user_import.html.twig', [
+            'form' => $form,
+            'rows' => $rows,
+        ]);
+    }
+
     #[Route('/villes', name: 'app_admin_cities', methods: ['GET'])]
     public function cities(CityRepository $cityRepository, Request $request): Response
     {
@@ -118,7 +192,8 @@ class AdminController extends AbstractController
         $form = $this->createForm(CityType::class, $city);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid())
+        {
             $em->persist($city);
             $em->flush();
 
@@ -136,7 +211,8 @@ class AdminController extends AbstractController
     #[Route('/villes/ajouter-inline', name: 'app_admin_city_add_inline', methods: ['POST'])]
     public function addCityInline(Request $request, EntityManagerInterface $em): Response
     {
-        if (!$this->isCsrfTokenValid('add_city_inline', $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('add_city_inline', $request->request->get('_token')))
+        {
             $this->addFlash('danger', 'Jeton CSRF invalide.');
             return $this->redirectToRoute('app_admin_cities');
         }
@@ -144,7 +220,8 @@ class AdminController extends AbstractController
         $name = trim((string) $request->request->get('name', ''));
         $postalCode = trim((string) $request->request->get('postalCode', ''));
 
-        if ($name === '' || $postalCode === '') {
+        if ($name === '' || $postalCode === '')
+        {
             $this->addFlash('warning', 'Veuillez renseigner la ville et le code postal.');
             return $this->redirectToRoute('app_admin_cities');
         }
@@ -164,16 +241,19 @@ class AdminController extends AbstractController
     #[Route('/villes/{id}/supprimer', name: 'app_admin_city_delete', methods: ['POST'])]
     public function deleteCity(City $city, Request $request, EntityManagerInterface $em): Response
     {
-        if (!$this->isCsrfTokenValid('delete_city_' . $city->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete_city_' . $city->getId(), $request->request->get('_token')))
+        {
             $this->addFlash('danger', 'Jeton CSRF invalide.');
             return $this->redirectToRoute('app_admin_cities');
         }
 
-        try {
+        try
+        {
             $em->remove($city);
             $em->flush();
             $this->addFlash('success', 'La ville a été supprimée.');
-        } catch (\Throwable $e) {
+        } catch (\Throwable $e)
+        {
             // Par exemple si des lieux sont encore liés à cette ville
             $this->addFlash('danger', 'Impossible de supprimer cette ville car elle est utilisée.');
         }
@@ -187,7 +267,8 @@ class AdminController extends AbstractController
         $form = $this->createForm(CityType::class, $city);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid())
+        {
             $em->flush();
 
             $this->addFlash('success', 'La ville a été modifiée.');
