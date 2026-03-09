@@ -87,4 +87,31 @@ class OutingRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findForApi(?string $etat = null, ?string $date = null): array
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->leftJoin('o.campus', 'c')->addSelect('c')
+            ->leftJoin('o.organizer', 'u')->addSelect('u')
+            ->leftJoin('o.registrations', 'r')->addSelect('r')
+            // Exclure les sorties en cours de création et terminées
+            ->andWhere('o.status != :creation')
+            ->andWhere('o.status != :terminee')
+            ->setParameter('creation', Outing::ETAT_CREATION)
+            ->setParameter('terminee', Outing::ETAT_TERMINEE);
+
+        // Filtre optionnel par état
+        if ($etat) {
+            $qb->andWhere('o.status = :etat')
+                ->setParameter('etat', $etat);
+        }
+
+        // Filtre optionnel par date (sorties à partir de cette date)
+        if ($date) {
+            $qb->andWhere('o.startDateTime >= :date')
+                ->setParameter('date', new \DateTimeImmutable($date));
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }
