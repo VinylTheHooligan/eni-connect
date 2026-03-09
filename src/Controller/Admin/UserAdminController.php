@@ -33,9 +33,8 @@ class UserAdminController extends AbstractController
     #[Route('/ajouter', name: 'app_admin_user_add', methods: ['GET', 'POST'])]
     public function addUser(Request $request, UserManager $um): Response {
 
-        $user = new User()
-            ->setRoles(['ROLE_USER'])
-            ->setIsActive(true);
+        $user = new User();
+        $user->setRoles(['ROLE_USER'])->setIsActive(true);
 
         $form = $this->createForm(UserType::class, $user, [
             'include_roles' => true,

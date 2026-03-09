@@ -65,9 +65,8 @@ class CityAdminController extends AbstractController
             return $this->redirectToRoute('app_admin_cities');
         }
 
-        $city = new City()
-            ->setName($name)
-            ->setPostalCode($postalCode);
+        $city = new City();
+        $city->setName($name)->setPostalCode($postalCode);
 
         $cm->save($city);
 
