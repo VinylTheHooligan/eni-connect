@@ -6,3 +6,5 @@
  */
 import './styles/app.css';
 import 'bootstrap';
+import '@symfony/ux-leaflet-map';
+import 'leaflet/dist/leaflet.css';

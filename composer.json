@@ -35,10 +35,11 @@
         "symfony/runtime": "7.4.*",
         "symfony/security-bundle": "7.4.*",
         "symfony/serializer": "7.4.*",
-        "symfony/stimulus-bundle": "^2.32",
+        "symfony/stimulus-bundle": "*",
         "symfony/string": "7.4.*",
         "symfony/translation": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
+        "symfony/ux-leaflet-map": "^2.32",
         "symfony/ux-turbo": "^2.32",
         "symfony/validator": "7.4.*",
         "symfony/web-link": "7.4.*",
@@ -94,7 +95,7 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
+            "allow-contrib": "false",
             "require": "7.4.*"
         }
     },
