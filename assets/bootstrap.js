@@ -1,3 +1,7 @@
-import { startStimulusApp } from '@symfony/stimulus-bundle';
+import { Application } from '@hotwired/stimulus';
+import PlaceController from './controllers/place_controller.js';
 
-export const app = startStimulusApp();
+export const application = Application.start();
+
+// Registre des controlleurs
+application.register('place', PlaceController);

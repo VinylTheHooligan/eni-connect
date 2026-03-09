@@ -1,4 +1,6 @@
-export default class extends Controller {
+import { Controller } from '@hotwired/stimulus';
+
+export default class PlaceController extends Controller {
     static targets = [
         'campus', 'place', 'city',
         'street', 'postalCode', 'latitude', 'longitude'
