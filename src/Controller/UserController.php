@@ -15,7 +15,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[IsGranted('ROLE_USER')]
 final class UserController extends AbstractController
 {
-    // Tâche 3 - Gérer son profil
+    // Gérer son profil
     #[Route('/profil', name: 'app_profil')]
     public function edit(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
     {
@@ -26,18 +26,28 @@ final class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+             // Gestion du mot de passe
             if ($user->getPlainPassword()) {
                 $hashedPassword = $passwordHasher->hashPassword($user, $user->getPlainPassword());
                 $user->setPasswordHash($hashedPassword);
                 $user->setPlainPassword(null);
             }
 
+            // Gestion de la photo de profil
+            $profilePictureFile = $form->get('profilePictureFile')->getData();
+            if ($profilePictureFile) {
+                $newFilename = uniqid() . '.' . $profilePictureFile->guessExtension();
+                $profilePictureFile->move(
+                    $this->getParameter('profile_pictures_directory'),
+                    $newFilename
+                );
+                $user->setProfilePicture($newFilename);
+            }
+
             $em->persist($user);
             $em->flush();
             $this->addFlash('success', 'Profil mis à jour !');
 
-            // Redirige vers le show après sauvegarde
             return $this->redirectToRoute('app_profil_show', ['id' => $user->getId()]);
         }
 
@@ -46,7 +56,7 @@ final class UserController extends AbstractController
         ]);
     }
 
-    // Tâche 6 - Afficher le profil d'un participant
+    // Afficher le profil d'un participant
     #[Route('/profil/{id}', name: 'app_profil_show')]
     public function showProfil(User $user): Response
     {

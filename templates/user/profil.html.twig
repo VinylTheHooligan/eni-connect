@@ -16,10 +16,17 @@
 
             {# Colonne gauche - Photo placeholder (itération 2) #}
             <div class="col-md-2 text-center">
-                <img src="{{ asset('images/avatar-placeholder.png') }}"
-                     alt="Photo de profil"
-                     class="img-thumbnail"
-                     style="max-width: 130px;">
+                {% if app.user.profilePicture %}
+                    <img src="{{ asset('uploads/profile_pictures/' ~ app.user.profilePicture) }}"
+                         alt="Photo de profil"
+                         class="img-thumbnail"
+                         style="max-width: 130px;">
+                {% else %}
+                    <img src="{{ asset('images/icon-student.png') }}"
+                         alt="Photo de profil"
+                         class="img-thumbnail"
+                         style="max-width: 130px;">
+                {% endif %}
             </div>
 
             {# Colonne centre - Formulaire #}
