@@ -8,7 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_ORGANIZER')]
 final class APIPlaceController extends AbstractController
 {
     #[Route('/places/by-campus/{id}', name: 'places_by_campus')]
@@ -23,7 +25,7 @@ final class APIPlaceController extends AbstractController
             'street' => $p->getStreet(),
             'postalCode' => $p->getCity()->getPostalCode(),
             'latitude' => $p->getLatitude(),
-            'longitude' => $p->getLongitude(), 
+            'longitude' => $p->getLongitude(),
         ], $places);
 
         return new JsonResponse($data);
