@@ -5,7 +5,11 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use App\Form\UserImportType;
 use App\Form\UserType;
+use App\Repository\UserRepository;
+use App\Repository\CampusRepository;
 use App\Services\Admin\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,7 +41,7 @@ class UserAdminController extends AbstractController
         $user = new User();
         $user->setRoles(['ROLE_USER'])->setIsActive(true);
 
-        $form = $this->createForm(UserType::class, $user, [ 
+        $form = $this->createForm(UserType::class, $user, [
             'include_roles' => true,
             'default_role' => 'ROLE_USER',
         ]);
@@ -139,6 +143,101 @@ class UserAdminController extends AbstractController
             'form' => $form->createView(),
             'rows' => $rows,
         ]);
+    }
+
+    #[Route('/utilisateurs/import/confirmer', name: 'app_admin_user_import_confirm', methods: ['POST'])]
+    public function confirmImportUsers(
+        Request $request,
+        UserRepository $userRepository,
+        CampusRepository $campusRepository,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
+        $session = $request->getSession();
+        /** @var array|null $rows */
+        $rows = $session->get('user_import_rows');
+        if (!$rows || !is_array($rows)) {
+            $this->addFlash('warning', 'Aucune donnée d\'import en session. Veuillez recharger le fichier CSV.');
+            return $this->redirectToRoute('app_admin_user_import');
+        }
+        // Case à cocher "remplir les champs vides avec des valeurs par défaut"
+        $fillDefaults = (bool) $request->request->get('fill_defaults', false);
+        $created = 0;
+        $skipped = 0;
+        foreach ($rows as $row) {
+            $email     = $row['email']     ?? null;
+            $username  = $row['username']  ?? null;
+            $firstName = $row['firstName'] ?? null;
+            $lastName  = $row['lastName']  ?? null;
+            $phone     = $row['phone']     ?? null;
+            $campusName = $row['campus']   ?? null;
+            $role      = $row['role']      ?? null;
+            if ($fillDefaults) {
+                if (!$email) {
+                    $email = 'a.renseigner@arenseigner.com';
+                }
+                if (!$username) {
+                    $username = 'a.renseigner';
+                }
+                if (!$firstName) {
+                    $firstName = 'A renseigner';
+                }
+                if (!$lastName) {
+                    $lastName = 'arenseigner';
+                }
+                if (!$role) {
+                    $role = 'ROLE_USER';
+                }
+            }
+            // Champs vraiment obligatoires même après défauts
+            if (!$email || !$username || !$firstName || !$lastName) {
+                $skipped++;
+                continue;
+            }
+            // Email déjà utilisé ?
+            if ($userRepository->findOneBy(['email' => $email])) {
+                $skipped++;
+                continue;
+            }
+            if ($userRepository->findOneBy(['username' => $username])) {
+                $skipped++;
+                continue;
+            }
+            // Campus
+            $campus = null;
+            if ($campusName) {
+                $campus = $campusRepository->findOneBy(['name' => $campusName]);
+                if (!$campus) {
+                    // campus inconnu : on ignore la ligne
+                    $skipped++;
+                    continue;
+                }
+            }
+            $user = new User();
+            $user->setEmail($email);
+            $user->setUsername($username);
+            $user->setFirstName($firstName);
+            $user->setLastName($lastName);
+            $user->setPhoneNumber($phone);
+            $user->setIsActive(true);
+            if ($campus) {
+                $user->setCampus($campus);
+            }
+            // Rôle avec défaut ROLE_USER si vide
+            $mainRole = $role ?: 'ROLE_USER';
+            $user->setRoles([$mainRole]);
+            // Mot de passe par défaut (à améliorer plus tard)
+            $plainPassword = 'Azerty123!';
+            $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+            $user->setPasswordHash($hashedPassword);
+            $em->persist($user);
+            $created++;
+        }
+        $em->flush();
+        // On nettoie la session pour éviter de réutiliser des données vieilles
+        $session->remove('user_import_rows');
+        $this->addFlash('success', sprintf('%d utilisateurs créés, %d lignes ignorées.', $created, $skipped));
+        return $this->redirectToRoute('app_admin_users');
     }
 
 }
