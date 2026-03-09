@@ -1,6 +1,6 @@
-import { Controller } from "https://unpkg.com/@hotwired/stimulus@3.2.1/dist/stimulus.js";
+import { Controller } from '@hotwired/stimulus';
 
-export default class extends Controller {
+export default class PlaceController extends Controller {
     static targets = [
         'campus', 'place', 'city',
         'street', 'postalCode', 'latitude', 'longitude'
