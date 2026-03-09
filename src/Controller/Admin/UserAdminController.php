@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use App\Form\UserImportType;
 use App\Form\UserType;
 use App\Services\Admin\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +37,7 @@ class UserAdminController extends AbstractController
         $user = new User();
         $user->setRoles(['ROLE_USER'])->setIsActive(true);
 
-        $form = $this->createForm(UserType::class, $user, [
+        $form = $this->createForm(UserType::class, $user, [ 
             'include_roles' => true,
             'default_role' => 'ROLE_USER',
         ]);
@@ -67,4 +68,77 @@ class UserAdminController extends AbstractController
         $this->addFlash('success', 'Statut de l\'utilisateur mis à jour.');
         return $this->redirectToRoute('app_admin_users');
     }
+
+    #[Route('/utilisateurs/import', name: 'app_admin_user_import', methods: ['GET', 'POST'])]
+    public function importUsers(Request $request): Response
+    {
+        $form = $this->createForm(UserImportType::class);
+        $form->handleRequest($request);
+
+        $rows = null;
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $file = $form->get('file')->getData();
+            $hasHeader = (bool) $form->get('hasHeader')->getData();
+
+            if ($file)
+            {
+                $path = $file->getRealPath();
+                $handle = fopen($path, 'r');
+
+                if ($handle === false)
+                {
+                    $this->addFlash('danger', 'Impossible de lire le fichier CSV.');
+                } else {
+                    // 1) lecture d’une première ligne brute pour détecter le séparateur
+                    $firstLine = fgets($handle);
+                    $commaCount = substr_count($firstLine, ',');
+                    $semicolonCount = substr_count($firstLine, ';');
+                    $delimiter = $semicolonCount > $commaCount ? ';' : ',';
+
+                    // Retour au début du fichier pour lire proprement avec fgetcsv
+                    rewind($handle);
+
+                    if ($hasHeader)
+                    {
+                        // on saute la ligne d’en‑tête
+                        fgetcsv($handle, 0, $delimiter);
+                    }
+
+                    $rows = [];
+
+                    // La boucle Tant que pour : email, username, firstName, lastName, phone, campus, role
+                    while (($data = fgetcsv($handle, 0, $delimiter)) !== false)
+                    {
+                        // Verifier si on a bien 7 colonnes
+                        $data = array_pad($data, 7, null);
+
+                        $rows[] = [
+                            'email'     => $data[0],
+                            'username'  => $data[1],
+                            'firstName' => $data[2],
+                            'lastName'  => $data[3],
+                            'phone'     => $data[4],
+                            'campus'    => $data[5],
+                            'role'      => $data[6],
+                        ];
+                    }
+
+                    fclose($handle);
+
+                    if (empty($rows))
+                    {
+                        $this->addFlash('warning', 'Le fichier ne contient aucune ligne de données.');
+                    }
+                }
+            }
+        }
+
+        return $this->render('admin/user_import.html.twig', [
+            'form' => $form->createView(),
+            'rows' => $rows,
+        ]);
+    }
+
 }
