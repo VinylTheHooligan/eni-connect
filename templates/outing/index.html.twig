@@ -85,7 +85,6 @@
                                     </div>
                                 </div>
                             </fieldset>
-
                             <fieldset class="col-lg-4 border-0">
                                 <legend class="visually-hidden">Options de filtre</legend>
                                 <div class="d-flex flex-column gap-2">
@@ -168,7 +167,7 @@
                                     {% if not isOrganizer %}
                                         {% if status == 'ouverte' %}
                                             {% if isRegistered %}
-                                                 <a href="{{ path('outing_unregister', {'id': outing.id}) }}" class="link-primary">Se désister</a>
+                                                 <a href="{{ path('outing_unregister', {'id': outing.id}) }}" class="btn btn-sm btn-outline-light">Se désister</a>
                                             {% else %}
                                                  <a href="{{ path('outing_register', {'id': outing.id}) }}" class="btn btn-sm btn-outline-success">S'inscrire</a>
                                             {% endif %}
@@ -177,12 +176,12 @@
 
                                     {% if isOrganizer %}
                                         {% if status == 'creation' %}
-                                            | <a href="{{ path('manage_edit', {'id': outing.id}) }}" class="link-primary">Modifier</a>
-                                            | <a href="{{ path('manage_publish', {'id': outing.id}) }}" class="link-primary">Publier</a>
-                                            | <a href="{{ path('manage_edit', {'id': outing.id}) }}" class="link-primary">Supprimer</a>
+                                            <a href="{{ path('manage_edit', {'id': outing.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                                            <a href="{{ path('manage_publish', {'id': outing.id}) }}" class="btn btn-sm btn-outline-success">Publier</a>
+                                            <a href="{{ path('manage_edit', {'id': outing.id}) }}" class="btn btn-sm btn btn-outline-danger">Supprimer</a>
                                         {% endif %}
                                         {% if status == 'ouverte' %}
-                                            | <a href="{{ path('manage_cancel', {'id': outing.id}) }}" class="link-primary">Annuler</a>
+                                            <a href="{{ path('manage_cancel', {'id': outing.id}) }}" class="btn btn-sm btn-outline-danger">Annuler</a>
                                         {% endif %}
                                     {% endif %}
                                 {% endif %}
