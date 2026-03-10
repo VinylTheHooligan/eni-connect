@@ -41,35 +41,72 @@ class UserAdminController extends AbstractController
         UserRepository $userRepository,
         EntityManagerInterface $em
     ): Response {
-        if (!$this->isCsrfTokenValid('user_bulk_action', $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('user_bulk_action', $request->request->get('_token')))
+        {
             $this->addFlash('danger', 'Jeton CSRF invalide pour l’action groupée.');
             return $this->redirectToRoute('app_admin_users');
         }
 
         $ids = $request->request->all('user_ids');
-        if (!is_array($ids) || empty($ids)) {
+        if (empty($ids))
+        {
             $this->addFlash('warning', 'Aucun utilisateur sélectionné.');
             return $this->redirectToRoute('app_admin_users');
         }
 
         $users = $userRepository->findBy(['id' => $ids]);
-        if (empty($users)) {
+        if (empty($users))
+        {
             $this->addFlash('warning', 'Aucun utilisateur trouvé pour cette sélection.');
             return $this->redirectToRoute('app_admin_users');
         }
 
-        if ($request->request->has('bulk_deactivate')) {
+        if ($request->request->has('bulk_deactivate'))
+        {
             foreach ($users as $user) {
                 $user->setIsActive(false);
             }
             $em->flush();
             $this->addFlash('success', sprintf('%d utilisateur(s) mis inactif.', count($users)));
         } elseif ($request->request->has('bulk_delete')) {
-            foreach ($users as $user) {
+
+            $deleted = 0;
+            $skipped = 0;
+
+            foreach ($users as $user)
+            {
+                // Verifier si l'utilisateur présent dans des sorties ? (organisateur ou le participant)
+                $hasOutings       = !$user->getOutings()->isEmpty();
+                $hasRegistrations = !$user->getRegistrations()->isEmpty();
+
+                if ($hasOutings || $hasRegistrations)
+                {
+                    $skipped++;
+                    $this->addFlash(
+                        'warning',
+                        sprintf(
+                            'Impossible de supprimer %s : l’utilisateur est encore lié à au moins une sortie.',
+                            $user->getUsername()
+                        )
+                    );
+                    continue;
+                }
+
                 $em->remove($user);
+                $deleted++;
             }
-            $em->flush();
-            $this->addFlash('success', sprintf('%d utilisateur(s) supprimé(s).', count($users)));
+
+            if ($deleted > 0) {
+                $em->flush();
+                $this->addFlash('success', sprintf('%d utilisateur(s) supprimé(s).', $deleted));
+            }
+            if ($skipped > 0) {
+                $this->addFlash(
+                    'info',
+                    sprintf('%d utilisateur(s) n’ont pas été supprimés car présents dans des sorties.', $skipped)
+                );
+            }
+
         } else {
             $this->addFlash('warning', 'Aucune action groupée valide sélectionnée.');
         }
@@ -196,10 +233,10 @@ class UserAdminController extends AbstractController
         UserPasswordHasherInterface $passwordHasher
     ): Response {
 
-        // Données saisies / corrigées dans le tableau de prévisualisation
+        // Données saisies manuellement par l'admin dans le tableau de prévisualisation pour les champs manquants
         $rows = $request->request->all('rows');
 
-        if (!$rows || !is_array($rows))
+        if (empty($rows))
         {
             $this->addFlash('warning', 'Aucune donnée d\'import reçue. Veuillez recharger le fichier CSV.');
             return $this->redirectToRoute('app_admin_user_import');
@@ -229,10 +266,10 @@ class UserAdminController extends AbstractController
                     $username = 'a.renseigner';
                 }
                 if (!$firstName) {
-                    $firstName = 'A renseigner';
+                    $firstName = 'A_renseigner';
                 }
                 if (!$lastName) {
-                    $lastName = 'arenseigner';
+                    $lastName = 'A_renseigner';
                 }
                 if (!$role) {
                     $role = 'ROLE_USER';
@@ -296,5 +333,4 @@ class UserAdminController extends AbstractController
         $this->addFlash('success', sprintf('%d utilisateurs créés, %d lignes ignorées.', $created, $skipped));
         return $this->redirectToRoute('app_admin_users');
     }
-
 }
