@@ -37,8 +37,8 @@
             </a>
         </div>
         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-            <table class="table table-sm table-striped table-bordered">
-                <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+            <table class="table table-sm table-striped table-bordered w-100">
+                <thead class="table-light">
                 <tr>
                     <th style="width: 80%;">
                         <a href="?q={{ app.request.get('q') }}&sort=name&order={{ app.request.get('sort') == 'name' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
@@ -58,13 +58,13 @@
                     <tr>
                         <td>{{ campus.name }}</td>
                         <td>
-                            <a href="{{ path('app_admin_campus_edit', {'id': campus.id}) }}" class="link-primary">Modifier</a>
-                            <span class="mx-1">|</span>
+                            <a href="{{ path('app_admin_campus_edit', {'id': campus.id}) }}" class="btn btn-sm btn-outline-dark">Modifier</a>
+                            <span class="mx-1"></span>
                             <form method="post" action="{{ path('app_admin_campus_delete', {'id': campus.id}) }}"
                                   class="d-inline"
                                   onsubmit="return confirm('Confirmer la suppression du campus ?');">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete_campus_' ~ campus.id) }}">
-                                <button type="submit" class="btn btn-link link-primary p-0 align-baseline text-decoration-none">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
                                     Supprimer
                                 </button>
                             </form>

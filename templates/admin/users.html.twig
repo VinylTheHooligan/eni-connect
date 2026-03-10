@@ -49,10 +49,10 @@
             </div>
         </div>
         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-            <table class="table table-sm table-striped table-bordered">
-                <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+            <table class="table table-sm table-striped table-bordered w-100">
+                <thead class="table-light">
                 <tr>
-                    <th>
+                    <th style="width: 80%;">
                         <a href="?q={{ app.request.get('q') }}&sort=username&order={{ app.request.get('sort') == 'username' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
                             Pseudo
                             {% if app.request.get('sort') == 'username' %}

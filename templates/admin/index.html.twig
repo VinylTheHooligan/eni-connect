@@ -3,33 +3,39 @@
 {% block title %}Administration - Sortir.com{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
+    <div class="container mt-5">
 
-    <h1 class="h4 text-center mb-4">Page d'administration</h1>
+        <h1 class="text-center mb-2">Administration</h1>
+        <p class="text-center mb-5" style="color: var(--muted-color);">
+            Bienvenue {{ app.user.username ?? app.user.email }}.
+        </p>
 
-    <p class="text-center mb-4">
-        Bienvenue {{ app.user.username ?? app.user.email }}.
-    </p>
-
-    <div class="d-flex justify-content-center mb-4">
-        <div class="btn-group" role="group" aria-label="Navigation administration">
-            {# Gérer les campus – à brancher sur la future page de gestion des campus #}
-            <a href="{{ path('app_admin_campuses') }}"
-               class="btn btn-outline-dark">
-                Gérer les campus
-            </a>
-
-            <a href="{{ path('app_admin_cities') }}"
-               class="btn btn-outline-dark">
-                Gérer les villes
-            </a>
-
-            <a href="{{ path('app_admin_users') }}"
-               class="btn btn-outline-dark">
-                Gérer les utilisateurs
-            </a>
+        <div class="row justify-content-center g-4">
+            <div class="col-md-3">
+                <a href="{{ path('app_admin_campuses') }}" class="text-decoration-none card-link">
+                    <div class="card admin-card">
+                        <h5 class="mb-1">Campus</h5>
+                        <p style="color: var(--muted-color); font-size: 13px; margin: 0;">Gérer les campus</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ path('app_admin_campuses') }}" class="text-decoration-none card-link">
+                    <div class="card admin-card">
+                        <h5 class="mb-1">Villes</h5>
+                        <p style="color: var(--muted-color); font-size: 13px; margin: 0;">Gérer les villes</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ path('app_admin_campuses') }}" class="text-decoration-none card-link">
+                    <div class="card admin-card">
+                        <h5 class="mb-1">Utilisateurs</h5>
+                        <p style="color: var(--muted-color); font-size: 13px; margin: 0;">Gérer les utilisateurs</p>
+                    </div>
+                </a>
+            </div>
         </div>
-    </div>
 
-</div>
+    </div>
 {% endblock %}
