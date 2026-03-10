@@ -52,11 +52,11 @@ security:
     # Note: Only the *first* matching rule is applied
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/profil, roles: ROLE_USER }
-        - { path: ^/sorties, roles: ROLE_USER }
         - { path: ^/sorties/creer, roles: ROLE_ORGANIZER }
         - { path: ^/sorties/modifier, roles: ROLE_ORGANIZER }
         - { path: ^/sorties/delete, roles: ROLE_ORGANIZER }
+        - { path: ^/sorties, roles: ROLE_USER }
+        - { path: ^/profil, roles: ROLE_USER }
 
 when@test:
     security:
