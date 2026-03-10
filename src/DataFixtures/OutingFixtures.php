@@ -51,6 +51,7 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
             $organizer = $this->getReference('organizer' . $i, User::class);
             
             $outing->setOrganizer($organizer);
+            $outing->setStatus(Outing::ETAT_PUBLIEE);
 
             $outing->setCampus($organizer->getCampus());
             $this->setPlaceByCampus($organizer, $outing);

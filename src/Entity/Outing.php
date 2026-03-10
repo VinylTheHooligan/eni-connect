@@ -13,12 +13,16 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: OutingRepository::class)]
 class Outing
 {
+    // Etat stocké en base
     public const ETAT_CREATION = 'creation';
+    public const ETAT_PUBLIEE = 'publiee';
+    public const ETAT_ANNULEE = 'annulee';
+
+    // Etat obtenu par calcul
     public const ETAT_OUVERTE = 'ouverte';
     public const ETAT_CLOTUREE = 'cloturee';
     public const ETAT_EN_COURS = 'en_cours';
     public const ETAT_TERMINEE = 'terminee';
-    public const ETAT_ANNULEE = 'annulee';
     public const ETAT_HISTORISEE = 'historisee';
 
     #[ORM\Id]
@@ -290,12 +294,32 @@ class Outing
 
     public function isPublished(): ?bool
     {
-        return $this->published;
+        if ($this->getStatus() === self::ETAT_PUBLIEE)
+        {
+            return true;
+        }
+        return false;
     }
 
-    public function setPublished(bool $published): static
+    public function setPublished(): static
     {
-        $this->published = $published;
+        $this->status = self::ETAT_PUBLIEE;
+
+        return $this;
+    }
+
+    public function isCancelled(): ?bool
+    {
+        if ($this->getStatus() === self::ETAT_ANNULEE)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public function setCancelled(): static
+    {
+        $this->status = self::ETAT_ANNULEE;
 
         return $this;
     }
