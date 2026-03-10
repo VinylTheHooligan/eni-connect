@@ -60,18 +60,10 @@
                    </button>
                 </div>
             </div>
-            <div class="d-flex gap-2">
-                <a href="{{ path('app_admin_user_import') }}" class="btn btn-sm btn-outline-secondary">
-                    Importer un fichier CSV
-                </a>
-                <a href="{{ path('app_admin_user_add') }}" class="btn btn-sm btn-outline-dark">
-                    Ajouter un utilisateur
-                </a>
-            </div>
-        </div>
-        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-            <table class="table table-sm table-striped table-bordered w-100">
-                <thead class="table-light">
+
+            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-sm table-striped table-bordered align-middle w-100">
+                    <thead class="table-light">
                     <tr>
                         <th style="width: 1%;"></th>
                         <th>
@@ -110,39 +102,34 @@
                         <th>Actif</th>
                         <th>Actions</th>
                     </tr>
-                </thead>
-                <tbody>
-                {% for user in users %}
-                    <tr>
-                        <td>
-                            <input
-                                type="checkbox"
-                                name="user_ids[]"
-                                value="{{ user.id }}"
-                                class="user-select-checkbox"
-                                aria-label="Sélectionner l'utilisateur {{ user.username }}"
-                            >
-                        </td>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.lastName }}</td>
-                        <td>{{ user.firstName }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.campus ? user.campus.name : '-' }}</td>
-                        <td>{{ user.roles|join(', ') }}</td>
-                        <td>{{ user.isactive ? 'Oui' : 'Non' }}</td>
-                        <td>
-                            <a href="{{ path('app_admin_user_toggle', {'id': user.id}) }}" class="btn btn-sm btn-outline-dark">
-                                {{ user.isactive ? 'Désactiver' : 'Activer' }}
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </form>
-
-    <a href="{{ path('app_admin') }}" class="btn btn-outline-secondary mt-3">Retour</a>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="user_ids[]" value="{{ user.id }}"
+                                       class="user-select-checkbox"
+                                       aria-label="Sélectionner l'utilisateur {{ user.username }}">
+                            </td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.lastName }}</td>
+                            <td>{{ user.firstName }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.campus ? user.campus.name : '-' }}</td>
+                            <td>{{ user.roles|join(', ') }}</td>
+                            <td>{{ user.isactive ? 'Oui' : 'Non' }}</td>
+                            <td>
+                                <a href="{{ path('app_admin_user_toggle', {'id': user.id}) }}" class="btn btn-sm btn-outline-dark">
+                                    {{ user.isactive ? 'Désactiver' : 'Activer' }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+        <a href="{{ path('app_admin') }}" class="btn btn-outline-secondary mt-3">Retour</a>
     </div>
 
     {# Sélection / dé-sélection globale des utilisateurs #}
