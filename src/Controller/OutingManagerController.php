@@ -3,13 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Outing;
-use App\Entity\Registration;
 use App\Entity\User;
 use App\Form\CancelOutingType;
 use App\Form\OutingType;
 use App\Security\Voter\OutingManagerVoter;
 use App\Services\OutingManagementService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -84,7 +82,6 @@ final class OutingManagerController extends AbstractController
             if ($action === 'delete') {
                 $this->denyAccessUnlessGranted(OutingManagerVoter::DELETE, $outing);
                 $this->oms->delete($outing);
-                $this->oms->save($outing);
                 $this->addFlash('success', 'La sortie a bien été supprimée.');
                 return $this->redirectToRoute('outing_list');
             }
@@ -122,7 +119,7 @@ final class OutingManagerController extends AbstractController
     }
 
     #[Route('/{id}/annuler', name: 'cancel', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
-    public function cancel(Outing $outing, Request $request, EntityManagerInterface $em): Response
+    public function cancel(Outing $outing, Request $request): Response
     {
 
         $this->denyAccessUnlessGranted(OutingManagerVoter::CANCEL, $outing);
