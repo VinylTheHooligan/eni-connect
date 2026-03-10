@@ -29,67 +29,101 @@
                     Étape 2 : vérifiez les lignes ci‑dessous puis confirmez l'import.
                 </p>
 
-                <div class="table-responsive mt-3">
-                    <table class="table table-sm table-bordered align-middle">
-                        <thead class="table-light">
-                        <tr>
-                            <th>Email</th>
-                            <th>Pseudo</th>
-                            <th>Prénom</th>
-                            <th>Nom</th>
-                            <th>Téléphone</th>
-                            <th>Campus</th>
-                            <th>Rôle</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for row in rows %}
-                            <tr>
-                                {# On surligne en rouge clair les champs vides pour les repérer #}
-                                <td class="{{ row.email is empty ? 'table-danger' : '' }}">
-                                    {{ row.email ?: '—' }}
-                                </td>
-                                <td class="{{ row.username is empty ? 'table-danger' : '' }}">
-                                    {{ row.username ?: '—' }}
-                                </td>
-                                <td class="{{ row.firstName is empty ? 'table-warning' : '' }}">
-                                    {{ row.firstName ?: '—' }}
-                                </td>
-                                <td class="{{ row.lastName is empty ? 'table-warning' : '' }}">
-                                    {{ row.lastName ?: '—' }}
-                                </td>
-                                <td>{{ row.phone ?: '—' }}</td>
-                                <td>{{ row.campus ?: '—' }}</td>
-                                <td class="{{ row.role is empty ? 'table-warning' : '' }}">
-                                    {{ row.role ?: '—' }}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                {# FORMULAIRE DE CONFIRMATION (ÉTAPE 2) #}
+                {# FORMULAIRE DE CONFIRMATION (ÉTAPE 2) AVEC ÉDITION DIRECTE DANS LE TABLEAU #}
                 <form method="post" action="{{ path('app_admin_user_import_confirm') }}" class="mt-3">
-                    {# on stocke les lignes dans la session côté contrôleur,
-                       donc ici on envoie juste un token CSRF et les options #}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered align-middle">
+                            <thead class="table-light">
+                            <tr>
+                                <th>Email</th>
+                                <th>Pseudo</th>
+                                <th>Prénom</th>
+                                <th>Nom</th>
+                                <th>Téléphone</th>
+                                <th>Campus</th>
+                                <th>Rôle</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for row in rows %}
+                                <tr>
+                                    {# Rouge = champ obligatoire (NOT NULL) manquant, Jaune = champ facultatif manquant #}
+                                    <td class="{{ row.email is empty ? 'table-danger' : '' }}">
+                                        <input
+                                            type="text" name="rows[{{ loop.index0 }}][email]" value="{{ row.email }}" class="form-control form-control-sm border-0 bg-transparent p-0" aria-label="Email ligne {{ loop.index }}"
+                                        >
+                                    </td>
+                                    <td class="{{ row.username is empty ? 'table-danger' : '' }}">
+                                        <input type="text" name="rows[{{ loop.index0 }}][username]" value="{{ row.username }}" class="form-control form-control-sm border-0 bg-transparent p-0" aria-label="Pseudo ligne {{ loop.index }}">
+                                    </td>
+                                    <td class="{{ row.firstName is empty ? 'table-danger' : '' }}">
+                                        <input type="text" name="rows[{{ loop.index0 }}][firstName]" value="{{ row.firstName }}" class="form-control form-control-sm border-0 bg-transparent p-0" aria-label="Prénom ligne {{ loop.index }}">
+                                    </td>
+                                    <td class="{{ row.lastName is empty ? 'table-danger' : '' }}">
+                                        <input type="text" name="rows[{{ loop.index0 }}][lastName]" value="{{ row.lastName }}" class="form-control form-control-sm border-0 bg-transparent p-0" aria-label="Nom ligne {{ loop.index }}">
+                                    </td>
+                                    <td class="{{ row.phone is empty ? 'table-warning' : '' }}">
+                                        <input type="text" name="rows[{{ loop.index0 }}][phone]" value="{{ row.phone }}" class="form-control form-control-sm border-0 bg-transparent p-0" aria-label="Téléphone ligne {{ loop.index }}">
+                                    </td>
+                                    <td class="{{ row.campus is empty ? 'table-warning' : '' }}">
+                                        <input type="text" name="rows[{{ loop.index0 }}][campus]" value="{{ row.campus }}" class="form-control form-control-sm border-0 bg-transparent p-0" aria-label="Campus ligne {{ loop.index }}">
+                                    </td>
+                                    <td class="{{ row.role is empty ? 'table-warning' : '' }}">
+                                        <input type="text" name="rows[{{ loop.index0 }}][role]" value="{{ row.role }}" class="form-control form-control-sm border-0 bg-transparent p-0" aria-label="Rôle ligne {{ loop.index }}">
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
 
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox"
-                               id="fill_defaults" name="fill_defaults" value="1" checked>
-                        <label class="form-check-label" for="fill_defaults">
-                            Remplir automatiquement les champs vides avec des valeurs par défaut
-                            (email <code>a.renseigner@arenseigner.com</code>, pseudo <code>a.renseigner</code>,
-                            nom <code>arenseigner</code>, rôle <code>ROLE_USER</code>, etc.).
-                        </label>
+                    <div class="card mt-3">
+                        <div class="card-body py-3">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-md-4">
+                                    <label for="default_password" class="form-label small mb-1">
+                                        Mot de passe par défaut pour les nouveaux utilisateurs
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="default_password"
+                                        name="default_password"
+                                        class="form-control form-control-sm"
+                                        placeholder="Laisser vide pour utiliser 12345"
+                                    >
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"
+                                               id="fill_defaults" name="fill_defaults" value="1" checked>
+                                        <label class="form-check-label small" for="fill_defaults">
+                                            Remplir automatiquement les champs vides avec des valeurs par défaut
+                                            (email <code>a.renseigner@arenseigner.com</code>, pseudo <code>a.renseigner</code>,
+                                            nom <code>arenseigner</code>, rôle <code>ROLE_USER</code>, etc.).
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-md-end">
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        Confirmer l'import des utilisateurs
+                                    </button>
+                                </div>
+                            </div>
+
+                            <p class="small text-muted mb-0 mt-3">
+                                <strong>Légende&nbsp;:</strong>
+                                cellules <span class="badge bg-danger-subtle text-dark border border-danger-subtle">rouges</span>
+                                = champs obligatoires manquants (email, pseudo, prénom, nom) ;
+                                cellules <span class="badge bg-warning-subtle text-dark border border-warning-subtle">jaunes</span>
+                                = champs facultatifs manquants (téléphone, campus, rôle).<br>
+                                Si vous corrigez une valeur et que la case ci‑dessus est cochée, <strong>votre saisie est prioritaire</strong> ;
+                                seules les cases encore vides recevront une valeur par défaut.
+                            </p>
+                        </div>
                     </div>
 
                     <input type="hidden" name="_token"
                            value="{{ csrf_token('user_import_confirm') }}">
-
-                    <button type="submit" class="btn btn-success">
-                        Confirmer l'import des utilisateurs
-                    </button>
                 </form>
             {% endif %}
         {% endif %}

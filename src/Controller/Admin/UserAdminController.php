@@ -35,6 +35,48 @@ class UserAdminController extends AbstractController
         ]);
     }
 
+    #[Route('/actions-multiples', name: 'app_admin_user_bulk', methods: ['POST'])]
+    public function bulkAction(
+        Request $request,
+        UserRepository $userRepository,
+        EntityManagerInterface $em
+    ): Response {
+        if (!$this->isCsrfTokenValid('user_bulk_action', $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton CSRF invalide pour l’action groupée.');
+            return $this->redirectToRoute('app_admin_users');
+        }
+
+        $ids = $request->request->all('user_ids');
+        if (!is_array($ids) || empty($ids)) {
+            $this->addFlash('warning', 'Aucun utilisateur sélectionné.');
+            return $this->redirectToRoute('app_admin_users');
+        }
+
+        $users = $userRepository->findBy(['id' => $ids]);
+        if (empty($users)) {
+            $this->addFlash('warning', 'Aucun utilisateur trouvé pour cette sélection.');
+            return $this->redirectToRoute('app_admin_users');
+        }
+
+        if ($request->request->has('bulk_deactivate')) {
+            foreach ($users as $user) {
+                $user->setIsActive(false);
+            }
+            $em->flush();
+            $this->addFlash('success', sprintf('%d utilisateur(s) mis inactif.', count($users)));
+        } elseif ($request->request->has('bulk_delete')) {
+            foreach ($users as $user) {
+                $em->remove($user);
+            }
+            $em->flush();
+            $this->addFlash('success', sprintf('%d utilisateur(s) supprimé(s).', count($users)));
+        } else {
+            $this->addFlash('warning', 'Aucune action groupée valide sélectionnée.');
+        }
+
+        return $this->redirectToRoute('app_admin_users');
+    }
+
     #[Route('/ajouter', name: 'app_admin_user_add', methods: ['GET', 'POST'])]
     public function addUser(Request $request, UserManager $um): Response {
 
@@ -154,14 +196,12 @@ class UserAdminController extends AbstractController
         UserPasswordHasherInterface $passwordHasher
     ): Response {
 
-        $session = $request->getSession();
-
-        /** @var array|null $rows */
-        $rows = $session->get('user_import_rows');
+        // Données saisies / corrigées dans le tableau de prévisualisation
+        $rows = $request->request->all('rows');
 
         if (!$rows || !is_array($rows))
         {
-            $this->addFlash('warning', 'Aucune donnée d\'import en session. Veuillez recharger le fichier CSV.');
+            $this->addFlash('warning', 'Aucune donnée d\'import reçue. Veuillez recharger le fichier CSV.');
             return $this->redirectToRoute('app_admin_user_import');
         }
 
@@ -172,15 +212,16 @@ class UserAdminController extends AbstractController
 
         foreach ($rows as $row)
         {
-            $email     = $row['email']     ?? null;
-            $username  = $row['username']  ?? null;
-            $firstName = $row['firstName'] ?? null;
-            $lastName  = $row['lastName']  ?? null;
-            $phone     = $row['phone']     ?? null;
-            $campusName = $row['campus']   ?? null;
-            $role      = $row['role']      ?? null;
+            $email      = $row['email']     ?? null;
+            $username   = $row['username']  ?? null;
+            $firstName  = $row['firstName'] ?? null;
+            $lastName   = $row['lastName']  ?? null;
+            $phone      = $row['phone']     ?? null;
+            $campusName = $row['campus']    ?? null;
+            $role       = $row['role']      ?? null;
 
-            if ($fillDefaults) {
+            if ($fillDefaults)
+            {
                 if (!$email) {
                     $email = 'a.renseigner@arenseigner.com';
                 }
@@ -197,63 +238,61 @@ class UserAdminController extends AbstractController
                     $role = 'ROLE_USER';
                 }
             }
+
             // Champs vraiment obligatoires même après défauts
             if (!$email || !$username || !$firstName || !$lastName)
             {
                 $skipped++;
                 continue;
             }
+
             // Email déjà utilisé ?
             if ($userRepository->findOneBy(['email' => $email])) {
                 $skipped++;
                 continue;
             }
+
             if ($userRepository->findOneBy(['username' => $username])) {
                 $skipped++;
                 continue;
             }
-            // Campus
+
+            // Campus (facultatif) : on essaie de le retrouver par nom, mais on n'ignore pas la ligne si introuvable
             $campus = null;
             if ($campusName)
             {
                 $campus = $campusRepository->findOneBy(['name' => $campusName]);
-                if (!$campus) {
-                    // campus inconnu : on ignore la ligne
-                    $skipped++;
-                    continue;
-                }
             }
 
             // Rôle avec défaut ROLE_USER si vide
             $mainRole = $role ?: 'ROLE_USER';
 
-            // Mot de passe par défaut (à améliorer plus tard)
-            $plainPassword = 'Azerty123!';
-            $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
-
+            // Création de l'utilisateur
             $user = new User();
-            $user   ->setEmail($email)
-                    ->setUsername($username)
-                    ->setFirstName($firstName)
-                    ->setLastName($lastName)
-                    ->setPhoneNumber($phone)
-                    ->setIsActive(true)
-                    ->setRoles([$mainRole])
-                    ->setPasswordHash($hashedPassword);
+            $user
+                ->setEmail($email)
+                ->setUsername($username)
+                ->setFirstName($firstName)
+                ->setLastName($lastName)
+                ->setPhoneNumber($phone)
+                ->setIsActive(true)
+                ->setRoles([$mainRole]);
 
             if ($campus)
             {
                 $user->setCampus($campus);
             }
-            
+
+            // Mot de passe par défaut (à améliorer plus tard)
+            $plainPassword  = 'Azerty123!';
+            $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+            $user->setPasswordHash($hashedPassword);
+
             $em->persist($user);
             $created++;
         }
         $em->flush();
-        // On nettoie la session pour éviter de réutiliser des données vieilles
 
-        $session->remove('user_import_rows');
-        
         $this->addFlash('success', sprintf('%d utilisateurs créés, %d lignes ignorées.', $created, $skipped));
         return $this->redirectToRoute('app_admin_users');
     }
