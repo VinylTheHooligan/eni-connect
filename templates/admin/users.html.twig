@@ -48,67 +48,67 @@
                 </a>
             </div>
         </div>
-
-        <table class="table table-sm table-striped table-bordered">
-            <thead class="table-light">
-            <tr>
-                <th>
-                    <a href="?q={{ app.request.get('q') }}&sort=username&order={{ app.request.get('sort') == 'username' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
-                        Pseudo
-                        {% if app.request.get('sort') == 'username' %}
-                            {{ app.request.get('order') == 'asc' ? '▲' : '▼' }}
-                        {% else %}
-                            ↕
-                        {% endif %}
-                    </a>
-                </th>
-                <th>
-                    <a href="?q={{ app.request.get('q') }}&sort=lastName&order={{ app.request.get('sort') == 'lastName' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
-                        Nom
-                        {% if app.request.get('sort') == 'lastName' %}
-                            {{ app.request.get('order') == 'asc' ? '▲' : '▼' }}
-                        {% else %}
-                            ↕
-                        {% endif %}
-                    </a>
-                </th>
-                <th>
-                    <a href="?q={{ app.request.get('q') }}&sort=firstName&order={{ app.request.get('sort') == 'firstName' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
-                        Prénom
-                        {% if app.request.get('sort') == 'firstName' %}
-                            {{ app.request.get('order') == 'asc' ? '▲' : '▼' }}
-                        {% else %}
-                            ↕
-                        {% endif %}
-                    </a>
-                </th>
-                <th>Email</th>
-                <th>Campus</th>
-                <th>Rôles</th>
-                <th>Actif</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for user in users %}
+        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-sm table-striped table-bordered">
+                <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
                 <tr>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.lastName }}</td>
-                    <td>{{ user.firstName }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.campus ? user.campus.name : '-' }}</td>
-                    <td>{{ user.roles|join(', ') }}</td>
-                    <td>{{ user.isactive ? 'Oui' : 'Non' }}</td>
-                    <td>
-                        <a href="{{ path('app_admin_user_toggle', {'id': user.id}) }}" class="btn btn-sm btn-outline-dark">
-                            {{ user.isactive ? 'Désactiver' : 'Activer' }}
+                    <th>
+                        <a href="?q={{ app.request.get('q') }}&sort=username&order={{ app.request.get('sort') == 'username' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
+                            Pseudo
+                            {% if app.request.get('sort') == 'username' %}
+                                {{ app.request.get('order') == 'asc' ? '▲' : '▼' }}
+                            {% else %}
+                                ↕
+                            {% endif %}
                         </a>
-                    </td>
+                    </th>
+                    <th>
+                        <a href="?q={{ app.request.get('q') }}&sort=lastName&order={{ app.request.get('sort') == 'lastName' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
+                            Nom
+                            {% if app.request.get('sort') == 'lastName' %}
+                                {{ app.request.get('order') == 'asc' ? '▲' : '▼' }}
+                            {% else %}
+                                ↕
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="?q={{ app.request.get('q') }}&sort=firstName&order={{ app.request.get('sort') == 'firstName' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
+                            Prénom
+                            {% if app.request.get('sort') == 'firstName' %}
+                                {{ app.request.get('order') == 'asc' ? '▲' : '▼' }}
+                            {% else %}
+                                ↕
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>Email</th>
+                    <th>Campus</th>
+                    <th>Rôles</th>
+                    <th>Actif</th>
+                    <th>Actions</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.lastName }}</td>
+                        <td>{{ user.firstName }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.campus ? user.campus.name : '-' }}</td>
+                        <td>{{ user.roles|join(', ') }}</td>
+                        <td>{{ user.isactive ? 'Oui' : 'Non' }}</td>
+                        <td>
+                            <a href="{{ path('app_admin_user_toggle', {'id': user.id}) }}" class="btn btn-sm btn-outline-dark">
+                                {{ user.isactive ? 'Désactiver' : 'Activer' }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
         <a href="{{ path('app_admin') }}" class="btn btn-outline-secondary mt-3">Retour</a>
     </div>
 {% endblock %}
