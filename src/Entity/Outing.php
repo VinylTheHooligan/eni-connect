@@ -57,7 +57,7 @@ class Outing
 
     #[Assert\NotBlank(message: "L'état de la sortie est obligatoire")]
     #[ORM\Column(length: 50)]
-    private ?string $status = null;  //Permet de gérer les états : En création, Ouverte, Clôturée, Annulée et Archivé.
+    private ?string $status = null;  //Stock uniquement EN_CREATION
 
     #[Assert\NotNull]
     #[ORM\ManyToOne(inversedBy: 'outings')]
@@ -160,14 +160,46 @@ class Outing
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
-        return $this->status;
+        if (in_array($this->status, [self::ETAT_CREATION, self::ETAT_ANNULEE]))
+        {
+            return $this->status;
+        }
+
+        $now = new \DateTimeImmutable();
+        $start = $this->getStartDateTime();
+        $limit = $this->getRegistrationDeadline();
+        $end = (clone $start)->modify('+' . $this->getDuration() . ' minutes');
+        $historisee = (clone $end)->modify('+1 month');
+
+        if ($now < $limit && !$this->isMaxRegistrationsReached())
+        {
+            return self::ETAT_OUVERTE;
+        }
+
+        if ($this->isMaxRegistrationsReached()
+            || $now >= $limit && $now < $start)
+        {
+            return self::ETAT_CLOTUREE;
+        }
+
+        if ($now >= $start && $now < $end)
+        {
+            return self::ETAT_EN_COURS;
+        }
+
+        if ($now >= $end && $now < $historisee)
+        {
+            return self::ETAT_TERMINEE;
+        }
+
+        return self::ETAT_HISTORISEE;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(string $newStatus): static
     {
-        $this->status = $status;
+        $this->status = $newStatus;
 
         return $this;
     }
