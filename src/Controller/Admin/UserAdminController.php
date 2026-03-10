@@ -157,7 +157,7 @@ class UserAdminController extends AbstractController
         $session = $request->getSession();
 
         /** @var array|null $rows */
-        $rows = $session->get('user_import_rows');
+        $rows = $session->request->get('rows', []);
 
         if (!$rows || !is_array($rows))
         {
@@ -203,15 +203,18 @@ class UserAdminController extends AbstractController
                 $skipped++;
                 continue;
             }
+
             // Email déjà utilisé ?
             if ($userRepository->findOneBy(['email' => $email])) {
                 $skipped++;
                 continue;
             }
+
             if ($userRepository->findOneBy(['username' => $username])) {
                 $skipped++;
                 continue;
             }
+            
             // Campus
             $campus = null;
             if ($campusName)
@@ -229,7 +232,6 @@ class UserAdminController extends AbstractController
 
             // Mot de passe par défaut (à améliorer plus tard)
             $plainPassword = 'Azerty123!';
-            $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
 
             $user = new User();
             $user   ->setEmail($email)
@@ -238,8 +240,10 @@ class UserAdminController extends AbstractController
                     ->setLastName($lastName)
                     ->setPhoneNumber($phone)
                     ->setIsActive(true)
-                    ->setRoles([$mainRole])
-                    ->setPasswordHash($hashedPassword);
+                    ->setRoles([$mainRole]);
+
+            $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+            $user->setPasswordHash($hashedPassword);
 
             if ($campus)
             {
@@ -250,9 +254,6 @@ class UserAdminController extends AbstractController
             $created++;
         }
         $em->flush();
-        // On nettoie la session pour éviter de réutiliser des données vieilles
-
-        $session->remove('user_import_rows');
         
         $this->addFlash('success', sprintf('%d utilisateurs créés, %d lignes ignorées.', $created, $skipped));
         return $this->redirectToRoute('app_admin_users');
