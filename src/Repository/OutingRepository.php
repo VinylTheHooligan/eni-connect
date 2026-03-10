@@ -27,11 +27,22 @@ class OutingRepository extends ServiceEntityRepository
         // 1) Statut : sorties publiées visibles pour tous,
         //    sorties "en création" uniquement visibles par leur organisateur
         if ($user) {
-            $qb
-                ->andWhere('o.status = :statusPubliee OR (o.status = :statusCreation AND o.organizer = :currentUser)')
+            if (in_array('ROLE_ADMIN', $user->getRoles(), true))
+            {
+                $qb
+                ->andWhere('o.status = :statusPubliee OR o.status = :statusCreation OR o.status = :statusAnnulee')
                 ->setParameter('statusCreation', Outing::ETAT_CREATION)
                 ->setParameter('statusPubliee', Outing::ETAT_PUBLIEE)
+                ->setParameter('statusAnnulee', Outing::ETAT_ANNULEE);
+            } else
+            {
+                $qb
+                ->andWhere('o.status = :statusPubliee OR ((o.status = :statusCreation OR o.status = :statusAnnulee) AND o.organizer = :currentUser)')
+                ->setParameter('statusCreation', Outing::ETAT_CREATION)
+                ->setParameter('statusPubliee', Outing::ETAT_PUBLIEE)
+                ->setParameter('statusAnnulee', Outing::ETAT_ANNULEE)
                 ->setParameter('currentUser', $user);
+            }
         } else {
             $qb
                 ->andWhere('o.status != :statusCreation')
