@@ -39,18 +39,27 @@ class OutingManagementService
             throw new LogicException("Impossible de publier une sortie qui n'est pas en création");
         }
 
-        $outing->setStatus(Outing::ETAT_OUVERTE);
-        $outing->setPublished(true);
+        $outing->setPublished();
     }
 
     public function cancel(Outing $outing): void
     {
-        $outing->setStatus(Outing::ETAT_ANNULEE); 
+        if ($outing->getStatus() === Outing::ETAT_ANNULEE)
+        {
+            throw new LogicException("Impossible d'annuler une sortie qui déjà annulée");
+        }
+
+        $outing->setCancelled();
     }
 
     public function delete(Outing $outing): void
     {
+        foreach ($outing->getRegistrations() as $registration) {
+            $outing->removeRegistration($registration);
+        }
+
         $this->em->remove($outing);
+        $this->em->flush();
     }
 
     public function autoRegisterOrganizer(Outing $outing, User $organizer): Registration
