@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Campus;
 use App\Entity\Outing;
 use App\Entity\Place;
 use App\Entity\User;
@@ -48,8 +47,6 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
             $outing->setMaxRegistrations(rand(5, 15));
 
             $outing->setEventInfo($faker->sentence(rand(15,60), true));
-
-            $outing->setStatus($this->statusCheck($datesTimes, $outing));
 
             $organizer = $this->getReference('organizer' . $i, User::class);
             
@@ -105,31 +102,6 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
         $outing->setPlace($place);
     }
 
-    private function statusCheck(array $datesTimes, Outing $outing): string
-    {
-        $now = new \DateTimeImmutable('now');
-        $start = $datesTimes['dateStart'];
-        $limit = $datesTimes['dateLimit'];
-        $timeOutingEnd = (clone $start)->modify('+' . $outing->getDuration() . ' minutes');
-
-        if ($now < $start)
-        {
-            return Outing::ETAT_OUVERTE;
-        }
-
-        if ($now >= $limit && $now < $start)
-        {
-            return Outing::ETAT_CLOTUREE;
-        }
-
-        if ($now >= $start && $now < $timeOutingEnd)
-        {
-            return Outing::ETAT_EN_COURS;
-        }
-
-        return Outing::ETAT_TERMINEE;
-    }
-
     private function generateDatesTimes(Generator $faker): array
     {
         $dateCreated = $faker->dateTimeBetween('-1 year', '-1 week', 'Europe/Paris');
@@ -142,7 +114,6 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
             'dateLimit' => $dateLimit,
         ];
     }
-
 
     public function getDependencies(): array
     {
