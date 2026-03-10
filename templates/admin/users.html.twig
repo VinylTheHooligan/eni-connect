@@ -69,12 +69,21 @@
                     </a>
                 </div>
             </div>
+<<<<<<< iter4/swan-style
+        </div>
+        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-sm table-striped table-bordered w-100">
+                <thead class="table-light">
+                <tr>
+                    <th style="width: 80%;">
+=======
 
             <table class="table table-sm table-striped table-bordered align-middle">
                 <thead class="table-light">
                 <tr>
                     <th style="width: 1%;"></th>
                     <th>
+>>>>>>> master
                         <a href="?q={{ app.request.get('q') }}&sort=username&order={{ app.request.get('sort') == 'username' and app.request.get('order') == 'asc' ? 'desc' : 'asc' }}" class="text-dark text-decoration-none">
                             Pseudo
                             {% if app.request.get('sort') == 'username' %}
