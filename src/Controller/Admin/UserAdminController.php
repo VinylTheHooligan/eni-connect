@@ -251,6 +251,7 @@ class UserAdminController extends AbstractController
                 $skipped++;
                 continue;
             }
+
             if ($userRepository->findOneBy(['username' => $username])) {
                 $skipped++;
                 continue;
