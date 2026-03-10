@@ -29,7 +29,7 @@ class Registration
     private ?User $participant = null;
 
     #[ORM\ManyToOne(inversedBy: 'registrations')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Outing $outing = null;
 
     public function getId(): ?int

@@ -82,7 +82,6 @@ final class OutingManagerController extends AbstractController
             if ($action === 'delete') {
                 $this->denyAccessUnlessGranted(OutingManagerVoter::DELETE, $outing);
                 $this->oms->delete($outing);
-                $this->oms->save($outing);
                 $this->addFlash('success', 'La sortie a bien été supprimée.');
                 return $this->redirectToRoute('outing_list');
             }

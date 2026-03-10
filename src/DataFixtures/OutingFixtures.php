@@ -56,7 +56,7 @@ class OutingFixtures extends Fixture implements DependentFixtureInterface
             $outing->setCampus($organizer->getCampus());
             $this->setPlaceByCampus($organizer, $outing);
 
-            $outing->setPublished(true);
+            $outing->setPublished();
 
             $om->persist($outing);
 

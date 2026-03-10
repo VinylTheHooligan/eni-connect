@@ -54,7 +54,12 @@ class OutingManagementService
 
     public function delete(Outing $outing): void
     {
+        foreach ($outing->getRegistrations() as $registration) {
+            $outing->removeRegistration($registration);
+        }
+
         $this->em->remove($outing);
+        $this->em->flush();
     }
 
     public function autoRegisterOrganizer(Outing $outing, User $organizer): Registration

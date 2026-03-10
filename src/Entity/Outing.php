@@ -87,9 +87,6 @@ class Outing
     #[ORM\Column]
     private ?\DateTimeImmutable $createdDateTime = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private ?bool $published = false;
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $cancelReason = null;
 
@@ -276,7 +273,14 @@ class Outing
 
     public function removeRegistration(Registration $registration): static
     {
-        $this->registrations->removeElement($registration);
+        if ($this->registrations->removeElement($registration))
+        {
+            if ($registration->getOuting() === $this)
+            {
+                $registration->setOuting(null);
+            }
+        }
+
         return $this;
     }
 
