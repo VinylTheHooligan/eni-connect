@@ -1,1 +1,0 @@
-const modules = import.meta.glob('./*_controller.js', { eager: true });
