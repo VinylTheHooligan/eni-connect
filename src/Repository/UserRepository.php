@@ -38,11 +38,8 @@ class UserRepository extends ServiceEntityRepository
 
     public function findOneByIdentifier(string $identifier): ?User
     {
-        return $this->createQueryBuilder('u')
-            ->where('u.email = :id OR u.username = :id')
-            ->setParameter('id', $identifier)
-            ->getQuery()
-            ->getOneOrNullResult();
+        return $this->findOneBy(['email' => $identifier])
+            ?? $this->findOneBy(['username' => $identifier]);
     }
 
     //    /**

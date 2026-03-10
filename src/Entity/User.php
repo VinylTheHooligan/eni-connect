@@ -90,16 +90,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Outing>
      */
-    #[ORM\OneToMany(targetEntity: Outing::class, mappedBy: 'organizer')]
+    #[ORM\OneToMany(targetEntity: Outing::class, mappedBy: 'organizer', fetch: 'LAZY')]
     private Collection $outings;
 
     /**
      * @var Collection<int, Registration>
      */
-    #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'participant')]
+    #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'participant', fetch: 'LAZY')]
     private Collection $registrations;
 
-    #[ORM\ManyToOne(inversedBy: 'user')]
+    #[ORM\ManyToOne(inversedBy: 'user', fetch: 'LAZY')]
     private ?Campus $campus = null;
 
     public function __construct()
