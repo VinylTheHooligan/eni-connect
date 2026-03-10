@@ -153,18 +153,25 @@ class UserAdminController extends AbstractController
         EntityManagerInterface $em,
         UserPasswordHasherInterface $passwordHasher
     ): Response {
+
         $session = $request->getSession();
+
         /** @var array|null $rows */
         $rows = $session->get('user_import_rows');
-        if (!$rows || !is_array($rows)) {
+
+        if (!$rows || !is_array($rows))
+        {
             $this->addFlash('warning', 'Aucune donnée d\'import en session. Veuillez recharger le fichier CSV.');
             return $this->redirectToRoute('app_admin_user_import');
         }
+
         // Case à cocher "remplir les champs vides avec des valeurs par défaut"
         $fillDefaults = (bool) $request->request->get('fill_defaults', false);
         $created = 0;
         $skipped = 0;
-        foreach ($rows as $row) {
+
+        foreach ($rows as $row)
+        {
             $email     = $row['email']     ?? null;
             $username  = $row['username']  ?? null;
             $firstName = $row['firstName'] ?? null;
@@ -172,6 +179,7 @@ class UserAdminController extends AbstractController
             $phone     = $row['phone']     ?? null;
             $campusName = $row['campus']   ?? null;
             $role      = $row['role']      ?? null;
+
             if ($fillDefaults) {
                 if (!$email) {
                     $email = 'a.renseigner@arenseigner.com';
@@ -190,7 +198,8 @@ class UserAdminController extends AbstractController
                 }
             }
             // Champs vraiment obligatoires même après défauts
-            if (!$email || !$username || !$firstName || !$lastName) {
+            if (!$email || !$username || !$firstName || !$lastName)
+            {
                 $skipped++;
                 continue;
             }
@@ -205,7 +214,8 @@ class UserAdminController extends AbstractController
             }
             // Campus
             $campus = null;
-            if ($campusName) {
+            if ($campusName)
+            {
                 $campus = $campusRepository->findOneBy(['name' => $campusName]);
                 if (!$campus) {
                     // campus inconnu : on ignore la ligne
@@ -213,29 +223,37 @@ class UserAdminController extends AbstractController
                     continue;
                 }
             }
-            $user = new User();
-            $user->setEmail($email);
-            $user->setUsername($username);
-            $user->setFirstName($firstName);
-            $user->setLastName($lastName);
-            $user->setPhoneNumber($phone);
-            $user->setIsActive(true);
-            if ($campus) {
-                $user->setCampus($campus);
-            }
+
             // Rôle avec défaut ROLE_USER si vide
             $mainRole = $role ?: 'ROLE_USER';
-            $user->setRoles([$mainRole]);
+
             // Mot de passe par défaut (à améliorer plus tard)
             $plainPassword = 'Azerty123!';
             $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
-            $user->setPasswordHash($hashedPassword);
+
+            $user = new User();
+            $user   ->setEmail($email)
+                    ->setUsername($username)
+                    ->setFirstName($firstName)
+                    ->setLastName($lastName)
+                    ->setPhoneNumber($phone)
+                    ->setIsActive(true)
+                    ->setRoles([$mainRole])
+                    ->setPasswordHash($hashedPassword);
+
+            if ($campus)
+            {
+                $user->setCampus($campus);
+            }
+            
             $em->persist($user);
             $created++;
         }
         $em->flush();
         // On nettoie la session pour éviter de réutiliser des données vieilles
+
         $session->remove('user_import_rows');
+        
         $this->addFlash('success', sprintf('%d utilisateurs créés, %d lignes ignorées.', $created, $skipped));
         return $this->redirectToRoute('app_admin_users');
     }

@@ -35,7 +35,7 @@ final class OutingManagerVoter extends Voter
         /** @var User $user */
         $user = $token->getUser();
 
-        // if the user is anonymous, do not grant access
+        // si l'user est anonyme, pas accès
         if (!$user instanceof User)
         {
             return false;

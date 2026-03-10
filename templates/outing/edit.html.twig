@@ -19,7 +19,7 @@
                     <div class="col-md-6">
                         <div class="mb-2">
                             {{ form_label(outingForm.name) }}
-                            {{ form_widget(outingForm.name, {'attr': 'disabledAttr', {'class': 'form-control form-control-sm'}}) }}
+                            {{ form_widget(outingForm.name, {'attr': {'class': 'form-control form-control-sm'}}) }}
                             {{ form_errors(outingForm.name) }}
                         </div>
                         <div class="mb-2">
