@@ -22,59 +22,59 @@
             </div>
 
             {# Colonne centre - Infos style formulaire #}
+            {# Colonne centre - Infos style formulaire #}
             <div class="col-md-7">
-
-                <h2 class="text-center mb-4">{{ user.username }}</h2>
-
-                {# Campus #}
-                <div class="row mb-3 align-items-center">
-                    <label class="col-sm-4 col-form-label fw-bold">Campus</label>
-                    <div class="col-sm-8">
-                        <span class="form-control-plaintext">
-                            {{ user.campus ? user.campus.name : '-' }}
-                        </span>
+                <h2 class="text-center mb-3 fw-bold">{{ user.username }}</h2>
+                <fieldset class="border rounded p-3">
+                    {# Campus #}
+                    <div class="row mb-3 align-items-center">
+                        <label class="col-sm-4 col-form-label fw-bold">Campus</label>
+                        <div class="col-sm-8">
+                            <span class="form-control-plaintext">
+                                {{ user.campus ? user.campus.name : '-' }}
+                            </span>
+                        </div>
                     </div>
-                </div>
 
-                {# Prénom #}
-                <div class="row mb-3 align-items-center">
-                    <div class="col-sm-4 fw-bold">Prénom</div>
-                    <div class="col-sm-8">
-                        <span class="form-control-plaintext">{{ user.firstName }}</span>
+                    {# Prénom #}
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 fw-bold">Prénom</div>
+                            <div class="col-sm-8">
+                                <span class="form-control-plaintext">{{ user.firstName }}</span>
+                            </div>
                     </div>
-                </div>
 
-                {# Nom #}
-                <div class="row mb-3 align-items-center">
-                    <div class="col-sm-4 fw-bold">Nom</div>
-                    <div class="col-sm-8">
-                        <span class="form-control-plaintext">{{ user.lastName }}</span>
+                    {# Nom #}
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 fw-bold">Nom</div>
+                        <div class="col-sm-8">
+                            <span class="form-control-plaintext">{{ user.lastName }}</span>
+                        </div>
                     </div>
-                </div>
 
-                {# Téléphone #}
-                <div class="row mb-3 align-items-center">
-                    <div class="col-sm-4 fw-bold">Téléphone</div>
-                    <div class="col-sm-8">
-                        <span class="form-control-plaintext">{{ user.phoneNumber }}</span>
+                    {# Téléphone #}
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 fw-bold">Téléphone</div>
+                        <div class="col-sm-8">
+                            <span class="form-control-plaintext">{{ user.phoneNumber }}</span>
+                        </div>
                     </div>
-                </div>
 
-                {# Email #}
-                <div class="row mb-3 align-items-center">
-                    <div class="col-sm-4 fw-bold">Email</div>
-                    <div class="col-sm-8">
-                        <span class="form-control-plaintext">{{ user.email }}</span>
+                    {# Email #}
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 fw-bold">Email</div>
+                        <div class="col-sm-8">
+                            <span class="form-control-plaintext">{{ user.email }}</span>
+                        </div>
                     </div>
-                </div>
 
-                {# Bouton Modifier uniquement si c'est mon propre profil #}
-                {% if app.user == user %}
-                    <div class="text-center mt-4">
-                        <a href="{{ path('app_profil') }}" class="btn btn-primary px-4">Modifier</a>
-                    </div>
-                {% endif %}
+                    {% if app.user == user %}
+                        <div class="text-center mt-4">
+                            <a href="{{ path('app_profil') }}" class="btn btn-primary px-4">Modifier</a>
+                        </div>
+                    {% endif %}
 
+                </fieldset>
             </div>
 
         </div>
