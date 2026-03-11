@@ -144,20 +144,20 @@
                     <tbody>
                     {% for outing in outings %}
                         <tr>
-                            <td>{{ outing.name }}</td>
-                            <td>{{ outing.startDateTime|date('d/m/Y H:i') }}</td>
-                            <td>{{ outing.registrationDeadline|date('d/m/Y') }}</td>
-                            <td>{{ outing.registrations|length }}/{{ outing.maxRegistrations }}</td>
-                            <td>{{ outing.status }}</td>
-                            <td>
+                            <td data-label="Nom">{{ outing.name }}</td>
+                            <td data-label="Date">{{ outing.startDateTime|date('d/m/Y H:i') }}</td>
+                            <td data-label="Clôture">{{ outing.registrationDeadline|date('d/m/Y') }}</td>
+                            <td data-label="Inscrits">{{ outing.registrations|length }}/{{ outing.maxRegistrations }}</td>
+                            <td data-label="État">{{ outing.status }}</td>
+                            <td data-label="Inscrit">
                                 {% set isRegistered = false %}
                                 {% if app.user %}
                                     {% set isRegistered = outing.registrations|filter(r => r.participant and r.participant.id == app.user.id)|length > 0 %}
                                 {% endif %}
-                                {% if isRegistered %}X{% endif %}
+                                {{ isRegistered ? '✓' : '—' }}
                             </td>
 
-                            <td>
+                            <td data-label="Actions">
                                 {% set isOrganizer = app.user and app.user.id == outing.organizer.id %}
                                 {% set status = outing.status %}
 

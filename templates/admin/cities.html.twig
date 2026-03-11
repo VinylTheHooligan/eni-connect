@@ -33,7 +33,6 @@
                             name="q"
                             value="{{ app.request.get('q') }}"
                             class="form-control"
-                            style="max-width: 260px;"
                             placeholder="search"
                             aria-label="Filtrer par nom de ville"
                         >
@@ -87,28 +86,23 @@
             {# Lignes existantes #}
             {% for city in cities %}
                 <tr>
-                    <td class="text-uppercase">{{ city.name }}</td>
-                    <td>{{ city.postalCode }}</td>
-                    <td>
-                        <a
-                            href="{{ path('app_admin_city_edit', { id: city.id }) }}"
-                            class="btn btn-sm btn-outline-dark"
-                        >
-                            Modifier
-                        </a>
-
-                        {# Suppression (POST recommandé) #}
-                        <form
-                            method="post"
-                            action="{{ path('app_admin_city_delete', { id: city.id }) }}"
-                            class="d-inline"
-                            onsubmit="return confirm('Confirmer la suppression de la ville ?');"
-                        >
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_city_' ~ city.id) }}">
-                            <button type="submit" class="btn btn-outline-danger btn-sm">
-                                Supprimer
-                            </button>
-                        </form>
+                    <td data-label="Ville" class="text-uppercase">{{ city.name }}</td>
+                    <td data-label="Code postal">{{ city.postalCode }}</td>
+                    <td data-label="Actions">
+                        <div class="d-flex gap-2 w-100">
+                            <a href="{{ path('app_admin_city_edit', { id: city.id }) }}"
+                               class="btn btn-sm btn-outline-dark flex-fill">
+                                Modifier
+                            </a>
+                            <form method="post" action="{{ path('app_admin_city_delete', { id: city.id }) }}"
+                                  class="flex-fill"
+                                  onsubmit="return confirm('Confirmer la suppression de la ville ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_city_' ~ city.id) }}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                    Supprimer
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             {% else %}
@@ -118,7 +112,7 @@
             {% endfor %}
 
             {# Ligne d'ajout direct d'une ville #}
-            <tr class="table-secondary">
+            <tr class="table-secondary add-row">
                 <td>
                     <input
                         form="city-inline-form"
