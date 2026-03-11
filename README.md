@@ -70,13 +70,13 @@ Objectifs pédagogiques principaux :
 
 ## 🧱 Stack technique
 
-- **Backend** : PHP 8+, **Symfony** (framework principal).
-- **Base de données** : MySQL / MariaDB via Doctrine ORM.
-- **Frontend** : Twig + **Bootstrap 5**, Stimulus pour certaines interactions.
-- **Tests** : PHPUnit, ZenstruckFoundryBundle.
-- **Outils** :
-  - Composer, Symfony CLI, Mailpit pour les emails de dev.
-  - Git / GitHub pour le versionnement et les PR.
+- **Langage** : PHP 8.2+
+- **Backend** : Symfony 7.4 (framework principal)
+- **Base de données** : MySQL / MariaDB via Doctrine ORM
+- **Frontend** : Twig, Bootstrap 5 (AssetMapper), Stimulus (Symfony UX), Symfony UX Turbo
+- **Tests** : PHPUnit 11, Zenstruck Foundry, Doctrine Fixtures Bundle, FakerPHP, BrowserKit, CSS Selector
+- **Bundles / composants ajoutés** : Doctrine ORM 3.6+, Doctrine Migrations, Doctrine Messenger, Symfony Apache Pack, Monolog Bundle, SymfonyCasts Reset Password Bundle, Twig Extra Bundle, Debug Bundle, Stopwatch, Maker Bundle
+- **Outils** : Composer, Symfony CLI, Mailpit, Git / GitHub
 
 ---
 
@@ -303,6 +303,7 @@ D’après le fichier `docs/Suivi équipe WRS - Suivi.csv`.
 - **Initialisation & infrastructure**
   - Création de la base de données, du projet Symfony, configuration environnement et Git/GitHub.
   - Ajout de Bootstrap dans le projet, intégration finale (suppression des CDN, configuration propre).
+  - Mise en place d’un système de fixtures cohérent et maintenable, piloté par un service central (FixturesDataProvider) garantissant cohérence, réutilisation et génération contrôlée des données.
 
 - **Modèle & services**
   - Création/refactor de plusieurs entités et relations (ex. Campus → Place).
