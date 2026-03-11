@@ -1,9 +1,15 @@
-{# Logo toujours visible sur toutes les pages #}
 <nav class="navbar navbar-expand-lg bg-light border-bottom">
     <div class="container-fluid">
 
-        {# Logo en haut à gauche, cliquable vers l’accueil #}
-        <a class="navbar-brand p-1 d-flex align-items-center" href="{{ path('app_home') }}">
+        {% if app.user %}
+            {# Burger EN PREMIER (gauche sur mobile) #}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        {% endif %}
+
+        {# Logo AU MILIEU avec mx-auto #}
+        <a class="navbar-brand mx-auto p-1 d-flex align-items-center" href="{{ path('app_home') }}">
             <img
                 src="{{ asset('images/logo.png') }}"
                 alt="Logo Sortir.com"
@@ -12,31 +18,24 @@
             >
         </a>
 
-        {# Partie navigation uniquement si l’utilisateur est connecté #}
         {% if app.user %}
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            {# Spacer pour equilibrer le burger a gauche (uniquement mobile) #}
+            <div class="navbar-spacer d-lg-none"></div>
 
+            {# Menu collapse #}
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-
-                    {# Lien Administration uniquement pour les admins #}
                     {% if is_granted('ROLE_ADMIN') %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('app_admin') }}">Administration</a>
                         </li>
                     {% endif %}
-
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
                     </li>
-
-                    {# Mon profil - redirige vers le show de l'utilisateur connecté #}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_profil_show', {'id': app.user.id}) }}">Mon profil</a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_logout') }}">Se déconnecter</a>
                     </li>

@@ -26,7 +26,7 @@
                         <label for="q" class="form-label mt-2 mb-1">Le nom contient</label>
                         <div class="d-flex gap-2">
                             <input id="q" type="text" name="q" value="{{ app.request.get('q') }}"
-                                   class="form-control" style="max-width: 260px;" placeholder="search">
+                                   class="form-control" placeholder="search">
                             <button type="submit" class="btn btn-outline-dark">Rechercher</button>
                         </div>
                     </fieldset>
@@ -116,17 +116,17 @@
                     {% for user in users %}
                         <tr>
                             <td>
-                                <input type="checkbox" name="user_ids[]" value="{{ user.id }}" 
+                                <input type="checkbox" name="user_ids[]" value="{{ user.id }}"
                                 class="user-select-checkbox" aria-label="Sélectionner l'utilisateur {{ user.username }}">
                             </td>
-                            <td>{{ user.username }}</td>
-                            <td>{{ user.lastName }}</td>
-                            <td>{{ user.firstName }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.campus ? user.campus.name : '-' }}</td>
-                            <td>{{ user.roles|join(', ') }}</td>
-                            <td>{{ user.isactive ? 'Oui' : 'Non' }}</td>
-                            <td>
+                            <td data-label="Pseudo">{{ user.username }}</td>
+                            <td data-label="Nom">{{ user.lastName }}</td>
+                            <td data-label="Prénom">{{ user.firstName }}</td>
+                            <td data-label="Email">{{ user.email }}</td>
+                            <td data-label="Campus">{{ user.campus ? user.campus.name : '-' }}</td>
+                            <td data-label="Rôles">{{ user.roles|join(', ') }}</td>
+                            <td data-label="Actif">{{ user.isactive ? 'Oui' : 'Non' }}</td>
+                            <td data-label="Actions">
                                 <a href="{{ path('app_admin_user_toggle', {'id': user.id}) }}" class="btn btn-sm btn-outline-dark">
                                     {{ user.isactive ? 'Désactiver' : 'Activer' }}
                                 </a>

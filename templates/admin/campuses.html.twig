@@ -22,7 +22,7 @@
                         <div class="d-flex gap-2">
                             <input id="q" type="text" name="q"
                                    value="{{ app.request.get('q') }}"
-                                   class="form-control" style="max-width: 260px;"
+                                   class="form-control"
                                    placeholder="search">
                             <button type="submit" class="btn btn-outline-dark">Rechercher</button>
                         </div>
@@ -56,8 +56,8 @@
                 <tbody>
                 {% for campus in campuses %}
                     <tr>
-                        <td>{{ campus.name }}</td>
-                        <td>
+                        <td data-label="Campus">{{ campus.name }}</td>
+                        <td data-label="Actions">
                             <a href="{{ path('app_admin_campus_edit', {'id': campus.id}) }}" class="btn btn-sm btn-outline-dark">Modifier</a>
                             <span class="mx-1"></span>
                             <form method="post" action="{{ path('app_admin_campus_delete', {'id': campus.id}) }}"

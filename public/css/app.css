@@ -148,18 +148,208 @@ fieldset {
     padding: 2rem;
     text-align: center;
 }
-
 .admin-card .card-icon {
     font-size: 2rem;
     margin-bottom: 0.5rem;
 }
-
 .admin-card h5 {
     margin-bottom: 0.25rem;
 }
-
 .admin-card p {
     color: var(--muted-color);
     font-size: 13px;
     margin: 0;
+}
+
+
+/* ============================================================
+   MOBILE — s'applique UNIQUEMENT en dessous de 768px
+   Le desktop ci-dessus n'est pas touché
+   ============================================================ */
+@media (max-width: 767.98px) {
+
+    /* Colonnes md/lg → pleine largeur sur mobile */
+    .row > [class*="col-md-"],
+    .row > [class*="col-lg-"] {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+
+    /* Toolbars justify-content-between → empilées en colonne */
+    .d-flex.justify-content-between {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+    }
+    /* Groupes de boutons internes → colonne sur mobile */
+    .d-flex.align-items-center.gap-3,
+    .d-flex.gap-2.align-items-center {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    /* Tableaux → cartes mobile */
+    .table-responsive table { display: block; }
+    .table-responsive thead { display: none; }
+    .table-responsive tbody,
+    .table-responsive tbody tr { display: block; }
+
+    .table-responsive tbody tr {
+        border: 1px solid var(--border-color) !important;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        background: var(--card-bg);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    /* Ligne d'ajout inline → exclue du style carte */
+    .table-responsive tbody tr.add-row td {
+        display: block;
+        padding: 0.4rem 0.75rem;
+    }
+    .table-responsive tbody tr.add-row td::before {
+        display: none;
+    }
+
+    .table-responsive tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.4rem 0.75rem;
+        border: none !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        font-size: 13px;
+        gap: 0.5rem;
+    }
+
+    .table-responsive tbody td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        font-size: 10px;
+        text-transform: uppercase;
+        color: var(--muted-color);
+        letter-spacing: 0.06em;
+        flex-shrink: 0;
+        min-width: 65px;
+    }
+
+    /* Pseudo → titre de la carte en foncé */
+    .table-responsive tbody td[data-label="Pseudo"] {
+        background: #9b9a97;
+        color: #fff;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 0.6rem 0.75rem;
+        border-bottom: none !important;
+    }
+    .table-responsive tbody td[data-label="Pseudo"]::before {
+        display: none;
+    }
+
+    /* Ligne Actions → fond clair, boutons qui s'adaptent */
+    .table-responsive tbody td[data-label="Actions"] {
+        background: #FAFAF8;
+        border-bottom: none !important;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 0.35rem;
+        padding: 0.5rem 0.75rem;
+    }
+    .table-responsive tbody td[data-label="Actions"]::before {
+        display: none;
+    }
+    .table-responsive tbody td[data-label="Actions"] .btn {
+        flex: 1 1 auto;
+        font-size: 12px;
+    }
+
+    @media (max-width: 991.98px) {
+        .navbar-spacer {
+            width: 46px; /* même largeur que le bouton burger pour centrer le logo */
+        }
+        .navbar-collapse {
+            padding: 0.75rem 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 0.5rem;
+        }
+        .nav-link {
+            padding: 0.8rem 0.5rem !important;
+            font-size: 1rem !important;
+        }
+    }
+
+    /* --- TITRES plus grands et lisibles --- */
+    h1 { font-size: 1.5rem !important; }
+    h2 { font-size: 1.25rem !important; }
+    h3 { font-size: 1.1rem !important; }
+
+    /* --- FIX iOS : sans ça le téléphone zoome sur chaque input --- */
+    input, select, textarea,
+    .form-control, .form-select {
+        font-size: 16px !important;
+    }
+
+    /* --- BOUTONS : zone de tap 44px minimum (Apple HIG) --- */
+    .btn {
+        min-height: 44px;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* --- BOUTONS GROUPÉS : empilés en colonne --- */
+    .d-flex.gap-3 {
+        flex-direction: column !important;
+    }
+    .d-flex.gap-3 .btn {
+        width: 100% !important;
+    }
+
+    /* --- CONTAINER : padding réduit --- */
+    .container,
+    .container-fluid {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    /* --- TABLEAUX : scroll horizontal si trop large --- */
+    .table-responsive-custom {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .table[style*="max-width: 400px"] {
+        max-width: 100% !important;
+    }
+    .table td,
+    .table th {
+        padding: 0.4rem 0.5rem !important;
+        font-size: 13px !important;
+    }
+
+    /* --- CARTE LEAFLET --- */
+    [data-controller="leaflet-map"] {
+        height: 200px !important;
+    }
+
+    /* --- ADMIN CARDS : compactes et empilées --- */
+    .admin-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+
+/* ============================================================
+   EXTRA SMALL — moins de 576px
+   Les col-sm-* Bootstrap ne s'activent qu'à 576px.
+   En dessous, on les force à s'empiler
+   ============================================================ */
+@media (max-width: 575.98px) {
+
+    [class*="col-sm-"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
 }
