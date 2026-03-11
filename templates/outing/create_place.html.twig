@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un lieu{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="h4 text-center mb-4">Ajouter un lieu</h1>
+
+            {{ form_start(placeForm) }}
+
+            <div class="row">
+                <div class="mb-2">
+                    {{ form_label(placeForm.name) }}
+                    {{ form_widget(placeForm.name, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                    {{ form_errors(placeForm.name) }}
+                <div/>
+
+                <div class="mb-2">
+                    {{ form_label(placeForm.campus) }}
+                    {{ form_widget(placeForm.campus, {
+                                attr: {
+                                    class: 'form-select form-select-sm',
+                                    disabled: true
+                                }
+                            }) }}
+                    {{ form_errors(placeForm.campus) }}
+                <div/>
+
+                <div class="mb-2">
+                    {{ form_label(placeForm.city) }}
+                    {{ form_widget(placeForm.city, {'attr': {'class': 'form-select form-select-sm'}}) }}
+                    {{ form_errors(placeForm.city) }}
+                <div/>
+
+                <div class="mb-2">
+                    {{ form_label(placeForm.street) }}
+                    {{ form_widget(placeForm.street, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                    {{ form_errors(placeForm.street) }}
+                <div/>
+
+                <div class="mb-2">
+                    <div>
+                        {{ form_label(placeForm.latitude) }}
+                        {{ form_widget(placeForm.latitude, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                        {{ form_errors(placeForm.latitude) }}
+                    </div>
+                    <div>
+                        {{ form_label(placeForm.longitude) }}
+                        {{ form_widget(placeForm.longitude, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                        {{ form_errors(placeForm.longitude) }}
+                    </div>
+                <div/>
+
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <a href="{{ path('outing_list') }}" class="btn btn-outline-dark px-4">
+                        Retour à la liste
+                    </a>
+                    <button type="submit" class="btn btn-outline-secondary px-4">
+                        Ajouter
+                    </button>
+                </div>
+
+                {{ form_end(placeForm) }}
+            <div/>
+        <div/>
+    <div/>
+<div/>
+{% endblock %}
