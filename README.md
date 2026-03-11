@@ -206,13 +206,19 @@ eni-connect/
 
 ## 🧭 Parcours utilisateur
 
-- **Visiteur / utilisateur**
+- **Utilisateur connecté (tout rôle)**
   - Accède à la page de **login** (maquette intégrée).
   - Se connecte avec email ou username.
   - Consulte la **liste des sorties**, filtre selon ses besoins.
-  - S’inscrit / se désinscrit aux sorties (messages flash explicites).
   - Consulte/édite son **profil** (photo, infos personnelles, mot de passe).
   - Peut **réinitialiser son mot de passe** via un email sécurisé.
+
+- **Participant (`ROLE_PARTICIPANT`)**
+  - Consulte la **liste des sorties** ouvertes à l’inscription.
+  - Filtre les sorties par campus, dates, mot‑clé, état.
+  - **S’inscrit** à une sortie (dans la limite des places et des dates).
+  - Peut se **désinscrire** d’une sortie tant que les règles métier le permettent.
+  - Voit des **messages flash** clairs en cas de succès ou d’erreur (places pleines, date dépassée, etc.).
 
 - **Organisateur (`ROLE_ORGANIZER`)**
   - Crée une sortie via un **formulaire complet**.
