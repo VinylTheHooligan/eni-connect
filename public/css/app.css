@@ -164,7 +164,6 @@ fieldset {
 
 /* ============================================================
    MOBILE — s'applique UNIQUEMENT en dessous de 768px
-   Le desktop ci-dessus n'est pas touché
    ============================================================ */
 @media (max-width: 767.98px) {
 
@@ -172,6 +171,7 @@ fieldset {
     .row > [class*="col-md-"],
     .row > [class*="col-lg-"] {
         width: 100% !important;
+        max-width: 100% !important;
         flex: 0 0 100% !important;
     }
 
@@ -181,12 +181,14 @@ fieldset {
         align-items: flex-start !important;
         gap: 0.5rem !important;
     }
+
     /* Groupes de boutons internes → colonne sur mobile */
     .d-flex.align-items-center.gap-3,
     .d-flex.gap-2.align-items-center {
         flex-direction: column !important;
         align-items: stretch !important;
     }
+
     /* Tableaux → cartes mobile */
     .table-responsive table { display: block; }
     .table-responsive thead { display: none; }
@@ -201,6 +203,7 @@ fieldset {
         background: var(--card-bg);
         box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     }
+
     /* Ligne d'ajout inline → exclue du style carte */
     .table-responsive tbody tr.add-row td {
         display: block;
@@ -232,15 +235,17 @@ fieldset {
         min-width: 65px;
     }
 
-    /* Pseudo → titre de la carte en foncé */
+    /* Nom ET Pseudo → titre de la carte en foncé */
+    .table-responsive tbody td[data-label="Nom"],
     .table-responsive tbody td[data-label="Pseudo"] {
-        background: #9b9a97;
+        background: var(--anthracite);
         color: #fff;
         font-weight: 600;
         font-size: 14px;
         padding: 0.6rem 0.75rem;
         border-bottom: none !important;
     }
+    .table-responsive tbody td[data-label="Nom"]::before,
     .table-responsive tbody td[data-label="Pseudo"]::before {
         display: none;
     }
@@ -260,21 +265,6 @@ fieldset {
     .table-responsive tbody td[data-label="Actions"] .btn {
         flex: 1 1 auto;
         font-size: 12px;
-    }
-
-    @media (max-width: 991.98px) {
-        .navbar-spacer {
-            width: 46px; /* même largeur que le bouton burger pour centrer le logo */
-        }
-        .navbar-collapse {
-            padding: 0.75rem 0;
-            border-top: 1px solid var(--border-color);
-            margin-top: 0.5rem;
-        }
-        .nav-link {
-            padding: 0.8rem 0.5rem !important;
-            font-size: 1rem !important;
-        }
     }
 
     /* --- TITRES plus grands et lisibles --- */
@@ -341,12 +331,28 @@ fieldset {
 
 
 /* ============================================================
+   NAVBAR MOBILE — en dessous de 992px
+   ============================================================ */
+@media (max-width: 991.98px) {
+    .navbar-spacer {
+        width: 46px;
+    }
+    .navbar-collapse {
+        padding: 0.75rem 0;
+        border-top: 1px solid var(--border-color);
+        margin-top: 0.5rem;
+    }
+    .nav-link {
+        padding: 0.8rem 0.5rem !important;
+        font-size: 1rem !important;
+    }
+}
+
+
+/* ============================================================
    EXTRA SMALL — moins de 576px
-   Les col-sm-* Bootstrap ne s'activent qu'à 576px.
-   En dessous, on les force à s'empiler
    ============================================================ */
 @media (max-width: 575.98px) {
-
     [class*="col-sm-"] {
         width: 100% !important;
         max-width: 100% !important;
