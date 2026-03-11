@@ -38,7 +38,7 @@ Objectifs pédagogiques principaux :
 - **Gestion des utilisateurs**
   - Inscription / connexion via email **ou** username.
   - Profil utilisateur, photo de profil, modification du mot de passe.
-  - Rôles : `ROLE_USER`, `ROLE_ORGANIZER`, `ROLE_ADMIN` avec hiérarchie.
+  - Rôles : `ROLE_USER`, `ROLE_PARTICIPANT`, `ROLE_ORGANIZER`, `ROLE_ADMIN` avec hiérarchie.
   - Administration des utilisateurs (création, édition, activation/désactivation, **suppression conditionnelle**).
 
 - **Gestion des sorties**
