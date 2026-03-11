@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Outing;
+use App\Entity\Place;
 use App\Entity\User;
 use App\Form\CancelOutingType;
 use App\Form\OutingType;
+use App\Form\PlaceType;
 use App\Security\Voter\OutingManagerVoter;
 use App\Services\OutingManagementService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -139,6 +141,32 @@ final class OutingManagerController extends AbstractController
         return $this->render('outing/cancel.html.twig', [
             'cancelForm' => $form->createView(),
             'outing' => $outing,
+        ]);
+    }
+
+    #[Route('/lieu/creer', name: 'place', methods: ['GET', 'POST'])]
+    public function placeCreate(Request $request): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $place = new Place();
+        $place->setCampus($user->getCampus());
+
+        $form = $this->createForm(PlaceType::class, $place);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $this->oms->save($place);
+
+            $this->addFlash('success', 'Le lieu a été créer !');
+            return $this->redirectToRoute('outing_list');
+        }
+
+        return $this->render('outing/create_place.html.twig', [
+            'placeForm' => $form->createView(),
+            'place' => $place,
         ]);
     }
 }

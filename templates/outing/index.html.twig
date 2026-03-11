@@ -196,9 +196,13 @@
                 </table>
             </div>
 
-            <div class="mt-3">
-                <a href="{{ path('manage_create') }}" class="btn btn-outline-dark">Créer une sortie</a>
-            </div>
+            {% set haveOrganizerRole = app.user.roles == ['ROLE_ORGANIZER'] %}
+
+            {% if haveOrganizerRole %}
+                <div class="mt-3">
+                    <a href="{{ path('manage_create') }}" class="btn btn-outline-dark">Créer une sortie</a>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
