@@ -87,6 +87,18 @@
             </div>
         </div>
 
+        {% if outing.place.latitude and outing.place.longitude %}
+            <div class="mb-4">
+                <h2 class="h6 fw-bold mb-2">Localisation</h2>
+                <div data-controller="leaflet-map"
+                     data-leaflet-map-lat-value="{{ outing.place.latitude }}"
+                     data-leaflet-map-lng-value="{{ outing.place.longitude }}"
+                     data-leaflet-map-title-value="{{ outing.place.name }}"
+                     style="height: 300px; border-radius: 8px;">
+                </div>
+            </div>
+        {% endif %}
+
         {# Liste des participants #}
         <div class="mt-3">
             <h2 class="h6 fw-bold">Liste des participants inscrits</h2>
