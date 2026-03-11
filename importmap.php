@@ -25,16 +25,6 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
-    'leaflet' => [
-        'version' => '1.9.4',
-    ],
-    'leaflet/dist/leaflet.min.css' => [
-        'version' => '1.9.4',
-        'type' => 'css',
-    ],
-    '@symfony/ux-leaflet-map' => [
-        'version' => '2.32.0',
-    ],
     '@popperjs/core' => [
         'version' => '2.11.8',
     ],
