@@ -317,6 +317,13 @@ D’après le fichier `docs/Suivi équipe WRS - Suivi.csv`.
   - Optimisation des requêtes et du firewall (gains de 200–400 ms sur certaines pages).
   - Remise à niveau de la BDD et clarification des statuts de sortie (3 statuts en BDD, le reste est calculé).
 
+- **Front-end dynamique & UX**
+  - Installation et configuration de **Stimulus** dans le projet.
+  - Développement du contrôleur **place_controller.js** permettant :
+    - la mise à jour dynamique des **villes** et **lieux** en fonction du **campus** sélectionné,
+    - une expérience fluide pour les organisateurs lors de la création et modification des sorties,
+    - une réduction des erreurs utilisateur et une meilleure cohérence des données.
+
 ### Swan – Sécurité, UI/UX, API et reset password
 
 - **Sécurité & authentification**
