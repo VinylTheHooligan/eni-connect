@@ -213,13 +213,6 @@ eni-connect/
   - Consulte/édite son **profil** (photo, infos personnelles, mot de passe).
   - Peut **réinitialiser son mot de passe** via un email sécurisé.
 
-- **Participant (`ROLE_PARTICIPANT`)**
-  - Consulte la **liste des sorties** ouvertes à l’inscription.
-  - Filtre les sorties par campus, dates, mot‑clé, état.
-  - **S’inscrit** à une sortie (dans la limite des places et des dates).
-  - Peut se **désinscrire** d’une sortie tant que les règles métier le permettent.
-  - Voit des **messages flash** clairs en cas de succès ou d’erreur (places pleines, date dépassée, etc.).
-
 - **Organisateur (`ROLE_ORGANIZER`)**
   - Crée une sortie via un **formulaire complet**.
   - Modifie ou annule ses sorties (avec formulaire spécifique et champ “motif d’annulation”).
