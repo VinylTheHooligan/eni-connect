@@ -375,6 +375,14 @@ class Outing
         return false;
     }
 
+    public function isPast(): bool
+    {
+        $end = $this->getStartDateTime()->modify('+' . $this->getDuration() . ' minutes');
+        
+        return (new \DateTimeImmutable()) > $end;
+    }
+
+
     public function isRegistrationDeadlinePassed(): bool
     {
         $now = new DateTimeImmutable();

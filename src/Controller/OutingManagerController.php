@@ -70,8 +70,6 @@ final class OutingManagerController extends AbstractController
     #[Route('/{id}/modifier', name: 'edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
     public function edit(Outing $outing, Request $request): Response
     {
-        $user = $this->getUser();
-
         $this->denyAccessUnlessGranted(OutingManagerVoter::EDIT, $outing);
 
         $form = $this->createForm(OutingType::class, $outing);
