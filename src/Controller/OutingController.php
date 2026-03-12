@@ -33,9 +33,7 @@ class OutingController extends AbstractController
         $campusId = $request->query->get('campus');
 
         $user = $this->getUser();
-        if (!$user instanceof User) {
-            $user = null;
-        }
+        assert($user instanceof User);
 
         if ($campusId === null && $user?->getCampus())
         {
@@ -73,25 +71,22 @@ class OutingController extends AbstractController
     #[Route('/{id}/inscription', name: 'register', requirements: ['id' => '\d+'], methods: ['POST','GET'])]
     public function register(Outing $outing): Response
     {
-        $user = $this->getUser();
-        if (!$user instanceof User) {
-            return $this->redirectToRoute('app_login');
-        }
+        $this->denyAccessUnlessGranted('OUTING_REGISTER', $outing);
 
+        $user = $this->getUser();
         $response = $this->ocs->register($outing, $user);
 
         $this->addFlash($response[0], $response[1]);
         return $this->redirectToList();
     }
 
+    #[IsGranted('ROLE_PARTICIPANT')]
     #[Route('/{id}/desistement', name: 'unregister', requirements: ['id' => '\d+'], methods: ['POST','GET'])]
     public function unregister(Outing $outing): Response
     {
-        $user = $this->getUser();
-        if (!$user instanceof User) {
-            return $this->redirectToRoute('app_login');
-        }
+        $this->denyAccessUnlessGranted('OUTING_UNREGISTER', $outing);
 
+        $user = $this->getUser();
         $response = $this->ocs->unregister($outing, $user);
 
         $this->addFlash($response[0], $response[1]);
