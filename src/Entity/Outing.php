@@ -205,6 +205,21 @@ class Outing
         return $this;
     }
 
+    public function getStatusPretty(): string
+    {
+        switch($this->getStatus())
+        {
+            case self::ETAT_CREATION: return 'En création';
+            case self::ETAT_OUVERTE: return 'Ouverte';
+            case self::ETAT_CLOTUREE: return 'Cloturée';
+            case self::ETAT_EN_COURS: return 'En cours';
+            case self::ETAT_TERMINEE: return 'Terminée';
+            case self::ETAT_HISTORISEE: return 'Historisée';
+            case self::ETAT_ANNULEE: return 'Annulée';
+            default: return 'N/A';
+        }
+    }
+
     public function getOrganizer(): ?User
     {
         return $this->organizer;

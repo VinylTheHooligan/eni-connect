@@ -148,7 +148,7 @@
                             <td data-label="Date">{{ outing.startDateTime|date('d/m/Y H:i') }}</td>
                             <td data-label="Clôture">{{ outing.registrationDeadline|date('d/m/Y') }}</td>
                             <td data-label="Inscrits">{{ outing.registrations|length }}/{{ outing.maxRegistrations }}</td>
-                            <td data-label="État">{{ outing.status }}</td>
+                            <td data-label="État">{{ outing.statusPretty }}</td>
                             <td data-label="Inscrit">
                                 {% set isRegistered = false %}
                                 {% if app.user %}
@@ -164,15 +164,15 @@
                                 <a href="{{ path('outing_detail', {id: outing.id}) }}" class="btn btn-sm btn-outline-dark">Afficher</a>
 
                                 {% if app.user %}
-                                    {% if not isOrganizer %}
-                                        {% if status == 'ouverte' %}
-                                            {% if isRegistered %}
-                                                 <a href="{{ path('outing_unregister', {'id': outing.id}) }}" class="btn btn-sm btn-outline-light">Se désister</a>
-                                            {% else %}
-                                                 <a href="{{ path('outing_register', {'id': outing.id}) }}" class="btn btn-sm btn-outline-success">S'inscrire</a>
+                                        {% if not is_granted('ROLE_ORGANIZER') %}
+                                            {% if status == 'ouverte' %}
+                                                {% if isRegistered %}
+                                                    <a href="{{ path('outing_unregister', {'id': outing.id}) }}" class="btn btn-sm btn-outline-danger">Se désister</a>
+                                                {% else %}
+                                                    <a href="{{ path('outing_register', {'id': outing.id}) }}" class="btn btn-sm btn-outline-success">S'inscrire</a>
+                                                {% endif %}
                                             {% endif %}
                                         {% endif %}
-                                    {% endif %}
 
                                     {% if isOrganizer %}
                                         {% if status == 'creation' %}

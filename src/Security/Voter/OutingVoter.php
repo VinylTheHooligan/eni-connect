@@ -15,7 +15,7 @@ final class OutingVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::REGISTER, self::UNREGISTER, self::VIEW])
+        return in_array($attribute, [self::REGISTER, self::UNREGISTER])
             && $subject instanceof Outing;
     }
 
@@ -27,16 +27,10 @@ final class OutingVoter extends Voter
         }
 
         return match ($attribute) {
-            self::VIEW => $this->canView($outing, $user),
             self::REGISTER => $this->canRegister($outing, $user),
             self::UNREGISTER => $this->canUnregister($outing, $user),
             default => false,
         };
-    }
-
-    private function canView(Outing $outing, User $user): bool
-    {
-        return true;
     }
 
     private function canRegister(Outing $outing, User $user): bool
@@ -51,6 +45,7 @@ final class OutingVoter extends Voter
 
     private function canUnregister(Outing $outing, User $user): bool
     {
+        if ($user->getRegistrations()->count() === 0) return false;
         if ($outing->isPast()) return false;
         return ($outing->getRegistrationFor($user) !== null);
     }

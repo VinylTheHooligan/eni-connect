@@ -59,8 +59,6 @@ class OutingControllerService
             return ['warning', "Vous ne pouvez pas vous désister de votre propre sortie."];
         }
 
-        $now = new DateTimeImmutable();
-
         if ($outing->isStarted())
         {
             return ['warning', 'Vous ne pouvez plus vous désister car la sortie a débuté.'];

@@ -80,7 +80,6 @@ class OutingController extends AbstractController
         return $this->redirectToList();
     }
 
-    #[IsGranted('ROLE_PARTICIPANT')]
     #[Route('/{id}/desistement', name: 'unregister', requirements: ['id' => '\d+'], methods: ['POST','GET'])]
     public function unregister(Outing $outing): Response
     {
