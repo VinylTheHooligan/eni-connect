@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
 
 
 class UserType extends AbstractType
@@ -52,7 +53,13 @@ class UserType extends AbstractType
                 'label' => 'Ma photo',
                 'required' => false,
                 'mapped' => false, // pas lié directement à l'entité
-                'attr' => ['accept' => 'image/*']
+                'attr' => ['accept' => '.jpg,.jpeg,.png'],
+                'constraints' => [
+                    new File([
+                        'extensions' => ['jpg', 'jpeg', 'png'],
+                        'extensionsMessage' => 'Veuillez uploader une image JPG ou PNG uniquement.',
+                    ])
+                ]
             ])
         ;
 
