@@ -38,7 +38,7 @@ Objectifs pédagogiques principaux :
 - **Gestion des utilisateurs**
   - Inscription / connexion via email **ou** username.
   - Profil utilisateur, photo de profil, modification du mot de passe.
-  - Rôles : `ROLE_USER`, `ROLE_PARTICIPANT`, `ROLE_ORGANIZER`, `ROLE_ADMIN` avec hiérarchie.
+  - Rôles : `ROLE_USER`, `ROLE_ORGANIZER`, `ROLE_ADMIN` avec hiérarchie.
   - Administration des utilisateurs (création, édition, activation/désactivation, **suppression conditionnelle**).
 
 - **Gestion des sorties**
@@ -212,13 +212,6 @@ eni-connect/
   - Consulte la **liste des sorties**, filtre selon ses besoins.
   - Consulte/édite son **profil** (photo, infos personnelles, mot de passe).
   - Peut **réinitialiser son mot de passe** via un email sécurisé.
-
-- **Participant (`ROLE_PARTICIPANT`)**
-  - Consulte la **liste des sorties** ouvertes à l’inscription.
-  - Filtre les sorties par campus, dates, mot‑clé, état.
-  - **S’inscrit** à une sortie (dans la limite des places et des dates).
-  - Peut se **désinscrire** d’une sortie tant que les règles métier le permettent.
-  - Voit des **messages flash** clairs en cas de succès ou d’erreur (places pleines, date dépassée, etc.).
 
 - **Organisateur (`ROLE_ORGANIZER`)**
   - Crée une sortie via un **formulaire complet**.
