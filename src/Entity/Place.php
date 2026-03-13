@@ -21,6 +21,7 @@ class Place
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank()]
     #[Assert\Length(
         min: 1, minMessage: 'Le nom du lieu doit contenir au minimum {{ min }} caractère.',
         max: 180, maxMessage: 'Le nom du lieu doit contenir au maximum {{ max }} caractères.',
@@ -28,6 +29,7 @@ class Place
     #[ORM\Column(length: 180)]
     private ?string $name = null;
 
+    #[Assert\NotBlank()]
     #[Assert\Length(
         min: 5, minMessage: 'La rue doit contenir au minimum {{ min }} caractère.',
         max: 200, maxMessage: 'La rue doit contenir au maximum {{ max }} caractères.'

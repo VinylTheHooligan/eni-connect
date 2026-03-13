@@ -19,6 +19,7 @@ class Campus
     private ?int $id = null;
 
 
+    #[Assert\NotBlank()]
     #[Assert\Length(
         min: 3, minMessage: 'Le nom doit contenir au minimum {{ min }} caractères.',
         max: 50, maxMessage: 'Le nom doit contenir au maximum {{ max }} caractères.',

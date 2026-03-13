@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
-use OutOfRangeException;
 
 #[ORM\Entity(repositoryClass: CityRepository::class)]
 class City
@@ -17,6 +16,7 @@ class City
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank()]
     #[Assert\Length(
         min: 1, minMessage: 'La ville doit contenir au minimum {{ min }} caractère.',
         max: 50, maxMessage: 'La ville doit contenir au maximum {{ max }} caractères.',
